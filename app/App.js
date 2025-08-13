@@ -7,7 +7,10 @@ import { Router } from "./Router.js";
 class App {
   constructor() {
     this.router = new Router();
-    this.router.init();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      this.router.init();
+    });
   }
 }
 
