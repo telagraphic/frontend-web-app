@@ -61,6 +61,13 @@ export class Router {
     this.loadPage(window.location.pathname);
   }
 
+  pageNavigation() {
+    // Start transition
+    // Fetch new page
+    // Finish transition
+    // Update History
+  }
+
   /**
    * Update history state and update DOM
    *
@@ -70,7 +77,7 @@ export class Router {
   loadPage(newPage, addToHistory = true) {
     if (addToHistory) {
       // TODO: don't call updateNewPage on first page load
-      console.log(`/pages/${newPage}`, window.location.pathname);
+
       if (`/pages/${newPage}` !== window.location.pathname) {
         this.updateNewPage(newPage);
         this.pageHistory.pushState({ route: newPage }, "", newPage);
@@ -83,16 +90,35 @@ export class Router {
    * - scroll to top of page
    */
   async updateNewPage(newPage) {
-    console.log(this.mainElement);
-    const page = await fetch(newPage);
-    console.log(page);
+    const response = await fetch(newPage);
+
+    if (response.ok) {
+      const newPageHTML = await response.text();
+      const newPageDOM = new DOMParser().parseFromString(
+        newPageHTML,
+        "text/html",
+      );
+      const newPageContent = newPageDOM.querySelector("main");
+      const newPageFragment = new DocumentFragment().appendChild(
+        newPageContent,
+      );
+      this.mainElement.replaceChildren(newPageFragment);
+    } else {
+      window.location.replace("index.html");
+    }
   }
 
   /**
+   * Returns a promise for showing/hiding page animation
+   */
+  async displayTransition() {}
+
+  /**
    * Display a 404 page when no route is found
+   *
    */
   displayErrorPage() {
-    // check a route object, re-route to home or throw a 404
+    // TODO: Use a server rewrite to handle a 404
   }
 
   /**
