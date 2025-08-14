@@ -10,12 +10,13 @@
  *
  */
 
-// TODO: Make this a singleton? NO
-// How to export the router as all ready initialized? NO
 export class Router {
   constructor() {
     this.pageHistory = window.history;
-    this.mainElement = document.querySelector("main");
+    this.mainElement = document.querySelector(".main-content");
+    this.links = document.querySelectorAll("a");
+    this.transitionOverlay = document.querySelector(".transition-overlay");
+    this.nextPage = null;
   }
 
   init() {
@@ -28,13 +29,12 @@ export class Router {
    */
   setupPopState() {
     if (this.pageHistory.state == null) {
-      const pagePath = window.location.pathname;
-      this.pageHistory.replaceState({ route: pagePath }, "", pagePath);
+      const initialPage = window.location.pathname;
+      this.pageHistory.replaceState({ route: initialPage }, "", initialPage);
     }
 
     window.addEventListener("popstate", (event) => {
-      console.log(event.state.route);
-      this.loadPage(event.state.route, false);
+      this.navigateToPage(event.state.route, false);
     });
   }
 
@@ -43,14 +43,11 @@ export class Router {
    * - call on new page load to ensure content links are updated
    */
   setupLinks() {
-    let links = document.querySelectorAll("a");
-    console.log(links);
-
-    links.forEach((link) => {
+    this.links.forEach((link) => {
       link.addEventListener("click", (event) => {
         event.preventDefault();
-        const newPage = event.target.getAttribute("href");
-        this.loadPage(newPage);
+        this.nextPage = event.target.getAttribute("href");
+        this.navigateToPage(this.nextPage);
       });
     });
 
@@ -58,14 +55,7 @@ export class Router {
      * Check the initial page if user is first visiting another page,
      * TODO: move to init function?
      */
-    this.loadPage(window.location.pathname);
-  }
-
-  pageNavigation() {
-    // Start transition
-    // Fetch new page
-    // Finish transition
-    // Update History
+    // this.navigateToPage(window.location.pathname);
   }
 
   /**
@@ -74,44 +64,112 @@ export class Router {
    * @param {*} newPage
    * @param {*} addToHistory
    */
-  loadPage(newPage, addToHistory = true) {
-    if (addToHistory) {
-      // TODO: don't call updateNewPage on first page load
+  // loadPage(nextPage, addToHistory = true) {
+  //   if (addToHistory) {
+  //     // TODO: don't call updateNewPage on first page load
+  //     console.log("loadPage called");
 
-      if (`/pages/${newPage}` !== window.location.pathname) {
-        this.updateNewPage(newPage);
-        this.pageHistory.pushState({ route: newPage }, "", newPage);
+  //     if (`/pages/${nextPage}` !== window.location.pathname) {
+  //       this.updatePage(nextPage);
+  //       this.pageHistory.pushState({ route: nextPage }, "", nextPage);
+  //     }
+  //   }
+  // }
+
+  /**
+   * Returns a promise for showing/hiding page animation
+   */
+  async navigateToPage(showAnimation = true) {
+    console.log("navigateToPage called");
+    const showOverlay = (element) => element.classList.add("is-visible");
+    const hideOverlay = (element) => element.classList.remove("is-visible");
+    const hidePage = (element) => element.classList.add("is-hidden");
+    const showPage = (element) => element.classList.remove("is-hidden");
+
+    // await this.runTransition(this.mainElement, hidePage);
+    await this.runTransition(this.transitionOverlay, showOverlay);
+    await this.updatePage(this.nextPage);
+    await this.updateHistory(this.nextPage);
+    await this.runTransition(this.transitionOverlay, hideOverlay);
+    // await this.runTransition(this.mainElement, showPage);
+  }
+
+  /**
+   * Updates the history state with the new page
+   * @param {*} nextPage
+   * @param {*} addToHistory
+   * @returns
+   */
+  async updateHistory(nextPage, addToHistory = true) {
+    return new Promise((resolve, reject) => {
+      if (addToHistory) {
+        // TODO: don't call updateNewPage on first page load
+        console.log("history updated");
+
+        if (`/pages/${nextPage}` !== window.location.pathname) {
+          this.pageHistory.pushState({ route: nextPage }, "", nextPage);
+        }
       }
-    }
+      resolve();
+    });
   }
 
   /**
    * Replace current DOM with new page DOM
    * - scroll to top of page
    */
-  async updateNewPage(newPage) {
-    const response = await fetch(newPage);
+  async updatePage(newPage) {
+    try {
+      const response = await fetch(newPage);
 
-    if (response.ok) {
-      const newPageHTML = await response.text();
-      const newPageDOM = new DOMParser().parseFromString(
-        newPageHTML,
-        "text/html",
-      );
-      const newPageContent = newPageDOM.querySelector("main");
-      const newPageFragment = new DocumentFragment().appendChild(
-        newPageContent,
-      );
-      this.mainElement.replaceChildren(newPageFragment);
-    } else {
-      window.location.replace("index.html");
+      if (response.ok) {
+        const newPageHTML = await response.text();
+        const newPageDOM = new DOMParser().parseFromString(
+          newPageHTML,
+          "text/html",
+        );
+        const newPageContent = newPageDOM.querySelector("main");
+        const newPageFragment = new DocumentFragment().appendChild(
+          newPageContent,
+        );
+        this.mainElement.replaceChildren(newPageFragment);
+        scrollTo({ top: 0, left: 0, behavior: "instant" });
+      } else {
+        // TODO: this resets the history state, perhaps go to a index.html state instead!
+        window.location.replace("index.html");
+        scrollTo({ top: 0, left: 0, behavior: "instant" });
+      }
+    } catch (error) {
+      console.error("Error updating page:", error);
     }
   }
 
   /**
-   * Returns a promise for showing/hiding page animation
+   * Run the transition callback, remove the listen when done, then resolve
+   * @param {*} element to target for animation
+   * @param {*} callback function to run on element for transition
+   * @returns
    */
-  async displayTransition() {}
+  async runTransition(element, transitionCallback) {
+    return new Promise((resolve) => {
+      element.addEventListener("transitionstart", () => {
+        console.log(" transition started");
+      });
+
+      element.addEventListener("transitionend", () => {
+        console.log("Transition ended");
+        resolve();
+      });
+
+      requestAnimationFrame(() => {
+        transitionCallback(element);
+      });
+    });
+  }
+
+  async showPage() {
+    return new Promise((resolve) => {});
+  }
 
   /**
    * Display a 404 page when no route is found
