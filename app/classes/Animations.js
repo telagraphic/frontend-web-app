@@ -11,12 +11,67 @@ export class Animations {
         console.log("Transition started");
       });
 
-      element.addEventListener("transitionend", () => {
-        resolve();
-      });
+      element.addEventListener(
+        "transitionend",
+        () => {
+          resolve();
+        },
+        { once: true },
+      );
 
       requestAnimationFrame(() => {
         transitionCallback(element);
+      });
+    });
+  }
+
+  async runCSSShowAnimation(element, animationCallback) {
+    return new Promise((resolve) => {
+      element.addEventListener(
+        "animationstart",
+        () => {
+          // element.style.opacity = "0";
+          console.log("show started");
+        },
+        { once: true },
+      );
+
+      element.addEventListener(
+        "animationend",
+        () => {
+          console.log("show ended");
+          resolve();
+        },
+        { once: true },
+      );
+
+      requestAnimationFrame(() => {
+        animationCallback(element);
+      });
+    });
+  }
+
+  async runCSSHideAnimation(element, animationCallback) {
+    return new Promise((resolve) => {
+      element.addEventListener(
+        "animationstart",
+        () => {
+          console.log("hide started");
+        },
+        { once: true },
+      );
+
+      element.addEventListener(
+        "animationend",
+        () => {
+          console.log("hide ended");
+          resolve();
+        },
+        { once: true },
+      );
+
+      requestAnimationFrame(() => {
+        animationCallback(element);
       });
     });
   }

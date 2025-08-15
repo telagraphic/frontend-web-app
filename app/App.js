@@ -9,10 +9,8 @@ import { Gallery } from "./pages/Gallery.js";
 
 class App {
   constructor() {
-    this.router = new Router();
-    this.links = document.querySelectorAll("a");
     this.pageHistory = window.history;
-    this.mainElement = document.querySelector("main");
+    this.mainElement = document.querySelector("main.main-content");
     this.setupPages();
     this.setupApp();
   }
@@ -32,38 +30,41 @@ class App {
 
   setupApp() {
     document.addEventListener("DOMContentLoaded", () => {
-      this.setupLinks();
+      this.setupLinkListeners();
       this.setupPopState();
     });
   }
 
-  setupLinks() {
-    this.links.forEach((link) => {
-      link.addEventListener("click", (event) => {
+  setupLinkListeners() {
+    this.body = document.querySelector("body");
+    document.addEventListener("click", (event) => {
+      if (event.target.tagName === "A") {
         event.preventDefault();
         this.nextPage = event.target.getAttribute("href");
-        this.navigateToPage(this.nextPage);
-      });
+        this.onPageChange(this.nextPage);
+      }
     });
   }
 
+  async onPageChange(newPage) {
+    if (window.location.pathname.includes(newPage)) return;
+    await this.currentPage.hide();
+    await this.updatePage(newPage);
+    // scrollTo({ top: 0, left: 0, behavior: "instant" });
+    await this.updateHistory(newPage);
+    await this.currentPage.create();
+    await this.currentPage.show();
+  }
+
   /**
-   * Replace current DOM with new page DOM
+   * Fetch next page and update DOM
    *
    */
-  async navigateToPage(newPage) {
-    await this.currentPage.hide();
-
+  async updatePage(newPage) {
     try {
       const response = await fetch(newPage);
-
       if (response.ok) {
         await this.updateMarkup(response);
-
-        scrollTo({ top: 0, left: 0, behavior: "instant" });
-        await this.currentPage.show();
-        await this.updateHistory(newPage);
-        // this.setupLinks(); optional, fix main element content wrapper issue
       } else {
         // TODO: this resets the history state, perhaps go to a index.html state instead!
         window.location.replace("index.html");
@@ -75,7 +76,8 @@ class App {
   }
 
   /**
-   * Update the currentPage and template, fix the mainElement content wrapper issue
+   * Update the currentPage and template
+   * TODO: fix the mainElement content wrapper issue
    * @param {*} response
    */
   async updateMarkup(response) {
@@ -84,9 +86,19 @@ class App {
       newPageHTML,
       "text/html",
     );
-    const newPageContent = newPageDOM.querySelector("main");
-    const newPageFragment = new DocumentFragment().appendChild(newPageContent);
+
+    const pageContent = newPageDOM.querySelector("main");
+    const newPageContent = newPageDOM.querySelector("section.page-content");
+    const newPageFragment = document.createDocumentFragment();
+    newPageFragment.appendChild(newPageContent);
+
+    this.template = pageContent.getAttribute("data-template");
+    this.currentPage = this.pages[this.template];
     this.mainElement.replaceChildren(newPageFragment);
+    this.mainElement.setAttribute(
+      "data-template",
+      `${this.template.toString()}`,
+    );
   }
 
   /**
