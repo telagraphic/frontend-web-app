@@ -80,7 +80,6 @@ export class Router {
    * Returns a promise for showing/hiding page animation
    */
   async navigateToPage(showAnimation = true) {
-    console.log("navigateToPage called");
     const showOverlay = (element) => element.classList.add("is-visible");
     const hideOverlay = (element) => element.classList.remove("is-visible");
     const hidePage = (element) => element.classList.add("is-hidden");
@@ -104,7 +103,6 @@ export class Router {
     return new Promise((resolve, reject) => {
       if (addToHistory) {
         // TODO: don't call updateNewPage on first page load
-        console.log("history updated");
 
         if (`/pages/${nextPage}` !== window.location.pathname) {
           this.pageHistory.pushState({ route: nextPage }, "", nextPage);
@@ -152,12 +150,9 @@ export class Router {
    */
   async runTransition(element, transitionCallback) {
     return new Promise((resolve) => {
-      element.addEventListener("transitionstart", () => {
-        console.log(" transition started");
-      });
+      element.addEventListener("transitionstart", () => {});
 
       element.addEventListener("transitionend", () => {
-        console.log("Transition ended");
         resolve();
       });
 
