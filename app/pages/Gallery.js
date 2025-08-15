@@ -3,4 +3,8 @@ export class Gallery extends Page {
   constructor() {
     super({ id: "gallery", element: ".gallery" });
   }
+
+  create() {
+    super.create();
+  }
 }

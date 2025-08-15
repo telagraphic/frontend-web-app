@@ -6,15 +6,16 @@
 
 ### DO
 
+**8/15**
 
-**8/14**
-
-
-- keep markup the same for all pages or when first visiting other pages besides index.html, animations won't work
-- add css animations to page navigation
-- add named routes function, hide/show for templates?
+- review todo's and fix
+- move animation code to animation file from page.js
+- add images, preloading animation
 - deploy to netlify
-- review creative web app js architecture for next steps
+- add named routes function? might not need to current setup? how will this affect loading index.html || /index in markup
+
+
+
 
 
 ### DOING
@@ -23,6 +24,13 @@
 
 
 ### DONE
+
+
+**8/14**
+- keep markup the same for all pages or when first visiting other pages besides index.html, animations won't work
+- add css animations to page navigation
+
+- review creative web app js architecture for next steps
 
 
 **8/13**

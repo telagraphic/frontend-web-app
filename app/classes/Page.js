@@ -1,8 +1,13 @@
+import { Animations } from "./Animations.js";
+
 export default class Page {
-  constructor({ id, element, elements }) {
+  constructor({ id, element, elements, transitionOverlay }) {
     this.selector = element;
     this.selectorChildren = { ...elements };
     this.id = id;
+    this.transitionOverlay =
+      transitionOverlay || document.querySelector(".transition-overlay");
+    this.animations = new Animations();
   }
 
   /**
@@ -33,11 +38,13 @@ export default class Page {
     console.log(this.elements);
   }
 
-  show() {
-    this.element.classList.add("is-visible");
+  async show() {
+    const showOverlay = (element) => element.classList.remove("is-visible");
+    await this.animations.runCSSTransition(this.transitionOverlay, showOverlay);
   }
 
-  hide() {
-    this.element.classList.remove("is-visible");
+  async hide() {
+    const hideOverlay = (element) => element.classList.add("is-visible");
+    await this.animations.runCSSTransition(this.transitionOverlay, hideOverlay);
   }
 }
