@@ -11,16 +11,66 @@
  */
 
 export class Router {
-  constructor() {
+  constructor(mainElement) {
+    this.template = null;
+    this.newPage = null;
+    this.mainElement =
+      mainElement || document.querySelector("main.main-content");
     this.pageHistory = window.history;
-    this.mainElement = document.querySelector(".main-content");
-    this.links = document.querySelectorAll("a");
-    this.nextPage = null;
   }
 
   init() {
     this.setupPopState();
-    this.setupLinks();
+  }
+
+  async updatePage(href) {
+    await this.requestPage(href);
+    await this.updateMarkup(this.newPage);
+    await this.updateHistory(href);
+    return this.template;
+  }
+
+  /**
+   * Fetch next page
+   * @param {string} newPage - The URL of the next page to fetch
+   */
+  async requestPage(newPage) {
+    try {
+      const response = await fetch(newPage);
+      if (response.ok) {
+        this.newPage = response;
+      } else {
+        // TODO: this resets the history state, perhaps go to a index.html state instead!
+        window.location.replace("index.html");
+        // scrollTo({ top: 0, left: 0, behavior: "instant" });
+      }
+    } catch (error) {
+      console.error("Error updating page:", error);
+    }
+  }
+
+  /**
+   * Replace DOM with new page content
+   * @param {*} response
+   */
+  async updateMarkup(response) {
+    const newPageHTML = await response.text();
+    const newPageDOM = new DOMParser().parseFromString(
+      newPageHTML,
+      "text/html",
+    );
+
+    const pageContent = newPageDOM.querySelector("main");
+    const newPageContent = newPageDOM.querySelector("section.page-content");
+    const newPageFragment = document.createDocumentFragment();
+    newPageFragment.appendChild(newPageContent);
+
+    this.template = pageContent.getAttribute("data-template");
+    this.mainElement.replaceChildren(newPageFragment);
+    this.mainElement.setAttribute(
+      "data-template",
+      `${this.template.toString()}`,
+    );
   }
 
   /**
@@ -33,65 +83,14 @@ export class Router {
     }
 
     window.addEventListener("popstate", (event) => {
-      this.navigateToPage(event.state.route, false);
+      this.updatePage(event.state.route, false);
     });
-  }
-
-  /**
-   * Intercept links for removing current page and replacing with new page
-   * TODO: call on new page load to ensure content links are updated
-   */
-  setupLinks() {
-    this.links.forEach((link) => {
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
-        this.nextPage = event.target.getAttribute("href");
-        this.navigateToPage(this.nextPage);
-      });
-    });
-
-    /**
-     * Check the initial page if user is first visiting another page,
-     * TODO: move to init function?
-     */
-    // this.navigateToPage(window.location.pathname);
-  }
-
-  /**
-   * Replace current DOM with new page DOM
-   * - scroll to top of page
-   */
-  async navigateToPage(newPage) {
-    try {
-      const response = await fetch(newPage);
-
-      if (response.ok) {
-        const newPageHTML = await response.text();
-        const newPageDOM = new DOMParser().parseFromString(
-          newPageHTML,
-          "text/html",
-        );
-        const newPageContent = newPageDOM.querySelector("main");
-        const newPageFragment = new DocumentFragment().appendChild(
-          newPageContent,
-        );
-        this.mainElement.replaceChildren(newPageFragment);
-        scrollTo({ top: 0, left: 0, behavior: "instant" });
-        await this.updateHistory(newPage);
-      } else {
-        // TODO: this resets the history state, perhaps go to a index.html state instead!
-        window.location.replace("index.html");
-        scrollTo({ top: 0, left: 0, behavior: "instant" });
-      }
-    } catch (error) {
-      console.error("Error updating page:", error);
-    }
   }
 
   /**
    * Updates the history state with the new page
-   * @param {*} nextPage
-   * @param {*} addToHistory
+   * @param {string} nextPage the href
+   * @param {boolean} addToHistory boolean to write to history
    * @returns
    */
   async updateHistory(nextPage, addToHistory = true) {
@@ -111,11 +110,6 @@ export class Router {
   displayErrorPage() {
     // TODO: Use a server rewrite to handle a 404
   }
-
-  /**
-   * If link is the current page, do nothing or navigate to a #header
-   */
-  checkIfSamePage() {}
 
   /**
    * Handle page refresh after push state history is refreshed?
