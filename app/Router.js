@@ -35,6 +35,11 @@ export class Router {
    * @param {string} newPage - The URL of the next page to fetch
    */
   async requestPage(newPage) {
+    if (newPage.includes("http")) {
+      window.location.href = newPage;
+      return;
+    }
+
     try {
       const response = await fetch(newPage);
       if (response.ok) {
@@ -42,7 +47,6 @@ export class Router {
       } else {
         // TODO: this resets the history state, perhaps go to a index.html state instead!
         window.location.replace("index.html");
-        // scrollTo({ top: 0, left: 0, behavior: "instant" });
       }
     } catch (error) {
       console.error("Error updating page:", error);

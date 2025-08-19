@@ -16,6 +16,7 @@ class App {
     this.setupPages();
     this.setupApp();
     this.updateRAF();
+    this.onResize();
     this.setupEventListeners();
     // this.createPreloader();
   }
@@ -31,7 +32,6 @@ class App {
     this.template = this.content.getAttribute("data-template");
     this.currentPage = this.pages[this.template];
     this.currentPage.create();
-    this.onResize();
   }
 
   setupApp() {
@@ -67,6 +67,7 @@ class App {
   async onPageChange(href) {
     if (window.location.pathname.includes(href)) return;
     await this.currentPage.hide();
+    // this.currentPage.removeEventListeners();
     const newPage = await this.router.updatePage(href);
     this.currentPage = this.pages[newPage];
     await this.currentPage.create();
@@ -82,6 +83,7 @@ class App {
   }
 
   onResize() {
+    console.log("onResize");
     if (this.currentPage && this.currentPage.onResize) {
       this.currentPage.onResize();
     }
