@@ -15,7 +15,9 @@ class App {
     this.router = new Router();
     this.setupPages();
     this.setupApp();
-    this.createPreloader();
+    this.updateRAF();
+    this.setupEventListeners();
+    // this.createPreloader();
   }
 
   setupPages() {
@@ -29,6 +31,7 @@ class App {
     this.template = this.content.getAttribute("data-template");
     this.currentPage = this.pages[this.template];
     this.currentPage.create();
+    this.onResize();
   }
 
   setupApp() {
@@ -41,8 +44,8 @@ class App {
   createPreloader() {
     this.preloader = new Preloader();
     this.preloader.on("preloader-complete", ({ message }) => {
-      console.log(message);
-      // Images are not cached when visiting back home!
+      // TODO: Images are not cached when visiting back home!
+      this.onResize();
       this.preloader.hide();
       setTimeout(() => {
         this.preloader.destroy();
@@ -67,7 +70,25 @@ class App {
     const newPage = await this.router.updatePage(href);
     this.currentPage = this.pages[newPage];
     await this.currentPage.create();
+    this.onResize();
     await this.currentPage.show();
+  }
+
+  updateRAF() {
+    if (this.currentPage && this.currentPage.updateRAF) {
+      this.currentPage.updateRAF();
+    }
+    this.frame = window.requestAnimationFrame(this.updateRAF.bind(this));
+  }
+
+  onResize() {
+    if (this.currentPage && this.currentPage.onResize) {
+      this.currentPage.onResize();
+    }
+  }
+
+  setupEventListeners() {
+    window.addEventListener("resize", this.onResize.bind(this));
   }
 }
 

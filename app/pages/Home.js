@@ -6,6 +6,7 @@ export class Home extends Page {
       id: "home",
       element: ".home",
       elements: {
+        wrapper: ".page-content",
         header: "h1",
         button: "button",
         images: document.querySelectorAll("img"),

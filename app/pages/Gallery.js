@@ -4,7 +4,7 @@ export class Gallery extends Page {
     super({
       id: "gallery",
       element: ".gallery",
-      elements: { header: "h1", paragraph: "p" },
+      elements: { header: "h1", paragraph: "p", wrapper: ".page-content" },
     });
   }
 

@@ -1,4 +1,6 @@
 import { Animations } from "./Animations.js";
+// import { prefixMemozied } from "../../node_modules/prefix/index.js";
+import { gsap } from "../../node_modules/gsap/index.js";
 
 export default class Page {
   constructor({ id, element, elements, transitionOverlay }) {
@@ -8,6 +10,13 @@ export default class Page {
     this.transitionOverlay =
       transitionOverlay || document.querySelector(".transition-overlay");
     this.animations = new Animations();
+
+    this.scroll = {
+      current: 0,
+      target: 0,
+      last: 0,
+      limit: 0,
+    };
   }
 
   /**
@@ -48,9 +57,11 @@ export default class Page {
       element.classList.remove("hide-element");
     };
     await this.animations.runCSSShowAnimation(this.element, callback);
+    this.addEventListeners();
   }
 
   async hide() {
+    this.removeEventListeners();
     // const hideOverlay = (element) => element.classList.add("is-visible");
     // await this.animations.runCSSTransition(this.transitionOverlay, hideOverlay);
     const callback = (element) => {
@@ -58,5 +69,42 @@ export default class Page {
       element.classList.add("hide-element");
     };
     await this.animations.runCSSHideAnimation(this.element, callback);
+  }
+
+  onMouseWheel(event) {
+    const { deltaY } = event;
+    console.log(deltaY);
+    this.scroll.target += deltaY;
+  }
+
+  onResize() {
+    console.log("resize");
+    this.scroll.limit = this.elements.wrapper.clientHeight - window.innerHeight;
+  }
+
+  updateRAF() {
+    this.scroll.current = gsap.utils.interpolate(
+      this.scroll.target,
+      this.scroll.current,
+      0.1,
+    );
+
+    if (this.scroll.current < 0.01) {
+      this.scroll.current = 0;
+    }
+
+    this.scroll.current = gsap.utils.clamp(
+      0,
+      this.scroll.limit,
+      this.scroll.target,
+    );
+    this.elements.wrapper.style.transform = `translateY(-${this.scroll.current}px)`;
+  }
+
+  addEventListeners() {
+    window.addEventListener("mousewheel", this.onMouseWheel.bind(this));
+  }
+  removeEventListeners() {
+    window.removeEventListener("mousewheel", this.onMouseWheel.bind(this));
   }
 }
