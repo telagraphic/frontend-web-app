@@ -8,11 +8,25 @@ export class Home extends Page {
       elements: {
         header: "h1",
         button: "button",
+        images: document.querySelectorAll("img"),
       },
     });
+
+    this.images = document.querySelectorAll("img");
   }
 
   create() {
     super.create();
+    this.preloadImages();
+  }
+
+  preloadImages() {
+    // consoles with the src but the DOM is not updated yet
+    Object.entries(this.elements.images).forEach(([position, element]) => {
+      element.onload = () => {
+        console.log(element);
+        element.src = element.getAttribute("data-src");
+      };
+    });
   }
 }

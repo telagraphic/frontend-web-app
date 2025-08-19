@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "event-emitter": "^0.3.5",
     "http-server": "^14.1.1"
   },
   "scripts": {

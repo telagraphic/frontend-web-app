@@ -6,7 +6,7 @@ import { Router } from "./Router.js";
 import { Home } from "./pages/Home.js";
 import { About } from "./pages/About.js";
 import { Gallery } from "./pages/Gallery.js";
-import Observer from "./classes/Observer.js";
+import { Preloader } from "./components/Preloader.js";
 
 class App {
   constructor() {
@@ -15,6 +15,7 @@ class App {
     this.router = new Router();
     this.setupPages();
     this.setupApp();
+    this.createPreloader();
   }
 
   setupPages() {
@@ -34,6 +35,18 @@ class App {
     document.addEventListener("DOMContentLoaded", () => {
       this.setupLinkListeners();
       this.router.init();
+    });
+  }
+
+  createPreloader() {
+    this.preloader = new Preloader();
+    this.preloader.on("preloader-complete", ({ message }) => {
+      console.log(message);
+      // Images are not cached when visiting back home!
+      this.preloader.hide();
+      setTimeout(() => {
+        this.preloader.destroy();
+      }, 2000);
     });
   }
 
