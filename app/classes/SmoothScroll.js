@@ -13,12 +13,24 @@ export class SmoothScroll {
   }
 
   create() {
-    this.container.style.position = "fixed";
-    this.container.style.top = "0";
-    this.container.style.left = "0";
-    this.container.style.width = "100%";
-    this.container.style.height = "100%";
-    this.container.style.overflow = "hidden";
+    if (!this.container.classList.contains("smooth-scroll-container")) {
+      this.container.classList.add("smooth-scroll-container");
+    }
+    this.onResize();
+    this.updateAnimationFrame();
+  }
+
+  /**
+   * Updates the animation frame for smooth scrolling
+   */
+  updateAnimationFrame() {
+    if (this.updateSmoothScroll) {
+      this.updateSmoothScroll();
+    }
+
+    this.animationFrame = window.requestAnimationFrame(
+      this.updateAnimationFrame.bind(this),
+    );
   }
 
   onMouseWheel(event) {
@@ -30,7 +42,7 @@ export class SmoothScroll {
     this.scroll.limit = this.wrapper.clientHeight - window.innerHeight;
   }
 
-  updateAnimationFrame() {
+  updateSmoothScroll() {
     this.scroll.current = gsap.utils.interpolate(
       this.scroll.current,
       this.scroll.target,
@@ -52,13 +64,35 @@ export class SmoothScroll {
     }
   }
 
+  setupEventListeners() {
+    if (this.onMouseWheel) {
+      this.onMouseWheelEvent = (event) => {
+        this.onMouseWheel(event);
+      };
+      window.addEventListener("mousewheel", this.onMouseWheelEvent);
+    }
+
+    if (this.onResize) {
+      this.onResizeEvent = (event) => {
+        this.onResize(event).bind(this);
+      };
+      window.addEventListener("resize", this.onResizeEvent);
+    }
+  }
+
+  removeEventListeners() {
+    if (this.onMouseWheelEvent) {
+      window.removeEventListener("mousewheel", this.onMouseWheelEvent);
+    }
+
+    if (this.onResizeEvent) {
+      console.log("onresizeevent removed");
+      window.removeEventListener("resize", this.onResizeEvent);
+    }
+  }
+
   destroy() {
     this.wrapper.style.transform = "none";
-    this.container.style.position = "relative";
-    this.container.style.top = "0";
-    this.container.style.left = "0";
-    this.container.style.width = "100%";
-    this.container.style.height = "100%";
-    this.container.style.overflow = "auto";
+    this.container.classList.remove("smooth-scroll-container");
   }
 }

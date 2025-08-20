@@ -44,7 +44,6 @@ class App {
     this.preloader = new Preloader();
     this.preloader.on("preloader-complete", ({ message }) => {
       // TODO: Images are not cached when visiting back home!
-      // this.onResize();
       this.preloader.hide();
       setTimeout(() => {
         this.preloader.destroy();
@@ -69,14 +68,7 @@ class App {
     const newPage = await this.router.updatePage(href);
     this.currentPage = this.pages[newPage];
     await this.currentPage.create();
-    // this.onResize();
     await this.currentPage.show();
-  }
-
-  onResize() {
-    if (this.currentPage && this.currentPage.onResize) {
-      this.currentPage.onResize();
-    }
   }
 
   setupEventListeners() {

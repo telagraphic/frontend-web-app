@@ -10,6 +10,7 @@
 
 - review todo's and fix
 - move animation code to animation file from page.js
+- refactor all smooth scroll to class and update page.js code
 - add images, preloading animation
 - create a webserver in node.js, hono or express
 - add images

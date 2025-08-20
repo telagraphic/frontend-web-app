@@ -70,56 +70,35 @@ export default class Page {
       wrapper: this.elements.wrapper,
     });
     this.smoothScroll.create();
-    this.onResize();
-    this.updateAnimationFrame();
-    this.setupEventListeners();
+    this.smoothScroll.setupEventListeners();
   }
 
   /**
    * Resets the page wrapper element to match the actual content height
    */
-  onResize() {
-    this.smoothScroll.scroll.limit =
-      this.elements.wrapper.clientHeight - window.innerHeight;
-  }
+  // onResize() {
+  //   this.smoothScroll.scroll.limit =
+  //     this.elements.wrapper.clientHeight - window.innerHeight;
+  // }
 
   /**
    * Updates the animation frame for smooth scrolling
    */
-  updateAnimationFrame() {
-    if (this.smoothScroll && this.smoothScroll.updateAnimationFrame) {
-      this.smoothScroll.updateAnimationFrame();
-    }
+  // updateAnimationFrame() {
+  //   if (this.smoothScroll && this.smoothScroll.updateAnimationFrame) {
+  //     this.smoothScroll.updateAnimationFrame();
+  //   }
 
-    this.animationFrame = window.requestAnimationFrame(
-      this.updateAnimationFrame.bind(this),
-    );
-  }
+  //   this.animationFrame = window.requestAnimationFrame(
+  //     this.updateAnimationFrame.bind(this),
+  //   );
+  // }
 
   setupEventListeners() {
-    if (this.smoothScroll && this.smoothScroll.onMouseWheel) {
-      this.onMouseWheelEvent = (event) => {
-        this.smoothScroll.onMouseWheel(event);
-      };
-      window.addEventListener("mousewheel", this.onMouseWheelEvent);
-    }
-
-    if (this.onResize) {
-      this.onResizeEvent = (event) => {
-        this.onResize(event).bind(this);
-      };
-      window.addEventListener("resize", this.onResizeEvent);
-    }
+    this.smoothScroll.setupEventListeners();
   }
 
   removeEventListeners() {
-    if (this.onMouseWheelEvent) {
-      window.removeEventListener("mousewheel", this.onMouseWheelEvent);
-    }
-
-    if (this.onResizeEvent) {
-      console.log("onresizeevent removed");
-      window.removeEventListener("resize", this.onResizeEvent);
-    }
+    this.smoothScroll.removeEventListeners();
   }
 }
