@@ -11,8 +11,13 @@
 - review todo's and fix
 - move animation code to animation file from page.js
 - add images, preloading animation
-- deploy to netlify
+- create a webserver in node.js, hono or express
+- add images
+- deploy to netlify for testing
+- create web components for basic elements
+- update router to hide/show templates
 - add named routes function? might not need to current setup? how will this affect loading index.html || /index in markup
+- add dom lookups and event handlers syntax
 
 
 

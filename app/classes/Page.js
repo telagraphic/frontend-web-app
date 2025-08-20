@@ -1,7 +1,5 @@
 import { Animations } from "./Animations.js";
 import { SmoothScroll } from "./SmoothScroll.js";
-// import { prefixMemozied } from "../../node_modules/prefix/index.js";
-import { gsap } from "../../node_modules/gsap/index.js";
 
 export default class Page {
   constructor({ id, element, elements, transitionOverlay }) {
@@ -11,8 +9,6 @@ export default class Page {
     this.transitionOverlay =
       transitionOverlay || document.querySelector(".transition-overlay");
     this.animations = new Animations();
-
-    this.addEventListeners();
   }
 
   /**
@@ -70,34 +66,50 @@ export default class Page {
 
   setupSmoothScroll() {
     this.smoothScroll = new SmoothScroll({
+      container: document.body,
       wrapper: this.elements.wrapper,
     });
     this.smoothScroll.create();
     this.onResize();
-    this.addEventListeners();
+    this.updateAnimationFrame();
+    this.setupEventListeners();
   }
 
+  /**
+   * Resets the page wrapper element to match the actual content height
+   */
   onResize() {
     this.smoothScroll.scroll.limit =
       this.elements.wrapper.clientHeight - window.innerHeight;
   }
 
-  updateRAF() {
-    this.smoothScroll.updateRAF();
+  /**
+   * Updates the animation frame for smooth scrolling
+   */
+  updateAnimationFrame() {
+    if (this.smoothScroll && this.smoothScroll.updateAnimationFrame) {
+      this.smoothScroll.updateAnimationFrame();
+    }
+
+    this.animationFrame = window.requestAnimationFrame(
+      this.updateAnimationFrame.bind(this),
+    );
   }
 
-  addEventListeners() {
+  setupEventListeners() {
     if (this.smoothScroll && this.smoothScroll.onMouseWheel) {
-      this.boundMouseWheelHandler = (event) => {
+      this.onMouseWheelEvent = (event) => {
         this.smoothScroll.onMouseWheel(event);
       };
-      window.addEventListener("mousewheel", this.boundMouseWheelHandler);
+      window.addEventListener("mousewheel", this.onMouseWheelEvent);
     }
+
+    window.addEventListener("resize", this.onResize.bind(this));
   }
 
   removeEventListeners() {
     if (this.smoothScroll && this.smoothScroll.onMouseWheel) {
-      window.removeEventListener("mousewheel", this.boundMouseWheelHandler);
+      window.removeEventListener("mousewheel", this.onMouseWheelEvent);
     }
   }
 }

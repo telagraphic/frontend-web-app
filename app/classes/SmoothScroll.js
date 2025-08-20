@@ -1,8 +1,8 @@
 import { gsap } from "../../node_modules/gsap/index.js";
 
 export class SmoothScroll {
-  constructor(wrapper) {
-    this.body = document.body;
+  constructor({ container, wrapper }) {
+    this.container = container;
     this.wrapper = wrapper;
     this.scroll = {
       current: 0,
@@ -13,12 +13,12 @@ export class SmoothScroll {
   }
 
   create() {
-    this.body.style.position = "fixed";
-    this.body.style.top = "0";
-    this.body.style.left = "0";
-    this.body.style.width = "100%";
-    this.body.style.height = "100%";
-    this.body.style.overflow = "hidden";
+    this.container.style.position = "fixed";
+    this.container.style.top = "0";
+    this.container.style.left = "0";
+    this.container.style.width = "100%";
+    this.container.style.height = "100%";
+    this.container.style.overflow = "hidden";
   }
 
   onMouseWheel(event) {
@@ -27,10 +27,10 @@ export class SmoothScroll {
   }
 
   onResize() {
-    this.scroll.limit = this.wrapper.wrapper.clientHeight - window.innerHeight;
+    this.scroll.limit = this.wrapper.clientHeight - window.innerHeight;
   }
 
-  updateRAF() {
+  updateAnimationFrame() {
     this.scroll.current = gsap.utils.interpolate(
       this.scroll.current,
       this.scroll.target,
@@ -48,17 +48,17 @@ export class SmoothScroll {
     );
 
     if (this.wrapper) {
-      this.wrapper.wrapper.style.transform = `translateY(-${this.scroll.current}px)`;
+      this.wrapper.style.transform = `translateY(-${this.scroll.current}px)`;
     }
   }
 
   destroy() {
-    this.wrapper.wrapper.style.transform = "none";
-    this.body.style.position = "relative";
-    this.body.style.top = "0";
-    this.body.style.left = "0";
-    this.body.style.width = "100%";
-    this.body.style.height = "100%";
-    this.body.style.overflow = "auto";
+    this.wrapper.style.transform = "none";
+    this.container.style.position = "relative";
+    this.container.style.top = "0";
+    this.container.style.left = "0";
+    this.container.style.width = "100%";
+    this.container.style.height = "100%";
+    this.container.style.overflow = "auto";
   }
 }
