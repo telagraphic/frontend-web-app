@@ -104,12 +104,22 @@ export default class Page {
       window.addEventListener("mousewheel", this.onMouseWheelEvent);
     }
 
-    window.addEventListener("resize", this.onResize.bind(this));
+    if (this.onResize) {
+      this.onResizeEvent = (event) => {
+        this.onResize(event).bind(this);
+      };
+      window.addEventListener("resize", this.onResizeEvent);
+    }
   }
 
   removeEventListeners() {
-    if (this.smoothScroll && this.smoothScroll.onMouseWheel) {
+    if (this.onMouseWheelEvent) {
       window.removeEventListener("mousewheel", this.onMouseWheelEvent);
+    }
+
+    if (this.onResizeEvent) {
+      console.log("onresizeevent removed");
+      window.removeEventListener("resize", this.onResizeEvent);
     }
   }
 }
