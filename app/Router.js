@@ -23,11 +23,14 @@ export class Router {
     this.setupPopState();
   }
 
+  /**
+   * SPA page navigation flow
+   * @param {*} href
+   */
   async updatePage(href) {
     await this.requestPage(href);
     await this.updateMarkup(this.newPage);
     await this.updateHistory(href);
-    return this.template;
   }
 
   /**

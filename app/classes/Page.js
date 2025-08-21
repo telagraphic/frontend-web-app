@@ -12,10 +12,13 @@ export default class Page {
   }
 
   /**
-   * Creates an object based mapping for page elements
-   * Changing the markup structure might break the first two elements
+   * Create a page object of elements
+   * Initalize any other components for the page
    */
   create() {
+    /**
+     * Changing the markup structure might break the first two elements
+     */
     this.element = document.querySelector("[data-template]");
     this.elements = {};
 
@@ -40,30 +43,42 @@ export default class Page {
     this.setupSmoothScroll();
   }
 
+  /**
+   * Show the page
+   */
   async show() {
-    // this.element.classList.remove("is-visible"); does not work for main.is-visible animation keyframes
-    // const showOverlay = (element) => element.classList.remove("is-visible");
-    // await this.animations.runCSSTransition(this.transitionOverlay, showOverlay);
-
-    // Use keyframes, need to call a different animation function for each show/hide
-    const callback = (element) => {
+    /**
+     * Execute a CSS Animation Keyframe
+     * @param {*} element
+     */
+    const animationCallback = (element) => {
       element.classList.add("show-element");
       element.classList.remove("hide-element");
     };
-    await this.animations.runCSSShowAnimation(this.element, callback);
+
+    await this.animations.onCSSAnimation(this.element, animationCallback);
   }
 
+  /**
+   * Hide the page
+   */
   async hide() {
     this.removeEventListeners();
-    // const hideOverlay = (element) => element.classList.add("is-visible");
-    // await this.animations.runCSSTransition(this.transitionOverlay, hideOverlay);
+
+    /**
+     * Executes CSS Animation Keyframe
+     * @param {*} element
+     */
     const callback = (element) => {
       element.classList.remove("show-element");
       element.classList.add("hide-element");
     };
-    await this.animations.runCSSHideAnimation(this.element, callback);
+    await this.animations.onCSSAnimation(this.element, callback);
   }
 
+  /**
+   * Initalizes the smoothScroll object for the page
+   */
   setupSmoothScroll() {
     this.smoothScroll = new SmoothScroll({
       container: document.body,
@@ -74,30 +89,15 @@ export default class Page {
   }
 
   /**
-   * Resets the page wrapper element to match the actual content height
+   * Setup page event listeners
    */
-  // onResize() {
-  //   this.smoothScroll.scroll.limit =
-  //     this.elements.wrapper.clientHeight - window.innerHeight;
-  // }
-
-  /**
-   * Updates the animation frame for smooth scrolling
-   */
-  // updateAnimationFrame() {
-  //   if (this.smoothScroll && this.smoothScroll.updateAnimationFrame) {
-  //     this.smoothScroll.updateAnimationFrame();
-  //   }
-
-  //   this.animationFrame = window.requestAnimationFrame(
-  //     this.updateAnimationFrame.bind(this),
-  //   );
-  // }
-
   setupEventListeners() {
     this.smoothScroll.setupEventListeners();
   }
 
+  /**
+   * Remove page event listeners
+   */
   removeEventListeners() {
     this.smoothScroll.removeEventListeners();
   }

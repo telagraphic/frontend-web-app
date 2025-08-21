@@ -1,11 +1,17 @@
+import { gsap } from "../../node_modules/gsap/index.js";
+
 export class Animations {
   /**
-   * Run the transition callback, remove the listener when done
+   * Run the transition callback in an RAF, remove the listener when done
    * @param {*} element to target for animation
    * @param {*} callback function to run on element for transition
-   * @returns nil
+   * @returns Promise
+   * @example call in Page.show/hide
+   *  this.element.classList.remove("is-visible"); does not work for main.is-visible animation keyframes
+   *  const hideOverlay = (element) => element.classList.add("is-visible");
+   *  await this.animations.onCSSTransition(this.transitionOverlay, hideOverlay);
    */
-  async runCSSTransition(element, transitionCallback) {
+  async onCSSTransition(element, transitionCallback) {
     return new Promise((resolve) => {
       element.addEventListener("transitionstart", () => {
         console.log("Transition started");
@@ -14,6 +20,7 @@ export class Animations {
       element.addEventListener(
         "transitionend",
         () => {
+          console.log("Transition ended");
           resolve();
         },
         { once: true },
@@ -25,13 +32,25 @@ export class Animations {
     });
   }
 
-  async runCSSShowAnimation(element, animationCallback) {
+  /**
+   * Run the animation callback in an RAF, remove the listener when done
+   * @param {*} element
+   * @param {*} animationCallback
+   * @returns Promise
+   * @example call in Page.show/hide
+   * const animationCallback = (element) => {
+   *  element.classList.add("show-element");
+   *   element.classList.remove("hide-element");
+   * };
+   *
+   * await this.animations.onCSSAnimation(this.element, animationCallback);
+   */
+  async onCSSAnimation(element, animationCallback) {
     return new Promise((resolve) => {
       element.addEventListener(
         "animationstart",
         () => {
-          // element.style.opacity = "0";
-          console.log("show started");
+          console.log("Animation started");
         },
         { once: true },
       );
@@ -39,7 +58,7 @@ export class Animations {
       element.addEventListener(
         "animationend",
         () => {
-          console.log("show ended");
+          console.log("Animation ended");
           resolve();
         },
         { once: true },
@@ -51,28 +70,5 @@ export class Animations {
     });
   }
 
-  async runCSSHideAnimation(element, animationCallback) {
-    return new Promise((resolve) => {
-      element.addEventListener(
-        "animationstart",
-        () => {
-          console.log("hide started");
-        },
-        { once: true },
-      );
-
-      element.addEventListener(
-        "animationend",
-        () => {
-          console.log("hide ended");
-          resolve();
-        },
-        { once: true },
-      );
-
-      requestAnimationFrame(() => {
-        animationCallback(element);
-      });
-    });
-  }
+  async GSAPAnimation() {}
 }

@@ -15,11 +15,26 @@ class App {
     this.router = new Router();
     this.setupPages();
     this.setupApp();
-    // this.onResize();
     this.setupEventListeners();
     // this.createPreloader();
   }
 
+  /**
+   * Update the preloader template with the image loading percentage
+   * @param {*} imageElement
+   */
+  updatePreloader(imageElement) {
+    this.imagesLength += 1;
+    this.imagesLoaded += 1;
+    const percentage = Math.round(
+      (this.imagesLoaded / this.imagesLength) * 100,
+    );
+    this.preloader.update(percentage);
+  }
+
+  /**
+   * Register page classes, set the data-template field for
+   */
   setupPages() {
     this.pages = {
       home: new Home(),
@@ -33,6 +48,9 @@ class App {
     this.currentPage.create();
   }
 
+  /**
+   * Set up app event listeners and router
+   */
   setupApp() {
     document.addEventListener("DOMContentLoaded", () => {
       this.setupLinkListeners();
@@ -40,6 +58,9 @@ class App {
     });
   }
 
+  /**
+   * Display preloader on first page visit
+   */
   createPreloader() {
     this.preloader = new Preloader();
     this.preloader.on("preloader-complete", ({ message }) => {
@@ -51,6 +72,10 @@ class App {
     });
   }
 
+  /**
+   * Event delegation for navigation links
+   * TODO: check for the link class for internal versus external links
+   */
   setupLinkListeners() {
     this.body = document.querySelector("body");
     document.addEventListener("click", (event) => {
@@ -62,18 +87,23 @@ class App {
     });
   }
 
+  /**
+   * Handle page navigation flow and page change registration
+   * @param {*} href
+   *
+   */
   async onPageChange(href) {
     if (window.location.pathname.includes(href)) return;
     await this.currentPage.hide();
-    const newPage = await this.router.updatePage(href);
-    this.currentPage = this.pages[newPage];
+    await this.router.updatePage(href);
+    this.currentPage = this.pages[this.router.template];
     await this.currentPage.create();
     await this.currentPage.show();
   }
 
-  setupEventListeners() {
-    // window.addEventListener("resize", this.onResize.bind(this));
-  }
+  setupEventListeners() {}
+
+  removeEventListeners() {}
 }
 
 const app = new App();

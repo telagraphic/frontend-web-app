@@ -9,10 +9,12 @@ export default class Component extends EventTarget {
   }
 
   /**
-   * Creates an object based mapping for page elements
-   * Changing the markup structure might break the first two elements
+   * Create a page object of elements
    */
   create() {
+    /**
+     * Changing the markup structure might break the first two elements
+     */
     this.element = document.querySelector(this.selector);
     this.elements = {};
 
@@ -35,10 +37,16 @@ export default class Component extends EventTarget {
     });
   }
 
+  /**
+   * Emit an event with the given type and detail
+   */
   emit(type, detail) {
     this.eventTarget.dispatchEvent(new CustomEvent(type, { detail }));
   }
 
+  /**
+   * Add an event listener for the given event type
+   */
   on(type, callback) {
     this.eventTarget.addEventListener(type, (event) => callback(event.detail));
   }

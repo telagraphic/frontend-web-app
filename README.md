@@ -8,17 +8,28 @@
 
 **8/15**
 
-- review todo's and fix
-- move animation code to animation file from page.js
-- refactor all smooth scroll to class and update page.js code
-- add images, preloading animation
+
+
 - create a webserver in node.js, hono or express
 - add images
+- add basic styles, open props?
+
+- fix preloader animation
+- fix image preloading, on page load and page changes
+
+- finish animations
+
+- update prefix, normalize-wheel packages
+
+- add dom lookups and event handlers syntax
+
+- review redirect back to home state
+
 - deploy to netlify for testing
 - create web components for basic elements
 - update router to hide/show templates
 - add named routes function? might not need to current setup? how will this affect loading index.html || /index in markup
-- add dom lookups and event handlers syntax
+
 
 
 
@@ -30,6 +41,15 @@
 
 
 ### DONE
+
+**8/20**
+
+- refactored smooth scroll code into one class instead of multiple calls throughout classes
+- document code
+
+**8/19**
+
+- added smooth scroll functionality
 
 
 **8/14**

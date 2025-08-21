@@ -1,5 +1,9 @@
 import Component from "../classes/Component.js";
 
+/**
+ * Preloader is called on intial page load
+ */
+
 export class Preloader extends Component {
   constructor() {
     super({
@@ -18,6 +22,9 @@ export class Preloader extends Component {
     this.createLoader();
   }
 
+  /**
+   * Wait for images to load and then update the DOM with the path
+   */
   createLoader() {
     Object.entries(this.elements.images).forEach(([position, element]) => {
       element.onload = () => this.updatePreloader(element);
@@ -25,6 +32,10 @@ export class Preloader extends Component {
     });
   }
 
+  /**
+   * Update the preloader template with the image loading percentage
+   * @param {*} imageElement
+   */
   updatePreloader(imageElement) {
     this.imagesLength += 1;
     const percent = Math.round((this.imagesLength / this.images.length) * 100);
