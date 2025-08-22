@@ -1,5 +1,7 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
+import { glob } from "glob";
+import path from "path";
 
 export default defineConfig({
   // Base URL for assets - "./" means relative paths for deployment flexibility
@@ -25,6 +27,13 @@ export default defineConfig({
       input: {
         // Entry point - tells Vite where to start building from
         main: resolve(__dirname, "index.html"),
+        // Automatically include all HTML files from pages directory
+        ...Object.fromEntries(
+          glob.sync("pages/*.html").map(file => [
+            path.basename(file, ".html"),
+            resolve(__dirname, file)
+          ])
+        )
       },
       output: {
         // Organize output files - Control where different file types go
