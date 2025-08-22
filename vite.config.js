@@ -124,8 +124,23 @@ export default defineConfig({
 
   // Plugin configuration - Extend Vite's functionality
   plugins: [
-    // Add any additional plugins here if needed
-    // Examples: Vue(), React(), legacy browser support, etc.
+    // Copy _redirects file to dist for Netlify
+    {
+      name: 'copy-netlify-files',
+      closeBundle() {
+        const fs = require('fs');
+        const path = require('path');
+        
+        // Copy _redirects file
+        const redirectsSource = path.resolve(__dirname, '_redirects');
+        const redirectsDest = path.resolve(__dirname, 'dist/_redirects');
+        
+        if (fs.existsSync(redirectsSource)) {
+          fs.copyFileSync(redirectsSource, redirectsDest);
+          console.log('✓ Copied _redirects to dist/');
+        }
+      }
+    }
   ],
 
   // Resolve configuration - Configure import paths and aliases
