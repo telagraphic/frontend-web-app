@@ -13,19 +13,39 @@
 export class Router {
   constructor(mainElement) {
     this.template = null;
+    this.pathname = null;
     this.newPage = null;
     this.mainElement =
       mainElement || document.querySelector("main.main-content");
     this.pageHistory = window.history;
+    this.initialPage = null;
+
+    this.setupRoutes();
   }
 
-  init() {
+  create() {
     this.setupPopState();
+    this.setupEventListeners();
+
+    // Sync URL with content after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      this.syncUrlWithContent();
+    }, 100);
   }
 
   /**
-   * SPA page navigation flow
-   * @param {*} href
+   * Setup the routes for the application
+   */
+  setupRoutes() {
+    this.validRoutes = new Map();
+    this.validRoutes.set("home", "index.html");
+    this.validRoutes.set("about", "pages/about.html");
+    this.validRoutes.set("gallery", "pages/gallery.html");
+  }
+
+  /**
+   * SPA page navigation flow triggered by a link click
+   * @param {string} href - The route to navigate to (e.g., "home", "about", "gallery")
    */
   async updatePage(href) {
     await this.requestPage(href);
@@ -34,25 +54,49 @@ export class Router {
   }
 
   /**
-   * Fetch next page
-   * @param {string} newPage - The URL of the next page to fetch
+   * Builds the file path for a given route
+   * @param {string} href - The route identifier
+   * @returns {string} The file path to fetch
    */
-  async requestPage(newPage) {
-    if (newPage.includes("http")) {
-      window.location.href = newPage;
+  buildRoute(href) {
+    // Check if route exists in our valid routes map
+    if (this.validRoutes.has(href)) {
+      return this.validRoutes.get(href);
+    }
+
+    // Fallback for legacy "/" handling
+    if (href === "/") {
+      return this.validRoutes.get("home");
+    }
+
+    // If route doesn't exist, return null to indicate invalid route
+    return null;
+  }
+
+  /**
+   * Fetch next page
+   * @param {string} href - The URL of the next page to fetch
+   */
+  async requestPage(href) {
+    const routePath = this.buildRoute(href);
+
+    // Check if route is valid
+    if (routePath === null) {
+      this.redirectToHome();
       return;
     }
 
     try {
-      const response = await fetch(newPage);
+      const response = await fetch(routePath);
       if (response.ok) {
         this.newPage = response;
       } else {
-        // TODO: this resets the history state, perhaps go to a index.html state instead!
-        window.location.replace("index.html");
+        console.error("Failed to fetch page:", routePath);
+        this.redirectToHome();
       }
     } catch (error) {
       console.error("Error updating page:", error);
+      this.redirectToHome();
     }
   }
 
@@ -64,7 +108,7 @@ export class Router {
     const newPageHTML = await response.text();
     const newPageDOM = new DOMParser().parseFromString(
       newPageHTML,
-      "text/html",
+      "text/html"
     );
 
     const pageContent = newPageDOM.querySelector("main");
@@ -76,51 +120,137 @@ export class Router {
     this.mainElement.replaceChildren(newPageFragment);
     this.mainElement.setAttribute(
       "data-template",
-      `${this.template.toString()}`,
+      `${this.template.toString()}`
     );
   }
 
   /**
    * Setup initial state and prevent back/forward button to add to history
+   *
+   * @description
+   * Initializes the browser history state when the app first loads.
+   * This prevents the initial page load from being added to the navigation history,
+   * ensuring proper back/forward button behavior.
    */
   setupPopState() {
+    // If the page history state is null, create initial state
     if (this.pageHistory.state == null) {
       const initialPage = window.location.pathname;
-      this.pageHistory.replaceState({ route: initialPage }, "", initialPage);
-    }
+      
+      // If home page, set home state
+      if (initialPage === "/" || initialPage === "") {
+        this.pageHistory.replaceState({ route: "" }, "", "/");
+        return;
+      }
 
-    window.addEventListener("popstate", (event) => {
-      this.updatePage(event.state.route, false);
-    });
+      // Check if this is a valid route
+      const route = initialPage.replace("/", ""); // Remove leading slash
+      
+      if (this.validRoutes.has(route)) {
+        this.pageHistory.replaceState({ route: route }, "", initialPage);
+        // Don't call updatePage here - let syncUrlWithContent on new page load
+      } else {
+        this.redirectToHome();
+      }
+    }
   }
 
   /**
-   * Updates the history state with the new page
-   * @param {string} nextPage the href
-   * @param {boolean} addToHistory boolean to write to history
-   * @returns
+   * Updates the browser history state with the new page
+   *
+   * @param {string} nextPage - The route identifier (e.g., "home", "about", "gallery")
+   * @param {boolean} addToHistory - Whether to add this navigation to browser history
+   * @returns {Promise} Resolves when history is updated
+   *
+   * @description
+   * This method handles the special case of the home route:
+   * - When navigating to "home", the history state stores route: "" (empty string)
+   * - When navigating to "home", the browser URL shows "/" (base URL)
+   * - This allows the home page to resolve to the base path while maintaining
+   *   proper browser history and back/forward navigation
+   *
+   * @example
+   * // Clicking href="home" results in:
+   * // - History state: { route: "" }
+   * // - Browser URL: "/"
+   * // - File loaded: "index.html"
+   *
+   * // Clicking href="about" results in:
+   * // - History state: { route: "about" }
+   * // - Browser URL: "about"
+   * // - File loaded: "/pages/about.html"
    */
   async updateHistory(nextPage, addToHistory = true) {
     return new Promise((resolve, reject) => {
-      if (addToHistory) {
-        if (`/pages/${nextPage}` !== window.location.pathname) {
-          this.pageHistory.pushState({ route: nextPage }, "", nextPage);
-        }
+      if (!addToHistory) {
+        return;
+      }
+
+      // For home route, set route to empty string to resolve to base path
+      const routeForHistory =
+        nextPage === "/" || nextPage === "home" ? "" : nextPage;
+
+      // For home route, redirect to base URL instead of "home"
+      const urlForHistory =
+        nextPage === "/" || nextPage === "home" ? "/" : nextPage;
+
+      if (nextPage !== this.pathname) {
+        this.pageHistory.pushState(
+          { route: routeForHistory },
+          "",
+          urlForHistory
+        );
       }
       resolve();
     });
   }
+
   /**
-   * Display a 404 page when no route is found
-   *
+   * Syncs the browser URL with the current page content
+   * This handles cases where the URL doesn't match the displayed content due to client side routing
+   * defaulting to serving the home page
+   * Will cause a slight flicker of the home page when template and path are not the same
    */
-  displayErrorPage() {
-    // TODO: Use a server rewrite to handle a 404
+  syncUrlWithContent() {
+    const currentPath = window.location.pathname;
+    const currentTemplate = this.mainElement.getAttribute("data-template");
+
+
+    // If we're on a path like /gallery but showing home content, sync them
+    if (
+      currentPath !== "/" &&
+      currentPath !== "" &&
+      currentTemplate === "home"
+    ) {
+      const route = currentPath.replace("/", ""); // Remove leading slash
+      
+      if (this.validRoutes.has(route)) {
+        this.updatePage(route);
+      } else {
+        this.redirectToHome();
+      }
+    }
   }
 
   /**
-   * Handle page refresh after push state history is refreshed?
+   * Redirect back to home page when no route is found
    *
+   * @description
+   * Handles cases where a user types a URL that doesn't correspond to any valid page.
+   * Redirects to home page and updates the browser URL to reflect the home route.
    */
-  onPageRefresh() {}
+  redirectToHome() {
+    // Update the browser URL to show home
+    window.history.replaceState({ route: "" }, "", "/");
+    this.updatePage("home");
+  }
+
+  setupEventListeners() {
+    // Handle back/forward button navigation
+    window.addEventListener("popstate", (event) => {
+      if (event.state && event.state.route !== undefined) {
+        this.updatePage(event.state.route);
+      }
+    });
+  }
 }

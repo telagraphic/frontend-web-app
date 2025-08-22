@@ -14,13 +14,13 @@ export class Animations {
   async onCSSTransition(element, transitionCallback) {
     return new Promise((resolve) => {
       element.addEventListener("transitionstart", () => {
-        console.log("Transition started");
+        // console.log("Transition started");
       });
 
       element.addEventListener(
         "transitionend",
         () => {
-          console.log("Transition ended");
+          // console.log("Transition ended");
           resolve();
         },
         { once: true },
@@ -50,7 +50,7 @@ export class Animations {
       element.addEventListener(
         "animationstart",
         () => {
-          console.log("Animation started");
+          // console.log("Animation started");
         },
         { once: true },
       );
@@ -58,7 +58,7 @@ export class Animations {
       element.addEventListener(
         "animationend",
         () => {
-          console.log("Animation ended");
+          // console.log("Animation ended");
           resolve();
         },
         { once: true },

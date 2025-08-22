@@ -54,8 +54,8 @@ class App {
    */
   setupApp() {
     document.addEventListener("DOMContentLoaded", () => {
+      this.router.create();
       this.setupLinkListeners();
-      this.router.init();
     });
   }
 
@@ -94,7 +94,22 @@ class App {
    *
    */
   async onPageChange(href) {
+    /**
+     * If same page, do nothing
+     */
+    console.log("current path", window.location.pathname);
+    console.log("next page", href);
     if (window.location.pathname.includes(href)) return;
+    /**
+     * If external link, redirect to new page
+     */
+    if (href.includes("http")) {
+      window.location.href = href;
+      return;
+    }
+
+    console.log(href);
+
     await this.currentPage.hide();
     await this.router.updatePage(href);
     this.currentPage = this.pages[this.router.template];
@@ -105,6 +120,7 @@ class App {
   setupEventListeners() {}
 
   removeEventListeners() {}
+
 }
 
 const app = new App();
