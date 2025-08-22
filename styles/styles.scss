@@ -1,0 +1,9 @@
+@forward "./base.scss";
+@forward "./animations.scss";
+@forward "./preloader.scss";
+@forward "./smooth-scroll.scss";
+@forward "./home.scss";
+
+html {
+    overflow: hidden;
+}

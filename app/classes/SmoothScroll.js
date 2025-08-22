@@ -1,4 +1,4 @@
-import { gsap } from "../../node_modules/gsap/index.js";
+import { gsap } from "gsap";
 // Fix with web pack or vite
 // import { normalizeWheel } from "../../node_modules/normalize-wheel-es/index.d.ts";
 
@@ -108,9 +108,7 @@ export class SmoothScroll {
     }
 
     if (this.onResize) {
-      this.onResizeEvent = (event) => {
-        this.onResize(event).bind(this);
-      };
+      this.onResizeEvent = this.onResize.bind(this);
       window.addEventListener("resize", this.onResizeEvent);
     }
   }

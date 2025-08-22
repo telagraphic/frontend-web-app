@@ -1,8 +1,8 @@
 <html>
     <head>
         <title>Front End Web App</title>
-        <link rel="stylesheet" href="../styles/styles.css" />
-        <script src="../app/App.js" type="module"></script>
+        <link rel="stylesheet" href="./styles/styles.scss" />
+        <script src="./app/App.js" type="module"></script>
     </head>
 
     <body>
@@ -13,21 +13,25 @@
         </section> -->
 
         <!-- Breaks page flow due to smooth scrolling set on body-->
-        <nav>
+        <!-- <nav>
             <a href="index.html">Home</a>
-            <a href="about.html">About</a>
-            <a href="gallery.html">Gallery</a>
-            <a href="no.html">No Page</a>
-        </nav>
+            <a href="pages/about.html">About</a>
+            <a href="pages/gallery.html">Gallery</a>
+            <a href="pages/no.html">No Page</a>
+        </nav> -->
 
         <main class="main-content home" data-template="home">
             <section class="page-content">
                 <!-- Stays in flow with the content -->
                 <nav>
-                    <a href="index.html">Home</a>
-                    <a href="about.html">About</a>
-                    <a href="gallery.html">Gallery</a>
-                    <a href="no.html">No Page</a>
+                    <a href="/">Home</a>
+                    <a href="about">About</a>
+                    <a href="gallery">Gallery</a>
+                    <a href="">No Page</a>
+                    <a
+                        href="https://www.joshwcomeau.com/animation/keyframe-animations/"
+                        >External</a
+                    >
                 </nav>
                 <h1>Home Page</h1>
                 <p>This is the first page</p>
@@ -47,7 +51,7 @@
 
                 <button>Click</button>
 
-                <a href="gallery.html">Gallery page</a>
+                <a href="pages/gallery.html">Gallery page</a>
 
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -110,7 +114,7 @@
                     ligula eu luctus.
                 </p>
 
-                <img alt="Random Image" src="../images/sun.webp" />
+                <img alt="Random Image" src="./images/sun.webp" />
 
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -173,7 +177,7 @@
                     ligula eu luctus.
                 </p>
 
-                <img alt="Random Image" src="../images/planet.webp" />
+                <img alt="Random Image" src="./images/planet.webp" />
             </section>
         </main>
     </body>

@@ -7,6 +7,7 @@ import { Home } from "./pages/Home.js";
 import { About } from "./pages/About.js";
 import { Gallery } from "./pages/Gallery.js";
 import { Preloader } from "./components/Preloader.js";
+import "../styles/styles.scss";
 
 class App {
   constructor() {
