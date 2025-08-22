@@ -1,5 +1,10 @@
 ##########################
 # Application specfic
+
+
+/images
+/dist
+
 ##########################
 # config/config.js
 

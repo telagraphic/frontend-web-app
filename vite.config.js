@@ -49,11 +49,11 @@ export default defineConfig({
             return "assets/css/[name]-[hash].[ext]";
           }
           // Images go to assets/images/ folder
-          if (
-            /\.(png|jpe?g|svg|gif|tiff|bmp|ico|webp)$/i.test(assetInfo.name)
-          ) {
-            return "assets/images/[name]-[hash].[ext]";
-          }
+          // if (
+          //   /\.(png|jpe?g|svg|gif|tiff|bmp|ico|webp)$/i.test(assetInfo.name)
+          // ) {
+          //   return "assets/images/[name]-[hash].[ext]";
+          // }
           // Fonts go to assets/fonts/ folder
           if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name)) {
             return "assets/fonts/[name]-[hash].[ext]";
@@ -134,7 +134,7 @@ export default defineConfig({
       // Path aliases - Use these shortcuts in your imports
       "@": resolve(__dirname, "."), // @ = project root
       "@styles": resolve(__dirname, "styles"), // @styles = styles folder
-      "@images": resolve(__dirname, "images"), // @images = images folder
+      //"@images": resolve(__dirname, "images"), // @images = images folder
       "@app": resolve(__dirname, "app"), // @app = app folder
       "@pages": resolve(__dirname, "pages"), // @pages = pages folder
     },
