@@ -27,7 +27,7 @@ export class Router {
     this.setupPopState();
     this.setupEventListeners();
 
-    // Sync URL with content after a short delay to ensure DOM is ready
+    // Sync URL when a hard refresh occurs with content after a short delay to ensure DOM is ready
     setTimeout(() => {
       this.syncUrlWithContent();
     }, 100);
@@ -51,6 +51,11 @@ export class Router {
     await this.requestPage(href);
     await this.updateMarkup(this.newPage);
     await this.updateHistory(href);
+
+    // Dispatch a resize event to trigger the smooth scroll to update the page height
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
   }
 
   /**

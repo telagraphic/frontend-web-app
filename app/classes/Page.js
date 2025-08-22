@@ -15,7 +15,7 @@ export default class Page {
    * Create a page object of elements
    * Initalize any other components for the page
    */
-  create() {
+  async create() {
     /**
      * Changing the markup structure might break the first two elements
      */
@@ -40,7 +40,8 @@ export default class Page {
       }
     });
 
-    this.setupSmoothScroll();
+    // Wait for smooth scroll to be fully initialized
+    await this.setupSmoothScroll();
   }
 
   /**
@@ -78,14 +79,23 @@ export default class Page {
 
   /**
    * Initalizes the smoothScroll object for the page
+   * The wrapper needs to be called here to properly set Smooth Scroll on a hard refresh
+   * @returns {Promise} Resolves when smooth scroll is fully initialized
    */
   setupSmoothScroll() {
-    this.smoothScroll = new SmoothScroll({
-      container: document.body,
-      wrapper: this.elements.wrapper,
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.smoothScroll = new SmoothScroll({
+          container: document.body,
+          wrapper: document.querySelector("section.page-content"),
+        });
+        this.smoothScroll.create();
+        this.smoothScroll.setupEventListeners();
+        this.smoothScroll.isReady = true;
+        
+        resolve(); // Resolve when smooth scroll is ready
+      }, 1000);
     });
-    this.smoothScroll.create();
-    this.smoothScroll.setupEventListeners();
   }
 
   /**
@@ -100,5 +110,13 @@ export default class Page {
    */
   removeEventListeners() {
     this.smoothScroll.removeEventListeners();
+  }
+
+  /**
+   * Check if smooth scroll is ready
+   * @returns {boolean} True if smooth scroll is initialized
+   */
+  isSmoothScrollReady() {
+    return this.smoothScroll && this.smoothScroll.isReady;
   }
 }

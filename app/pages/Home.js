@@ -25,7 +25,6 @@ export class Home extends Page {
     // consoles with the src but the DOM is not updated yet
     Object.entries(this.elements.images).forEach(([position, element]) => {
       element.onload = () => {
-        console.log(element);
         element.src = element.getAttribute("data-src");
       };
     });

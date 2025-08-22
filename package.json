@@ -20,7 +20,8 @@
     "start": "npm run dev",
     "build:prod": "npm run build",
     "clean": "rm -rf dist",
-    "clean:build": "npm run clean && npm run build"
+    "clean:build": "npm run clean && npm run build",
+    "netlify:dev": "netlify dev --dir=dist"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",

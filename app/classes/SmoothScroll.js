@@ -122,7 +122,6 @@ export class SmoothScroll {
     }
 
     if (this.onResizeEvent) {
-      // console.log("onresizeevent removed");
       window.removeEventListener("resize", this.onResizeEvent);
     }
   }

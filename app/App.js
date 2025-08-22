@@ -97,8 +97,6 @@ class App {
     /**
      * If same page, do nothing
      */
-    console.log("current path", window.location.pathname);
-    console.log("next page", href);
     if (window.location.pathname.includes(href)) return;
     /**
      * If external link, redirect to new page
@@ -108,7 +106,6 @@ class App {
       return;
     }
 
-    console.log(href);
 
     await this.currentPage.hide();
     await this.router.updatePage(href);
