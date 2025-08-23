@@ -16,7 +16,7 @@ export class Router {
     this.pathname = null;
     this.newPage = null;
     this.mainElement =
-      mainElement || document.querySelector("main.main-content");
+      mainElement || document.querySelector("main");
     this.pageHistory = window.history;
     this.initialPage = null;
 
@@ -47,15 +47,14 @@ export class Router {
    * SPA page navigation flow triggered by a link click
    * @param {string} href - The route to navigate to (e.g., "home", "about", "gallery")
    */
-  async updatePage(href) {
+  async updatePage(href, currentPage, hardRefresh = false) {
     await this.requestPage(href);
-    await this.updateMarkup(this.newPage);
+    await this.updateMarkup(this.newPage, currentPage);
     await this.updateHistory(href);
-
-    // Dispatch a resize event to trigger the smooth scroll to update the page height
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 100);
+    // need to remove "home" from the main element when hard refresh occurs
+    if (hardRefresh) {
+      this.mainElement.classList.remove("home");
+    }
   }
 
   /**
@@ -82,7 +81,7 @@ export class Router {
    * Fetch next page
    * @param {string} href - The URL of the next page to fetch
    */
-  async requestPage(href) {
+  async requestPage(href, currentPage) {
     const routePath = this.buildRoute(href);
 
     // Check if route is valid
@@ -109,7 +108,8 @@ export class Router {
    * Replace DOM with new page content
    * @param {*} response
    */
-  async updateMarkup(response) {
+  async updateMarkup(response, currentPage) {
+    console.log("updatemarkup");
     const newPageHTML = await response.text();
     const newPageDOM = new DOMParser().parseFromString(
       newPageHTML,
@@ -121,12 +121,26 @@ export class Router {
     const newPageFragment = document.createDocumentFragment();
     newPageFragment.appendChild(newPageContent);
 
+
+    // could update the main element in one go isntead of multiple steps
     this.template = pageContent.getAttribute("data-template");
     this.mainElement.replaceChildren(newPageFragment);
     this.mainElement.setAttribute(
       "data-template",
       `${this.template.toString()}`
     );
+
+    // Update main element classes
+    console.log(typeof currentPage);
+    if (currentPage.length !== 0) {
+      console.log("removing", currentPage);
+      this.mainElement.classList.remove(`${currentPage}`);
+    }
+    this.mainElement.classList.add(`${this.template.toString()}`);
+
+    // Dispatch a resize event to trigger the smooth scroll to update the new page height
+    window.dispatchEvent(new Event("resize"));
+    
   }
 
   /**
@@ -141,7 +155,7 @@ export class Router {
     // If the page history state is null, create initial state
     if (this.pageHistory.state == null) {
       const initialPage = window.location.pathname;
-      
+
       // If home page, set home state
       if (initialPage === "/" || initialPage === "") {
         this.pageHistory.replaceState({ route: "" }, "", "/");
@@ -150,7 +164,7 @@ export class Router {
 
       // Check if this is a valid route
       const route = initialPage.replace("/", ""); // Remove leading slash
-      
+
       if (this.validRoutes.has(route)) {
         this.pageHistory.replaceState({ route: route }, "", initialPage);
         // Don't call updatePage here - let syncUrlWithContent on new page load
@@ -220,7 +234,6 @@ export class Router {
     const currentPath = window.location.pathname;
     const currentTemplate = this.mainElement.getAttribute("data-template");
 
-
     // If we're on a path like /gallery but showing home content, sync them
     if (
       currentPath !== "/" &&
@@ -228,9 +241,9 @@ export class Router {
       currentTemplate === "home"
     ) {
       const route = currentPath.replace("/", ""); // Remove leading slash
-      
+
       if (this.validRoutes.has(route)) {
-        this.updatePage(route);
+        this.updatePage(route, "", true);
       } else {
         this.redirectToHome();
       }

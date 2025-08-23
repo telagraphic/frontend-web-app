@@ -59,6 +59,7 @@ export class Animations {
         "animationend",
         () => {
           // console.log("Animation ended");
+          element.classList.remove("show-element");
           resolve();
         },
         { once: true },

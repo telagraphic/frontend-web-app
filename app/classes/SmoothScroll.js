@@ -51,6 +51,7 @@ export class SmoothScroll {
    * Removes extra white space at the bottom due to the position: fixed of the container element
    */
   onResize() {
+    console.log("onResize executed");
     this.scroll.limit = this.wrapper.clientHeight - window.innerHeight;
   }
 

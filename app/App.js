@@ -12,7 +12,7 @@ import "../styles/styles.scss";
 class App {
   constructor() {
     this.pageHistory = window.history;
-    this.mainElement = document.querySelector("main.main-content");
+    this.mainElement = document.querySelector("main");
     this.router = new Router();
     this.setupPages();
     this.setupApp();
@@ -94,6 +94,9 @@ class App {
    *
    */
   async onPageChange(href) {
+    this.currentPath = window.location.pathname;
+    
+
     /**
      * If same page, do nothing
      */
@@ -105,10 +108,17 @@ class App {
       window.location.href = href;
       return;
     }
+    if (this.currentPath === "/") {
+      this.currentPath = "home";
+    } else {
+      this.currentPath = this.currentPath.replace("/", "");
+    }
+
+    console.log("currentPath",this.currentPath);
 
 
     await this.currentPage.hide();
-    await this.router.updatePage(href);
+    await this.router.updatePage(href, this.currentPath);
     this.currentPage = this.pages[this.router.template];
     await this.currentPage.create();
     await this.currentPage.show();
