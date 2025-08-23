@@ -9,7 +9,6 @@ export class SmoothScroll {
     this.scroll = {
       current: 0,
       target: 0,
-      last: 0,
       limit: 0,
     };
   }
@@ -51,7 +50,6 @@ export class SmoothScroll {
    * Removes extra white space at the bottom due to the position: fixed of the container element
    */
   onResize() {
-    console.log("onResize executed");
     this.scroll.limit = this.wrapper.clientHeight - window.innerHeight;
   }
 
@@ -97,8 +95,8 @@ export class SmoothScroll {
 
   /**
    * Setup event listeners for mousewheel and browser resize
-   * Need to bound to the class via this to ensure only one listener is attached and removed
-   * Using window will create duplicate event listeners
+   * Need to bound to the class via 'this' to ensure only one listener is attached and removed
+   * Using window will create duplicate event listeners on page changes
    */
   setupEventListeners() {
     if (this.onMouseWheel) {

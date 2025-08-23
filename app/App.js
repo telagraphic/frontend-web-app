@@ -2,7 +2,7 @@
  *  Entry point for the application
  */
 
-import { Router } from "./Router.js";
+import { Router } from "./classes/Router.js";
 import { Home } from "./pages/Home.js";
 import { About } from "./pages/About.js";
 import { Gallery } from "./pages/Gallery.js";
@@ -94,31 +94,18 @@ class App {
    *
    */
   async onPageChange(href) {
-    this.currentPath = window.location.pathname;
+    const validation = this.router.validateRoute(href, window.location.pathname);
     
-
-    /**
-     * If same page, do nothing
-     */
-    if (window.location.pathname.includes(href)) return;
-    /**
-     * If external link, redirect to new page
-     */
-    if (href.includes("http")) {
-      window.location.href = href;
-      return;
+    // Handle invalid routes with early returns
+    if (!validation.isValid) {
+      if (validation.action === 'skip') return;
+      if (validation.action === 'redirect') return window.location.href = validation.url;
+      if (validation.action === 'redirect-home') return this.router.redirectToHome();
     }
-    if (this.currentPath === "/") {
-      this.currentPath = "home";
-    } else {
-      this.currentPath = this.currentPath.replace("/", "");
-    }
-
-    console.log("currentPath",this.currentPath);
-
-
+  
+    // Valid route - proceed with navigation
     await this.currentPage.hide();
-    await this.router.updatePage(href, this.currentPath);
+    await this.router.updatePage(href, validation.normalizedRootPath);
     this.currentPage = this.pages[this.router.template];
     await this.currentPage.create();
     await this.currentPage.show();

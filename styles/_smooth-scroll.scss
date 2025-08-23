@@ -1,3 +1,12 @@
+/**
+ * Smooth scroll container
+ * This is the container that will be used to scroll the page
+ * It is set to position: fixed to allow the content to scroll smoothly
+ * It is set to overflow: hidden to prevent the content from overflowing the container
+ * It is set to width: 100% to allow the content to scroll smoothly
+ * It is set to height: 100% to allow the content to scroll smoothly
+ */
+
 .smooth-scroll-container {
     position: fixed;
     left: 0;

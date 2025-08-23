@@ -15,8 +15,7 @@ export class Router {
     this.template = null;
     this.pathname = null;
     this.newPage = null;
-    this.mainElement =
-      mainElement || document.querySelector("main");
+    this.mainElement = mainElement || document.querySelector("main");
     this.pageHistory = window.history;
     this.initialPage = null;
 
@@ -44,20 +43,6 @@ export class Router {
   }
 
   /**
-   * SPA page navigation flow triggered by a link click
-   * @param {string} href - The route to navigate to (e.g., "home", "about", "gallery")
-   */
-  async updatePage(href, currentPage, hardRefresh = false) {
-    await this.requestPage(href);
-    await this.updateMarkup(this.newPage, currentPage);
-    await this.updateHistory(href);
-    // need to remove "home" from the main element when hard refresh occurs
-    if (hardRefresh) {
-      this.mainElement.classList.remove("home");
-    }
-  }
-
-  /**
    * Builds the file path for a given route
    * @param {string} href - The route identifier
    * @returns {string} The file path to fetch
@@ -78,10 +63,48 @@ export class Router {
   }
 
   /**
+   * Validates and normalizes a route for navigation
+   * @param {string} href - The route to validate
+   * @param {string} currentPath - The current browser path
+   * @returns {Object} Validation result
+   */
+  validateRoute(href, currentPath) {
+    // If same page, do nothing
+    if (currentPath.includes(href)) return { isValid: false, action: "skip" };
+
+    // If external link, redirect to new page
+    if (href.includes("http"))
+      return { isValid: false, action: "redirect", url: href };
+
+    // If home page, set current path to home, else remove the leading slash from /about to about
+    const normalizedRootPath =
+      currentPath === "/" || currentPath === ""
+        ? "home"
+        : currentPath.replace("/", "");
+
+    return { isValid: true, route: href, normalizedRootPath };
+  }
+
+  /**
+   * SPA page navigation flow triggered by a link click
+   * @param {string} href - The route to navigate to (e.g., "home", "about", "gallery")
+   */
+  async updatePage(href, currentPath, hardRefresh = false) {
+    await this.requestPage(href);
+    await this.updateMarkup(this.newPage, currentPath);
+    await this.updateHistory(href);
+
+    // need to remove "home" from the main element when hard refresh occurs
+    if (hardRefresh) {
+      this.mainElement.classList.remove("home");
+    }
+  }
+
+  /**
    * Fetch next page
    * @param {string} href - The URL of the next page to fetch
    */
-  async requestPage(href, currentPage) {
+  async requestPage(href) {
     const routePath = this.buildRoute(href);
 
     // Check if route is valid
@@ -95,12 +118,12 @@ export class Router {
       if (response.ok) {
         this.newPage = response;
       } else {
-        console.error("Failed to fetch page:", routePath);
+        throw new Error("Failed to fetch page: ${routePath}");
         this.redirectToHome();
       }
     } catch (error) {
-      console.error("Error updating page:", error);
-      this.redirectToHome();
+      throw new Error("Network error: ${error.message}");
+      this.redirectToHome();  
     }
   }
 
@@ -109,7 +132,6 @@ export class Router {
    * @param {*} response
    */
   async updateMarkup(response, currentPage) {
-    console.log("updatemarkup");
     const newPageHTML = await response.text();
     const newPageDOM = new DOMParser().parseFromString(
       newPageHTML,
@@ -121,7 +143,6 @@ export class Router {
     const newPageFragment = document.createDocumentFragment();
     newPageFragment.appendChild(newPageContent);
 
-
     // could update the main element in one go isntead of multiple steps
     this.template = pageContent.getAttribute("data-template");
     this.mainElement.replaceChildren(newPageFragment);
@@ -130,17 +151,14 @@ export class Router {
       `${this.template.toString()}`
     );
 
-    // Update main element classes
-    console.log(typeof currentPage);
-    if (currentPage.length !== 0) {
-      console.log("removing", currentPage);
+    // Update main element classes, will be undefined on an invalid route
+    if (currentPage !== undefined && currentPage.length !== 0) {
       this.mainElement.classList.remove(`${currentPage}`);
     }
     this.mainElement.classList.add(`${this.template.toString()}`);
 
     // Dispatch a resize event to trigger the smooth scroll to update the new page height
     window.dispatchEvent(new Event("resize"));
-    
   }
 
   /**
