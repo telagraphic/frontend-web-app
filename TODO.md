@@ -4,6 +4,12 @@
 ### DO
 
 
+**8/25**
+
+- added image preloading to each page in router
+- setup animation classes for elements
+- 
+
 
 ## design
 - add images
@@ -11,8 +17,6 @@
 - implement gsap animations for the other pages
 
 ## animations
-
-- finish animations
 
 ## bun/hono api
 - replace vite with bun?
@@ -22,7 +26,8 @@
 
 ## preloader
 - fix preloader animation
-- fix image preloading, on page load and page changes
+- fix image preloading
+
 
 
 ## refactoring

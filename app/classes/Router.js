@@ -164,7 +164,11 @@ export class Router {
     // Preload images after DOM is updated
     this.preloadImages();
   }
-  
+
+  /**
+   * Preload images for the page, need to fix when first page is /about or /gallery
+   * @returns {Promise} Resolves when images are loaded
+   */
   preloadImages() {
     const imageElements = document.querySelectorAll('img[data-src]');
     console.log(`Router: Found ${imageElements.length} images with data-src`);

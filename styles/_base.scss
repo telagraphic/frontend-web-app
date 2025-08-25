@@ -32,3 +32,69 @@ img {
     max-inline-size: 55%;
     height: auto;
 }
+
+// Responsive image containers for lazy loading
+.image-container {
+    position: relative;
+    background: #f0f0f0; /* placeholder color */
+    overflow: hidden;
+    border-radius: 8px;
+    
+    // Default aspect ratio
+    aspect-ratio: 16/9;
+    
+    // Responsive breakpoints
+    @media (max-width: 768px) {
+        aspect-ratio: 4/3;
+    }
+    
+    @media (max-width: 480px) {
+        aspect-ratio: 1/1;
+    }
+    
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 0.3s ease;
+        
+        // Fade in when loaded
+        opacity: 0;
+        &.loaded {
+            opacity: 1;
+        }
+    }
+    
+    // Loading state
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid #ddd;
+        border-top-color: #666;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 1;
+    }
+    
+    &.loaded::before {
+        display: none;
+    }
+}
+
+// Loading spinner animation
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Utility classes for different aspect ratios
+.aspect-square { aspect-ratio: 1/1; }
+.aspect-video { aspect-ratio: 16/9; }
+.aspect-photo { aspect-ratio: 4/3; }
+.aspect-portrait { aspect-ratio: 3/4; }

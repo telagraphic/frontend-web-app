@@ -51,7 +51,6 @@ export default class Page {
     await this.preloadImages();
     await this.setupSmoothScroll();
     this.createAnimations();
-    
   }
 
   createAnimations() {
@@ -59,11 +58,9 @@ export default class Page {
 
     if (this.elements.titleAnimations) {
       this.titleAnimations = [];
-      this.elements.titleAnimations.forEach(
-        (element) => {
-          this.titleAnimations.push(new Titles(element));
-        }
-      );
+      this.elements.titleAnimations.forEach((element) => {
+        this.titleAnimations.push(new Titles(element));
+      });
     }
 
     // Hold all animations in an array for future use
@@ -113,33 +110,13 @@ export default class Page {
    */
   async preloadImages() {
     return new Promise((resolve) => {
-      console.log(`preloadImages called for page: ${this.id}`);
-      console.log(`Selector: ${this.preloadImagesSelector}`);
-      const imageElements = document.querySelectorAll(this.preloadImagesSelector);
-      console.log(`Found ${imageElements.length} images with data-src:`, imageElements);
-      
-      imageElements.forEach((element) => {
-        console.log(`Processing image:`, element);
-        if (!element.src) {
-          const dataSrc = element.getAttribute("data-src");
-          console.log(`Setting src from data-src: ${dataSrc}`);
-          element.src = dataSrc;
-          element.onload = () => {
-            console.log("loaded", element.src);
-          };
-        }
+      imageElements.forEach(async (element) => {
+        this.asyncLoadedImages.push(new AsyncLoad(element));
       });
-      resolve();
-    })
 
-
-    // TODO: This is to load the images when scrolled into view
-    // imageElements.forEach(async (element) => {
-    //   this.asyncLoadedImages.push(new AsyncLoad(element));
-    // });
-
-    // // images at the bottom of the screen are loaded but don't add to the content height
-    // this.smoothScroll.onResize()
+      // images at the bottom of the screen are loaded but don't add to the content height
+      this.smoothScroll.onResize();
+    });
   }
 
   /**
