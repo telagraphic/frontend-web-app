@@ -94,18 +94,17 @@ class App {
    *
    */
   async onPageChange(href) {
-    const validation = this.router.validateRoute(href, window.location.pathname);
+    const isValidRoute = this.router.validateRoute(href, window.location.pathname);
     
-    // Handle invalid routes with early returns
-    if (!validation.isValid) {
-      if (validation.action === 'skip') return;
-      if (validation.action === 'redirect') return window.location.href = validation.url;
-      if (validation.action === 'redirect-home') return this.router.redirectToHome();
+    if (!isValidRoute.isValid) {
+      if (isValidRoute.action === 'skip') return;
+      if (isValidRoute.action === 'redirect') return window.location.href = isValidRoute.url;
+      if (isValidRoute.action === 'redirect-home') return this.router.redirectToHome();
     }
   
     // Valid route - proceed with navigation
     await this.currentPage.hide();
-    await this.router.updatePage(href, validation.normalizedRootPath);
+    await this.router.updatePage(href, isValidRoute.normalizedRootPath);
     this.currentPage = this.pages[this.router.template];
     await this.currentPage.create();
     await this.currentPage.show();

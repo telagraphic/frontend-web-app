@@ -3,23 +3,7 @@
 
 ### DO
 
-**8/15**
 
-
-## server attempt on 8/21
-- setup webserver with hono
-- setup routes
-- serve static pages for each route
-- router and url path are working?
-
-
-## netlify
-- vite for javascript
-- dart-sass for styles
-- add assets to bunny
-- deploy to netlify
-- fix router paths
-- document named routes for static spa jamstack
 
 ## design
 - add images
@@ -30,8 +14,8 @@
 
 - finish animations
 
-## hono api
-
+## bun/hono api
+- replace vite with bun?
 - setup project
 - document /routes for server api to serve pages for jamstack + api
 
@@ -66,6 +50,16 @@ package this as:
 
 
 ### DONE
+
+
+
+**8/22-23** 
+- vite for javascript
+- dart-sass for styles
+- add assets to bunny
+- deploy to netlify
+- fix router paths
+- document named routes for static spa jamstack
 
 **8/21**
 
