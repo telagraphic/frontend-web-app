@@ -48,7 +48,7 @@ export default class Page {
     });
 
     // Wait for smooth scroll to be fully initialized
-    await this.preloadImages();
+    // await this.preloadImages();
     await this.setupSmoothScroll();
     this.createAnimations();
   }

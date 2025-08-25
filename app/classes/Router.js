@@ -124,7 +124,7 @@ export class Router {
       }
     } catch (error) {
       throw new Error("Network error: ${error.message}");
-      this.redirectToHome();  
+      this.redirectToHome();
     }
   }
 
@@ -158,11 +158,10 @@ export class Router {
     }
     this.mainElement.classList.add(`${this.template.toString()}`);
 
-    // Dispatch a resize event to trigger the smooth scroll to update the new page height
-    window.dispatchEvent(new Event("resize"));
-    
     // Preload images after DOM is updated
     this.preloadImages();
+    // Dispatch a resize event to trigger the smooth scroll to update the new page height
+    window.dispatchEvent(new Event("resize"));
   }
 
   /**
@@ -170,9 +169,9 @@ export class Router {
    * @returns {Promise} Resolves when images are loaded
    */
   preloadImages() {
-    const imageElements = document.querySelectorAll('img[data-src]');
+    const imageElements = document.querySelectorAll("img[data-src]");
     console.log(`Router: Found ${imageElements.length} images with data-src`);
-    
+
     imageElements.forEach((element) => {
       if (!element.src) {
         const dataSrc = element.getAttribute("data-src");
