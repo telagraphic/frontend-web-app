@@ -18,15 +18,15 @@ export class Home extends Page {
 
   create() {
     super.create();
-    this.preloadImages();
+    // this.preloadImages();
   }
 
-  preloadImages() {
-    // consoles with the src but the DOM is not updated yet
-    Object.entries(this.elements.images).forEach(([position, element]) => {
-      element.onload = () => {
-        element.src = element.getAttribute("data-src");
-      };
-    });
-  }
+  // preloadImages() {
+  //   // consoles with the src but the DOM is not updated yet
+  //   Object.entries(this.elements.images).forEach(([position, element]) => {
+  //     element.onload = () => {
+  //       element.src = element.getAttribute("data-src");
+  //     };
+  //   });
+  // }
 }

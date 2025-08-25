@@ -7,6 +7,7 @@ import { Home } from "./pages/Home.js";
 import { About } from "./pages/About.js";
 import { Gallery } from "./pages/Gallery.js";
 import { Preloader } from "./components/Preloader.js";
+import { Navigation } from "./components/Navigation.js";
 import "../styles/styles.scss";
 
 class App {
@@ -18,20 +19,10 @@ class App {
     this.setupApp();
     this.setupEventListeners();
     // this.createPreloader();
+    this.createNavigation();
   }
 
-  /**
-   * Update the preloader template with the image loading percentage
-   * @param {*} imageElement
-   */
-  updatePreloader(imageElement) {
-    this.imagesLength += 1;
-    this.imagesLoaded += 1;
-    const percentage = Math.round(
-      (this.imagesLoaded / this.imagesLength) * 100,
-    );
-    this.preloader.update(percentage);
-  }
+
 
   /**
    * Register page classes, set the data-template field for
@@ -59,6 +50,13 @@ class App {
     });
   }
 
+  createNavigation() {
+    this.navigation = new Navigation({
+      currentPage: this.currentPage,
+    });
+  }
+
+
   /**
    * Display preloader on first page visit
    */
@@ -72,6 +70,19 @@ class App {
       }, 2000);
     });
   }
+
+    /**
+   * Update the preloader template with the image loading percentage
+   * @param {*} imageElement
+   */
+    updatePreloader(imageElement) {
+      this.imagesLength += 1;
+      this.imagesLoaded += 1;
+      const percentage = Math.round(
+        (this.imagesLoaded / this.imagesLength) * 100,
+      );
+      this.preloader.update(percentage);
+    }
 
   /**
    * Event delegation for navigation links
@@ -94,6 +105,7 @@ class App {
    *
    */
   async onPageChange(href) {
+    console.log('onPageChange', href);
     const isValidRoute = this.router.validateRoute(href, window.location.pathname);
     
     if (!isValidRoute.isValid) {
@@ -105,8 +117,10 @@ class App {
     // Valid route - proceed with navigation
     await this.currentPage.hide();
     await this.router.updatePage(href, isValidRoute.normalizedRootPath);
+    
     this.currentPage = this.pages[this.router.template];
     await this.currentPage.create();
+    this.navigation.onChange(this.currentPage);
     await this.currentPage.show();
   }
 

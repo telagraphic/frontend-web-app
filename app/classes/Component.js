@@ -13,9 +13,19 @@ export default class Component extends EventTarget {
    */
   create() {
     /**
-     * Changing the markup structure might break the first two elements
+     * Handle both selector strings and actual DOM elements
      */
-    this.element = document.querySelector(this.selector);
+    if (this.selector instanceof window.HTMLElement) {
+      // If selector is already a DOM element, use it directly
+      this.element = this.selector;
+    } else if (typeof this.selector === 'string') {
+      // If selector is a string, query for the element
+      this.element = document.querySelector(this.selector);
+    } else {
+      // Fallback for other cases
+      this.element = null;
+    }
+
     this.elements = {};
 
     Object.entries(this.selectorChildren).forEach(([key, selector]) => {

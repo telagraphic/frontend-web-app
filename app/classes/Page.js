@@ -1,14 +1,21 @@
-import { Animations } from "./Animations.js";
 import { SmoothScroll } from "./SmoothScroll.js";
+import { Animation } from "./Animation.js";
+import Titles from "../animation/Titles.js";
+import AsyncLoad from "./AsyncLoad.js";
 
 export default class Page {
   constructor({ id, element, elements, transitionOverlay }) {
     this.selector = element;
-    this.selectorChildren = { ...elements };
+    this.selectorChildren = {
+      ...elements,
+      titleAnimations: '[data-animation="title"]',
+    };
     this.id = id;
     this.transitionOverlay =
       transitionOverlay || document.querySelector(".transition-overlay");
-    this.animations = new Animations();
+    // this.animations = new Animations("[data-template]", this.selectorChildren);
+    this.animation = new Animation();
+    this.preloadImagesSelector = "img[data-src]";
   }
 
   /**
@@ -41,7 +48,28 @@ export default class Page {
     });
 
     // Wait for smooth scroll to be fully initialized
+    await this.preloadImages();
     await this.setupSmoothScroll();
+    this.createAnimations();
+    
+  }
+
+  createAnimations() {
+    this.animations = [];
+
+    if (this.elements.titleAnimations) {
+      this.titleAnimations = [];
+      this.elements.titleAnimations.forEach(
+        (element) => {
+          this.titleAnimations.push(new Titles(element));
+        }
+      );
+    }
+
+    // Hold all animations in an array for future use
+    if (this.titleAnimations?.length > 0) {
+      this.animations.push(...this.titleAnimations);
+    }
   }
 
   /**
@@ -57,7 +85,8 @@ export default class Page {
       element.classList.remove("hide-element");
     };
 
-    await this.animations.onCSSAnimation(this.element, animationCallback);
+    // await this.animations.onCSSAnimation(this.element, animationCallback);
+    await this.animation.GSAPShowAnimation(this.element);
   }
 
   /**
@@ -74,7 +103,43 @@ export default class Page {
       element.classList.remove("show-element");
       element.classList.add("hide-element");
     };
-    await this.animations.onCSSAnimation(this.element, callback);
+    // await this.animations.onCSSAnimation(this.element, callback);
+    await this.animation.GSAPHideAnimation(this.element);
+  }
+
+  /**
+   * Preload images for the page, need to fix when first page is /about or /gallery
+   * @returns {Promise} Resolves when images are loaded
+   */
+  async preloadImages() {
+    return new Promise((resolve) => {
+      console.log(`preloadImages called for page: ${this.id}`);
+      console.log(`Selector: ${this.preloadImagesSelector}`);
+      const imageElements = document.querySelectorAll(this.preloadImagesSelector);
+      console.log(`Found ${imageElements.length} images with data-src:`, imageElements);
+      
+      imageElements.forEach((element) => {
+        console.log(`Processing image:`, element);
+        if (!element.src) {
+          const dataSrc = element.getAttribute("data-src");
+          console.log(`Setting src from data-src: ${dataSrc}`);
+          element.src = dataSrc;
+          element.onload = () => {
+            console.log("loaded", element.src);
+          };
+        }
+      });
+      resolve();
+    })
+
+
+    // TODO: This is to load the images when scrolled into view
+    // imageElements.forEach(async (element) => {
+    //   this.asyncLoadedImages.push(new AsyncLoad(element));
+    // });
+
+    // // images at the bottom of the screen are loaded but don't add to the content height
+    // this.smoothScroll.onResize()
   }
 
   /**
@@ -92,7 +157,7 @@ export default class Page {
         this.smoothScroll.create();
         this.smoothScroll.setupEventListeners();
         this.smoothScroll.isReady = true;
-        
+
         resolve(); // Resolve when smooth scroll is ready
       }, 1000);
     });

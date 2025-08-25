@@ -43,6 +43,19 @@ Bae class for the page objects. Implements basic page functionality for showing/
 
 ## Component
 
+Accepts selector strings for `querySelector` and `querySelectorAll` and takes actual DOM elements for flexibility.
+This class creates an object of names to selector/elements to create a simple selector API to target elements within javascript.
+
+`this.elements.title` can be called by passing in `{elements: { title: "h1" }}`.
+
 The base class for components that inherits from EventTarget class for basic event dispatching.
 
 
+## Animation
+
+This class extends the component class for selecting elements. CSS Transition, Animation key-frame, and GSAP based animations can be created as stand alone methods to be called from Page.js or the page classes to overide the Page.js class. An IntersectionObserver method can be called from animation classes that extend the parent Animation class, see Titles.js. 
+
+
+1. Set a `data-animation="animiation-name` on an element to trigger an animation using the IntersectionObserver.
+2. Create the animation object for the animation-name in Page.js.
+3. Create the animation class to set the GSAP animation settings for the animation-name and call createIntersectionObserver() in the constructor to initalize a window based animation.

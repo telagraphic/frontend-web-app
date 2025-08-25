@@ -4,5 +4,12 @@
 @forward "./smooth-scroll.scss";
 @forward "./home.scss";
 
-html {
+*, 
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
 }

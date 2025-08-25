@@ -77,6 +77,7 @@ export class Router {
       return { isValid: false, action: "redirect", url: href };
 
     // If home page, set current path to home, else remove the leading slash from /about to about
+    // TODO: not returning "/" or home for the href
     const normalizedRootPath =
       currentPath === "/" || currentPath === ""
         ? "home"
@@ -159,6 +160,25 @@ export class Router {
 
     // Dispatch a resize event to trigger the smooth scroll to update the new page height
     window.dispatchEvent(new Event("resize"));
+    
+    // Preload images after DOM is updated
+    this.preloadImages();
+  }
+  
+  preloadImages() {
+    const imageElements = document.querySelectorAll('img[data-src]');
+    console.log(`Router: Found ${imageElements.length} images with data-src`);
+    
+    imageElements.forEach((element) => {
+      if (!element.src) {
+        const dataSrc = element.getAttribute("data-src");
+        console.log(`Router: Setting src from data-src: ${dataSrc}`);
+        element.src = dataSrc;
+        element.onload = () => {
+          console.log("Router: Image loaded", element.src);
+        };
+      }
+    });
   }
 
   /**

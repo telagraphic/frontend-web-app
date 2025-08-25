@@ -104,7 +104,7 @@ export default defineConfig({
   server: {
     port: 3000, // Dev server runs on localhost:3000
     host: true, // Accept connections from any IP (useful for mobile testing)
-    open: true, // Automatically open browser when server starts
+    open: false, // Don't automatically open browser when server starts
 
     // Hot Module Replacement - Updates code without full page refresh
     hmr: {
@@ -116,7 +116,7 @@ export default defineConfig({
   preview: {
     port: 4173, // Preview server runs on localhost:4173
     host: true, // Accept connections from any IP
-    open: true, // Automatically open browser
+    open: false, // Don't automatically open browser
   },
 
   // Asset optimization - Tell Vite about additional file types to process

@@ -1,6 +1,46 @@
-import { gsap } from "../../node_modules/gsap/index.js";
+import Component from "./Component.js";
+import { gsap } from "gsap/index.js";
 
-export class Animations {
+export class Animation extends Component {
+  constructor(element, elements) {
+    super({
+      element,
+      elements,
+    });
+
+    // this.createIntersectionObserver();
+  }
+
+  /**
+   * Create an Intersection Observer for the element to animate in and out
+   * Uses
+   */
+  createIntersectionObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          this.animateIn();
+        } else {
+          this.animateOut();
+        }
+      });
+    });
+
+    observer.observe(this.element);
+  }
+
+  /**
+   * This parent class will call the overriden methods in the child class in the Intersection Observer
+   */
+  animateIn() {
+  }
+
+  /**
+   * This parent class will call the overriden methods in the child class in the Intersection Observer
+   */
+  animateOut() {
+  }
+
   /**
    * Run the transition callback in an RAF, remove the listener when done
    * @param {*} element to target for animation
@@ -23,7 +63,7 @@ export class Animations {
           // console.log("Transition ended");
           resolve();
         },
-        { once: true },
+        { once: true }
       );
 
       requestAnimationFrame(() => {
@@ -52,7 +92,7 @@ export class Animations {
         () => {
           // console.log("Animation started");
         },
-        { once: true },
+        { once: true }
       );
 
       element.addEventListener(
@@ -62,7 +102,7 @@ export class Animations {
           element.classList.remove("show-element");
           resolve();
         },
-        { once: true },
+        { once: true }
       );
 
       requestAnimationFrame(() => {
@@ -71,5 +111,33 @@ export class Animations {
     });
   }
 
-  async GSAPAnimation() {}
+  async GSAPShowAnimation(element) {
+    return new Promise((resolve) => {
+      const showTimeline = gsap.timeline();
+
+      showTimeline.to(element, {
+        opacity: 1,
+        duration: 0.5,
+        ease: "power2.inOut",
+        onComplete: () => {
+          resolve();
+        },
+      });
+    });
+  }
+
+  async GSAPHideAnimation(element) {
+    return new Promise((resolve) => {
+      const hideTimeline = gsap.timeline();
+
+      hideTimeline.to(element, {
+        opacity: 0,
+        duration: 1,
+        ease: "power2.inOut",
+        onComplete: () => {
+          resolve();
+        },
+      });
+    });
+  }
 }
