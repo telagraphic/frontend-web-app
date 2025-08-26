@@ -2,6 +2,7 @@ import { SmoothScroll } from "./SmoothScroll.js";
 import { Animation } from "./Animation.js";
 import Titles from "../animation/Titles.js";
 import AsyncLoad from "./AsyncLoad.js";
+import { BackgroundColors } from "./Colors.js";
 
 export default class Page {
   constructor({ id, element, elements, transitionOverlay }) {
@@ -82,6 +83,7 @@ export default class Page {
       element.classList.remove("hide-element");
     };
 
+    
     // await this.animations.onCSSAnimation(this.element, animationCallback);
     await this.animation.GSAPShowAnimation(this.element);
   }

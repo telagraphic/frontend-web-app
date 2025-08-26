@@ -18,16 +18,19 @@ class App {
     this.setupPages();
     this.setupApp();
     this.setupEventListeners();
-    // this.createPreloader();
-    this.createNavigation();
+    this.createPreloader();
+    // Don't create navigation here - wait for the correct page to be set
+    // this.createNavigation();
   }
 
 
 
   /**
-   * Register page classes, set the data-template field for
+   * Register page classes using the data-template field in the main element
+   * This data-template field is a key for creating the page instances
+   * @param {string} specificPage - Optional specific page to set (e.g., "gallery", "about")
    */
-  setupPages() {
+  setupPages(specificPage = null) {
     this.pages = {
       home: new Home(),
       about: new About(),
@@ -35,9 +38,19 @@ class App {
     };
 
     this.content = document.querySelector("main");
-    this.template = this.content.getAttribute("data-template");
+    
+    // If a specific page is provided, use it; otherwise read from DOM
+    if (specificPage) {
+      this.template = specificPage;
+    } else {
+      this.template = this.content.getAttribute("data-template");
+    }
+    
     this.currentPage = this.pages[this.template];
     this.currentPage.create();
+    
+    // Create navigation after setting the correct currentPage
+    this.createNavigation();
   }
 
   /**
@@ -50,6 +63,9 @@ class App {
     });
   }
 
+  /**
+   * Create the navigation component
+   */
   createNavigation() {
     this.navigation = new Navigation({
       currentPage: this.currentPage,
@@ -63,26 +79,12 @@ class App {
   createPreloader() {
     this.preloader = new Preloader();
     this.preloader.on("preloader-complete", ({ message }) => {
-      // TODO: Images are not cached when visiting back home!
       this.preloader.hide();
       setTimeout(() => {
         this.preloader.destroy();
-      }, 2000);
+      }, 1000);
     });
   }
-
-    /**
-   * Update the preloader template with the image loading percentage
-   * @param {*} imageElement
-   */
-    updatePreloader(imageElement) {
-      this.imagesLength += 1;
-      this.imagesLoaded += 1;
-      const percentage = Math.round(
-        (this.imagesLoaded / this.imagesLength) * 100,
-      );
-      this.preloader.update(percentage);
-    }
 
   /**
    * Event delegation for navigation links
@@ -105,7 +107,6 @@ class App {
    *
    */
   async onPageChange(href) {
-    console.log('onPageChange', href);
     const isValidRoute = this.router.validateRoute(href, window.location.pathname);
     
     if (!isValidRoute.isValid) {
@@ -114,17 +115,24 @@ class App {
       if (isValidRoute.action === 'redirect-home') return this.router.redirectToHome();
     }
   
-    // Valid route - proceed with navigation
     await this.currentPage.hide();
-    await this.router.updatePage(href, isValidRoute.normalizedRootPath);
-    
+    await this.router.updatePage(href, isValidRoute.normalizedPath);
     this.currentPage = this.pages[this.router.template];
     await this.currentPage.create();
     this.navigation.onChange(this.currentPage);
     await this.currentPage.show();
   }
 
-  setupEventListeners() {}
+  setupEventListeners() {
+
+    // Update the currentPage when the hard-refresh event is triggered
+    window.addEventListener("hard-refresh", (event) => {
+      // Extract the route from the event detail
+      const route = event.detail?.route;
+      this.setupPages(route);
+      // Navigation is now created in setupPages, so no need to call it here
+    });
+  }
 
   removeEventListeners() {}
 

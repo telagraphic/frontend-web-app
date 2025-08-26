@@ -4,11 +4,6 @@
 ### DO
 
 
-**8/25**
-
-- added image preloading to each page in router
-- setup animation classes for elements
-- 
 
 
 ## design
@@ -23,10 +18,6 @@
 - setup project
 - document /routes for server api to serve pages for jamstack + api
 
-
-## preloader
-- fix preloader animation
-- fix image preloading
 
 
 
@@ -56,6 +47,17 @@ package this as:
 
 ### DONE
 
+
+**8/26/**
+
+- Finished preloader for initial page load
+- 
+
+
+**8/25**
+
+- added image preloading to each page in router
+- setup animation classes for elements 
 
 
 **8/22-23** 

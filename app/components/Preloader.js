@@ -1,7 +1,7 @@
 import Component from "../classes/Component.js";
 
 /**
- * Preloader is called on intial page load
+ * Preloader element is displayed until all images are loaded and ready to be displayed 
  */
 
 export class Preloader extends Component {
@@ -17,7 +17,7 @@ export class Preloader extends Component {
 
     this.images = Array.from(this.elements.images);
     this.images.length;
-    this.imagesLength = 0;
+    this.imagesLoaded = 0
 
     this.createLoader();
   }
@@ -27,6 +27,7 @@ export class Preloader extends Component {
    */
   createLoader() {
     Object.entries(this.elements.images).forEach(([position, element]) => {
+      // Call onload to register the event listener before the image is loaded, cached images will trigger the event listener
       element.onload = () => this.updatePreloader(element);
       element.src = element.getAttribute("data-src");
     });
@@ -37,8 +38,8 @@ export class Preloader extends Component {
    * @param {*} imageElement
    */
   updatePreloader(imageElement) {
-    this.imagesLength += 1;
-    const percent = Math.round((this.imagesLength / this.images.length) * 100);
+    this.imagesLoaded += 1;
+    const percent = Math.round((this.imagesLoaded / this.images.length) * 100);
     this.elements.counter.innerHTML = `${percent}%`;
 
     if (percent === 100) {
@@ -46,10 +47,16 @@ export class Preloader extends Component {
     }
   }
 
+  /**
+   * Hide the preloader element
+   */
   hide() {
     this.element.style.opacity = 0;
   }
 
+  /**
+   * Remove the preloader element
+   */
   destroy() {
     this.element.remove();
   }

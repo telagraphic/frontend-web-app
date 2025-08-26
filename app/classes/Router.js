@@ -10,6 +10,8 @@
  *
  */
 
+import { BackgroundColors } from "./Colors.js";
+
 export class Router {
   constructor(mainElement) {
     this.template = null;
@@ -69,6 +71,10 @@ export class Router {
    * @returns {Object} Validation result
    */
   validateRoute(href, currentPath) {
+    // If home page, set current path to home
+    if (href === "/" || href === "") {
+      return { isValid: true, route: "home", normalizedPath: "home" };
+    }
     // If same page, do nothing
     if (currentPath.includes(href)) return { isValid: false, action: "skip" };
 
@@ -76,19 +82,15 @@ export class Router {
     if (href.includes("http"))
       return { isValid: false, action: "redirect", url: href };
 
-    // If home page, set current path to home, else remove the leading slash from /about to about
-    // TODO: not returning "/" or home for the href
-    const normalizedRootPath =
-      currentPath === "/" || currentPath === ""
-        ? "home"
-        : currentPath.replace("/", "");
-
-    return { isValid: true, route: href, normalizedRootPath };
+    // Else, return a valid route
+    return { isValid: true, route: href, normalizedPath: href.replace("/", "") };
   }
 
   /**
    * SPA page navigation flow triggered by a link click
    * @param {string} href - The route to navigate to (e.g., "home", "about", "gallery")
+   * @param {string} currentPath - The current path of the page
+   * @param {boolean} hardRefresh - Whether the page was hard refreshed
    */
   async updatePage(href, currentPath, hardRefresh = false) {
     await this.requestPage(href);
@@ -107,6 +109,7 @@ export class Router {
    */
   async requestPage(href) {
     const routePath = this.buildRoute(href);
+    console.log("requestPage", routePath);
 
     // Check if route is valid
     if (routePath === null) {
@@ -140,12 +143,15 @@ export class Router {
     );
 
     const pageContent = newPageDOM.querySelector("main");
-    const newPageContent = newPageDOM.querySelector("section.page-content");
+    this.template = pageContent.getAttribute("data-template");
+    this.backgroundColor = pageContent.getAttribute("data-background") || null;
+    this.color = pageContent.getAttribute("data-color") || null;
+    
+    const newPageContent = pageContent.querySelector("section.page-content");
     const newPageFragment = document.createDocumentFragment();
     newPageFragment.appendChild(newPageContent);
 
-    // could update the main element in one go isntead of multiple steps
-    this.template = pageContent.getAttribute("data-template");
+    // could update the main element in one go instead of multiple steps
     this.mainElement.replaceChildren(newPageFragment);
     this.mainElement.setAttribute(
       "data-template",
@@ -162,6 +168,8 @@ export class Router {
     this.preloadImages();
     // Dispatch a resize event to trigger the smooth scroll to update the new page height
     window.dispatchEvent(new Event("resize"));
+    // Set the background and color of the page
+    BackgroundColors.change(this.backgroundColor, this.color);
   }
 
   /**
@@ -170,15 +178,13 @@ export class Router {
    */
   preloadImages() {
     const imageElements = document.querySelectorAll("img[data-src]");
-    console.log(`Router: Found ${imageElements.length} images with data-src`);
 
     imageElements.forEach((element) => {
       if (!element.src) {
         const dataSrc = element.getAttribute("data-src");
-        console.log(`Router: Setting src from data-src: ${dataSrc}`);
         element.src = dataSrc;
         element.onload = () => {
-          console.log("Router: Image loaded", element.src);
+          // Apply an animation class?
         };
       }
     });
@@ -285,6 +291,10 @@ export class Router {
 
       if (this.validRoutes.has(route)) {
         this.updatePage(route, "", true);
+        // Pass the route information with the hard-refresh event
+        window.dispatchEvent(new CustomEvent("hard-refresh", { 
+          detail: { route: route } 
+        }));
       } else {
         this.redirectToHome();
       }
