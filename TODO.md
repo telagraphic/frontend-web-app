@@ -51,7 +51,7 @@ package this as:
 **8/26/**
 
 - Finished preloader for initial page load
-- 
+- Added navigation color changes and page background color animation
 
 
 **8/25**
