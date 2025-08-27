@@ -1,10 +1,11 @@
 import { gsap } from "gsap";
 import { $, $$, setupHelpers } from "../utils/Helpers.js";
+import { Easings } from "../utils/Easings.js";
 // Fix with web pack or vite
 // import { normalizeWheel } from "../../node_modules/normalize-wheel-es/index.d.ts";
 
 export class SmoothScroll {
-  constructor({ container, wrapper }) {
+  constructor({ container, wrapper, easingType = 'linear' }) {
     this.container = container;
     this.wrapper = wrapper;
     this.scroll = {
@@ -12,6 +13,15 @@ export class SmoothScroll {
       target: 0,
       limit: 0,
     };
+    this.options = {
+      momentum: 0.95,
+      maxSpeed: 50,
+    };
+    
+    // Initialize easing system
+    this.easings = new Easings(easingType);
+    this.easingType = easingType;
+    
     setupHelpers();
   }
 
@@ -61,15 +71,36 @@ export class SmoothScroll {
    * Uses interpolate and clamp for the lerp effect
    */
   updateSmoothScroll(event) {
+
     /**
-     * scroll.target is updated on every mousewheel event
-     * interpolate calculates the next value for scroll.current
+     * Set different ease for touch devices
      */
-    this.scroll.current = gsap.utils.interpolate(
-      this.scroll.current,
-      this.scroll.target,
-      0.1,
-    );
+    const isTouch = 'ontouchstart' in window;
+    const ease = isTouch ? 0.12 : 0.08;
+    
+    // Update easing parameters for touch devices
+    this.easings.updateParams({ ease });
+
+    /**
+     * Apply the selected easing function
+     */
+    const easingFunction = this.easings.getCurrentEasingFunction();
+    if (easingFunction) {
+      if (this.easingType === 'spring') {
+        // Spring easing returns an object with current and velocity
+        const result = easingFunction(this.scroll.current, this.scroll.target);
+        this.scroll.current = result.current;
+        this.easings.velocity = result.velocity;
+      } else {
+        // Other easing functions return the new current value
+        this.scroll.current = easingFunction(this.scroll.current, this.scroll.target, this.options.maxSpeed);
+      }
+    } else {
+      // Fallback to linear if something goes wrong
+      this.scroll.current = this.easings.linearEasing(this.scroll.current, this.scroll.target, this.options.maxSpeed);
+    }
+
+
 
     /**
      * Ensures scroll.current is not less than 0
@@ -91,9 +122,11 @@ export class SmoothScroll {
      * Animates the wrapper element within the .smooth-scroll-container parent for smooth scroll effect
      */
     if (this.wrapper) {
-      this.wrapper.style.transform = `translateY(-${this.scroll.current}px)`;
+      this.wrapper.style.transform = `translate3d(0, -${this.scroll.current}px, 0)`;
     }
   }
+
+
 
   /**
    * Setup event listeners for mousewheel and browser resize

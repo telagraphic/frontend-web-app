@@ -134,6 +134,7 @@ export default class Page {
         this.smoothScroll = new SmoothScroll({
           container: document.body,
           wrapper: document.querySelector("section.page-content"),
+          easingType: "linear",
         });
         this.smoothScroll.create();
         this.smoothScroll.setupEventListeners();
