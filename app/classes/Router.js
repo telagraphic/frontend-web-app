@@ -11,6 +11,7 @@
  */
 
 import { BackgroundColors } from "./Colors.js";
+import { $, $$, setupHelpers } from "../utils/Helpers.js";
 
 export class Router {
   constructor(mainElement) {
@@ -20,7 +21,7 @@ export class Router {
     this.mainElement = mainElement || document.querySelector("main");
     this.pageHistory = window.history;
     this.initialPage = null;
-
+    setupHelpers();
     this.setupRoutes();
   }
 

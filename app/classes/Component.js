@@ -1,9 +1,12 @@
+import { $, $$, setupHelpers } from "../utils/Helpers.js";
+
 export default class Component extends EventTarget {
   constructor({ element, elements, transitionOverlay }) {
     super();
     this.selector = element;
     this.selectorChildren = { ...elements };
     this.eventTarget = new EventTarget();
+    setupHelpers();
     this.create();
     this.setupEventListeners();
   }

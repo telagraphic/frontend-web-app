@@ -1,4 +1,5 @@
 import { gsap } from "gsap";
+import { $, $$, setupHelpers } from "../utils/Helpers.js";
 // Fix with web pack or vite
 // import { normalizeWheel } from "../../node_modules/normalize-wheel-es/index.d.ts";
 
@@ -11,6 +12,7 @@ export class SmoothScroll {
       target: 0,
       limit: 0,
     };
+    setupHelpers();
   }
 
   /**

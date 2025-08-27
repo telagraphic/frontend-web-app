@@ -3,6 +3,7 @@ import { Animation } from "./Animation.js";
 import Titles from "../animation/Titles.js";
 import AsyncLoad from "./AsyncLoad.js";
 import { BackgroundColors } from "./Colors.js";
+import { $, $$, setupHelpers } from "../utils/Helpers.js";
 
 export default class Page {
   constructor({ id, element, elements, transitionOverlay }) {
@@ -17,6 +18,7 @@ export default class Page {
     // this.animations = new Animations("[data-template]", this.selectorChildren);
     this.animation = new Animation();
     this.preloadImagesSelector = "img[data-src]";
+    setupHelpers();
   }
 
   /**

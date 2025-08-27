@@ -8,10 +8,13 @@ import { About } from "./pages/About.js";
 import { Gallery } from "./pages/Gallery.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
+import { $, $$, setupHelpers } from "./utils/Helpers.js";
 import "../styles/styles.scss";
 
 class App {
   constructor() {
+    // Setup helper functions first
+    setupHelpers(); 
     this.pageHistory = window.history;
     this.mainElement = document.querySelector("main");
     this.router = new Router();
@@ -19,8 +22,6 @@ class App {
     this.setupApp();
     this.setupEventListeners();
     this.createPreloader();
-    // Don't create navigation here - wait for the correct page to be set
-    // this.createNavigation();
   }
 
 
@@ -37,7 +38,7 @@ class App {
       gallery: new Gallery(),
     };
 
-    this.content = document.querySelector("main");
+    this.content = $("main");
     
     // If a specific page is provided, use it; otherwise read from DOM
     if (specificPage) {
