@@ -1,13 +1,28 @@
-a {
+nav {
+  ul {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    list-style: none;
+  }
+
+  a {
     text-decoration: none;
     transition: color 0.3s ease;
     color: #000000;
 
     &:hover {
-        color: #000000;
+      color: #000000;
     }
 
     &:visited {
-        color: #000000;
+      color: #000000;
     }
+  }
 }

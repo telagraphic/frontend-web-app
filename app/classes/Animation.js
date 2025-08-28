@@ -140,4 +140,38 @@ export class Animation extends Component {
       });
     });
   }
+
+
+  async GSAPShowTransition(element) {
+    return new Promise((resolve) => {
+      const showTimeline = gsap.timeline();
+
+      showTimeline.to(element, {
+        transform: "translateY(0)",
+        duration: 0.5,
+        ease: "power2.inOut",
+        onComplete: () => {
+          resolve();
+        },
+      });
+    });
+  }
+
+
+  async GSAPHideTransition(element) {
+    return new Promise((resolve) => {
+      const hideTimeline = gsap.timeline();
+
+      hideTimeline.to(element, {
+        transform: "translateY(100%)",
+        duration: 0.5,
+        delay: 0.5,
+        ease: "power2.inOut",
+        onComplete: () => {
+          resolve();
+        },
+      });
+    });
+  }
 }
+

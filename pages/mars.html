@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mars - Planet</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body>
+    <div id="app">
+        <div class="preloader">
+            <div class="preloader-content">
+                <div class="spinner"></div>
+                <p>Loading Mars...</p>
+            </div>
+        </div>
+        
+        <nav class="navigation">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="../index.html">Solar System</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="mercury.html">Mercury</a></li>
+                    <li><a href="venus.html">Venus</a></li>
+                    <li><a href="earth.html">Earth</a></li>
+                    <li><a href="mars.html" class="active">Mars</a></li>
+                    <li><a href="jupiter.html">Jupiter</a></li>
+                    <li><a href="saturn.html">Saturn</a></li>
+                    <li><a href="uranus.html">Uranus</a></li>
+                    <li><a href="neptune.html">Neptune</a></li>
+                    <li><a href="pluto.html">Pluto</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="page-content">
+            <div class="planet-hero">
+                <h1 class="planet-title">Mars</h1>
+                <div class="planet-image">
+                    <img src="https://frontend-web-app.b-cdn.net/mars.jpg" alt="Mars" class="lazy">
+                </div>
+                <div class="planet-info">
+                    <h2>The Red Planet</h2>
+                    <p>Mars is the fourth planet from the Sun and the second-smallest planet in the Solar System, being larger than only Mercury. Mars is often called the 'Red Planet' due to its reddish appearance.</p>
+                    
+                    <div class="planet-stats">
+                        <div class="stat">
+                            <h3>Distance from Sun</h3>
+                            <p>227.9 million km</p>
+                        </div>
+                        <div class="stat">
+                            <h3>Diameter</h3>
+                            <p>6,792 km</p>
+                        </div>
+                        <div class="stat">
+                            <h3>Day Length</h3>
+                            <p>24.6 hours</p>
+                        </div>
+                        <div class="stat">
+                            <h3>Year Length</h3>
+                            <p>687 Earth days</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../app/App.js" type="module"></script>
+</body>
+</html>

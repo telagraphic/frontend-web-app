@@ -6,6 +6,7 @@ import { Router } from "./classes/Router.js";
 import { Home } from "./pages/Home.js";
 import { About } from "./pages/About.js";
 import { Gallery } from "./pages/Gallery.js";
+import { Earth } from "./pages/Earth.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
 import { $, $$, setupHelpers } from "./utils/Helpers.js";
@@ -13,7 +14,6 @@ import "../styles/styles.scss";
 
 class App {
   constructor() {
-    // Setup helper functions first
     setupHelpers(); 
     this.pageHistory = window.history;
     this.mainElement = document.querySelector("main");
@@ -36,6 +36,7 @@ class App {
       home: new Home(),
       about: new About(),
       gallery: new Gallery(),
+      earth: new Earth(),
     };
 
     this.content = $("main");

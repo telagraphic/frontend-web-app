@@ -2,6 +2,7 @@ import { SmoothScroll } from "./SmoothScroll.js";
 import { Animation } from "./Animation.js";
 import Titles from "../animation/Titles.js";
 import AsyncLoad from "./AsyncLoad.js";
+import { NavigationComponent } from "../components/NavigationComponent.js";
 import { BackgroundColors } from "./Colors.js";
 import { $, $$, setupHelpers } from "../utils/Helpers.js";
 
@@ -87,7 +88,9 @@ export default class Page {
 
     
     // await this.animations.onCSSAnimation(this.element, animationCallback);
-    await this.animation.GSAPShowAnimation(this.element);
+    // await this.animation.GSAPShowAnimation(this.element);
+
+    await this.animation.GSAPHideTransition(this.transitionOverlay);
   }
 
   /**
@@ -105,7 +108,8 @@ export default class Page {
       element.classList.add("hide-element");
     };
     // await this.animations.onCSSAnimation(this.element, callback);
-    await this.animation.GSAPHideAnimation(this.element);
+    // await this.animation.GSAPHideAnimation(this.element);
+    await this.animation.GSAPShowTransition(this.transitionOverlay);
   }
 
   /**

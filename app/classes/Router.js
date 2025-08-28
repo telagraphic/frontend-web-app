@@ -43,6 +43,15 @@ export class Router {
     this.validRoutes.set("home", "index.html");
     this.validRoutes.set("about", "pages/about.html");
     this.validRoutes.set("gallery", "pages/gallery.html");
+    this.validRoutes.set("earth", "pages/earth.html");
+    this.validRoutes.set("mercury", "pages/mercury.html");
+    this.validRoutes.set("venus", "pages/venus.html");
+    this.validRoutes.set("mars", "pages/mars.html");
+    this.validRoutes.set("jupiter", "pages/jupiter.html");
+    this.validRoutes.set("saturn", "pages/saturn.html");
+    this.validRoutes.set("uranus", "pages/uranus.html");
+    this.validRoutes.set("neptune", "pages/neptune.html");
+    this.validRoutes.set("pluto", "pages/pluto.html");
   }
 
   /**
