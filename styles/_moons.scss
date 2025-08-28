@@ -1,0 +1,37 @@
+.moons {
+
+ 
+  article {
+    padding: 1rem;
+    height: 100vh;
+    display: flex;
+    gap: 1.6vw;
+    padding: 0 1.6vw;
+    width: 100%;
+  }
+
+  .col {
+    flex: 1;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6vw;
+    padding-bottom: 1.6vw;
+  }
+}
+
+.moon-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 10rem;
+  border-radius: 0.625rem;
+  background-color: black;
+  color: #e1e1e1;
+  text-align: center;
+  height: 15rem;
+  margin-bottom: 1.5rem;
+}

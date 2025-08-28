@@ -12,7 +12,7 @@ export class Venus extends Page {
   }
 
   create() {
-    super.create();
+    super.create({});
   }
 
 }

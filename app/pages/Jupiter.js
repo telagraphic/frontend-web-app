@@ -12,7 +12,6 @@ export class Jupiter extends Page {
   }
 
   create() {
-    super.create();
+    super.create({});
   }
-
 }

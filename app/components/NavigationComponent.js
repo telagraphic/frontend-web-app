@@ -23,6 +23,7 @@ export class NavigationComponent extends HTMLElement {
                     <li><a href="uranus">Uranus</a></li>
                     <li><a href="neptune">Neptune</a></li>
                     <li><a href="pluto">Pluto</a></li>
+                    <li><a href="moons">Moons</a></li>
                 </ul>
             </nav>
         `;

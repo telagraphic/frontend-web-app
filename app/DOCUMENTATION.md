@@ -15,6 +15,10 @@ For the SPA implementation, the router hijacks the default link click event, use
 
 It also updates the page/url for hard refreshes edge cases, toggles page classes to be consistent with the page registry system, sets up named routes and helper functions to ensure the correct page file is fetched.
 
+- Had to use Promise.all() to wait for all the images to load before resolving the updateMarkup method
+
+- Used ResizeObserver to resolve once the layout calculations were complete once the replaceChildren method was called for the new page
+
 ## Smooth Scroll
 
 Smooth scroll creates a smooth buttery flow when scrolling the page.

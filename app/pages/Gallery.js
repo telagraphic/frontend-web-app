@@ -9,6 +9,6 @@ export class Gallery extends Page {
   }
 
   create() {
-    super.create();
+    super.create({});
   }
 }

@@ -12,7 +12,7 @@ export class Earth extends Page {
   }
 
   create() {
-    super.create();
+    super.create({});
   }
 
   async show() {

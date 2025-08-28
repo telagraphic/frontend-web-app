@@ -12,7 +12,7 @@ export class Uranus extends Page {
   }
 
   create() {
-    super.create();
+    super.create({});
   }
 
 }

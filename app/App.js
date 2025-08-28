@@ -15,6 +15,7 @@ import { Pluto } from "./pages/Pluto.js";
 import { Saturn } from "./pages/Saturn.js";
 import { Uranus } from "./pages/Uranus.js";
 import { Venus } from "./pages/Venus.js";
+import { Moons } from "./pages/Moons.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
 import { $, $$, setupHelpers } from "./utils/Helpers.js";
@@ -53,6 +54,7 @@ class App {
       saturn: new Saturn(),
       uranus: new Uranus(),
       venus: new Venus(),
+      moons: new Moons(),
     };
 
     this.content = $("main");

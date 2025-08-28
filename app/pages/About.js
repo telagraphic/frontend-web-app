@@ -10,6 +10,6 @@ export class About extends Page {
   }
 
   create() {
-    super.create();
+    super.create({});
   }
 }

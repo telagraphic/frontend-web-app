@@ -52,6 +52,7 @@ export class Router {
     this.validRoutes.set("uranus", "pages/uranus.html");
     this.validRoutes.set("neptune", "pages/neptune.html");
     this.validRoutes.set("pluto", "pages/pluto.html");
+    this.validRoutes.set("moons", "pages/moons.html");
   }
 
   /**
@@ -93,18 +94,21 @@ export class Router {
       return { isValid: false, action: "redirect", url: href };
 
     // Else, return a valid route
-    return { isValid: true, route: href, normalizedPath: href.replace("/", "") };
+    return {
+      isValid: true,
+      route: href,
+      normalizedPath: href.replace("/", ""),
+    };
   }
 
   /**
    * SPA page navigation flow triggered by a link click
    * @param {string} href - The route to navigate to (e.g., "home", "about", "gallery")
-   * @param {string} currentPath - The current path of the page
    * @param {boolean} hardRefresh - Whether the page was hard refreshed
    */
-  async updatePage(href, currentPath, hardRefresh = false) {
+  async updatePage(href, hardRefresh = false) {
     await this.requestPage(href);
-    await this.updateMarkup(this.newPage, currentPath);
+    await this.updateMarkup(this.newPage);
     await this.updateHistory(href);
 
     // need to remove "home" from the main element when hard refresh occurs
@@ -119,7 +123,6 @@ export class Router {
    */
   async requestPage(href) {
     const routePath = this.buildRoute(href);
-    console.log("requestPage", routePath);
 
     // Check if route is valid
     if (routePath === null) {
@@ -145,7 +148,7 @@ export class Router {
    * Replace DOM with new page content
    * @param {*} response
    */
-  async updateMarkup(response, currentPage) {
+  async updateMarkup(response) {
     const newPageHTML = await response.text();
     const newPageDOM = new DOMParser().parseFromString(
       newPageHTML,
@@ -156,7 +159,7 @@ export class Router {
     this.template = pageContent.getAttribute("data-template");
     this.backgroundColor = pageContent.getAttribute("data-background") || null;
     this.color = pageContent.getAttribute("data-color") || null;
-    
+
     const newPageContent = pageContent.querySelector("section.page-content");
     const newPageFragment = document.createDocumentFragment();
     newPageFragment.appendChild(newPageContent);
@@ -169,13 +172,13 @@ export class Router {
     );
 
     // Update main element classes, will be undefined on an invalid route
-    if (currentPage !== undefined && currentPage.length !== 0) {
-      this.mainElement.classList.remove(`${currentPage}`);
-    }
+    this.mainElement.removeAttribute("class");
     this.mainElement.classList.add(`${this.template.toString()}`);
 
     // Preload images after DOM is updated
-    this.preloadImages();
+    await this.preloadImages();
+    // Waits for the images to be loaded and complete layout calculation
+    await this.waitForDOMReady();
     // Dispatch a resize event to trigger the smooth scroll to update the new page height
     window.dispatchEvent(new Event("resize"));
     // Set the background and color of the page
@@ -186,17 +189,40 @@ export class Router {
    * Preload images for the page, need to fix when first page is /about or /gallery
    * @returns {Promise} Resolves when images are loaded
    */
-  preloadImages() {
-    const imageElements = document.querySelectorAll("img[data-src]");
+  async preloadImages() {
+    const imageElements = Array.from(
+      document.querySelectorAll("img[data-src]")
+    );
+    console.log("preloadImages", imageElements);
+    if (imageElements.length === 0) return;
 
-    imageElements.forEach((element) => {
-      if (!element.src) {
-        const dataSrc = element.getAttribute("data-src");
-        element.src = dataSrc;
-        element.onload = () => {
-          // Apply an animation class?
-        };
-      }
+    const imagePromises = imageElements.map((element) => {
+      return new Promise((resolve) => {
+        if (!element.src) {
+          const dataSrc = element.getAttribute("data-src");
+          element.src = dataSrc;
+          element.onload = () => resolve();
+          element.onerror = () => resolve();
+        } else {
+          resolve();
+        }
+      });
+    });
+
+    await Promise.all(imagePromises);
+  }
+
+  /**
+   * Returns a promise that syncs with the RAF loop to ensure DOM is ready
+   * @returns {Promise} Resolves when the DOM is ready
+   */
+  waitForDOMReady() {
+    return new Promise((resolve) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          resolve();
+        });
+      });
     });
   }
 
@@ -302,9 +328,11 @@ export class Router {
       if (this.validRoutes.has(route)) {
         this.updatePage(route, "", true);
         // Pass the route information with the hard-refresh event
-        window.dispatchEvent(new CustomEvent("hard-refresh", { 
-          detail: { route: route } 
-        }));
+        window.dispatchEvent(
+          new CustomEvent("hard-refresh", {
+            detail: { route: route },
+          })
+        );
       } else {
         this.redirectToHome();
       }

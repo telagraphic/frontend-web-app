@@ -26,7 +26,7 @@ export default class Page {
    * Create a page object of elements
    * Initalize any other components for the page
    */
-  async create() {
+  async create({isScrollSmooth = true}) {
     /**
      * Changing the markup structure might break the first two elements
      */
@@ -51,9 +51,9 @@ export default class Page {
       }
     });
 
-    // Wait for smooth scroll to be fully initialized
-    // await this.preloadImages();
-    await this.setupSmoothScroll();
+    if (isScrollSmooth) {
+      await this.setupSmoothScroll();
+    }
     this.createAnimations();
   }
 
@@ -77,6 +77,8 @@ export default class Page {
    * Show the page
    */
   async show() {
+    // TODO: this is throwing an undefined
+    // this.setupEventListeners();
     /**
      * Execute a CSS Animation Keyframe
      * @param {*} element
@@ -154,6 +156,9 @@ export default class Page {
    */
   setupEventListeners() {
     this.smoothScroll.setupEventListeners();
+    document.addEventListener("resize", () => {
+      console.log("resize");
+    });
   }
 
   /**
