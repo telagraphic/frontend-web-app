@@ -7,6 +7,9 @@ import { Home } from "./pages/Home.js";
 import { About } from "./pages/About.js";
 import { Gallery } from "./pages/Gallery.js";
 import { Earth } from "./pages/Earth.js";
+import { Jupiter } from "./pages/Jupiter.js";
+import { Mars } from "./pages/Mars.js";
+import { Mercury } from "./pages/Mercury.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
 import { $, $$, setupHelpers } from "./utils/Helpers.js";
@@ -21,7 +24,7 @@ class App {
     this.setupPages();
     this.setupApp();
     this.setupEventListeners();
-    this.createPreloader();
+    // this.createPreloader();
   }
 
 
@@ -37,6 +40,9 @@ class App {
       about: new About(),
       gallery: new Gallery(),
       earth: new Earth(),
+      jupiter: new Jupiter(),
+      mars: new Mars(),
+      mercury: new Mercury(),
     };
 
     this.content = $("main");

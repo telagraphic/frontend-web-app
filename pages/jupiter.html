@@ -1,75 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jupiter - Planet</title>
-    <link rel="stylesheet" href="../styles/styles.css">
-</head>
-<body>
-    <div id="app">
-        <div class="preloader">
-            <div class="preloader-content">
-                <div class="spinner"></div>
-                <p>Loading Jupiter...</p>
-            </div>
-        </div>
-        
-        <nav class="navigation">
-            <div class="nav-container">
-                <div class="nav-logo">
-                    <a href="../index.html">Solar System</a>
-                </div>
-                <ul class="nav-menu">
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="gallery.html">Gallery</a></li>
-                    <li><a href="mercury.html">Mercury</a></li>
-                    <li><a href="venus.html">Venus</a></li>
-                    <li><a href="earth.html">Earth</a></li>
-                    <li><a href="mars.html">Mars</a></li>
-                    <li><a href="jupiter.html" class="active">Jupiter</a></li>
-                    <li><a href="saturn.html">Saturn</a></li>
-                    <li><a href="uranus.html">Uranus</a></li>
-                    <li><a href="neptune.html">Neptune</a></li>
-                    <li><a href="pluto.html">Pluto</a></li>
-                </ul>
-            </div>
-        </nav>
+    <link rel="stylesheet" href="../styles/styles.css" />
+  </head>
+  <body>
+    <section class="transition-overlay"></section>
+    <section class="preloader">
+      <h1>Loading</h1>
+      <p>%</p>
+    </section>
 
-        <main class="page-content">
-            <div class="planet-hero">
-                <h1 class="planet-title">Jupiter</h1>
-                <div class="planet-image">
-                    <img src="https://frontend-web-app.b-cdn.net/jupiter.jpg" alt="Jupiter" class="lazy">
-                </div>
-                <div class="planet-info">
-                    <h2>The Giant Planet</h2>
-                    <p>Jupiter is the fifth planet from the Sun and the largest in the Solar System. It is a gas giant with a mass more than two and a half times that of all the other planets in the Solar System combined.</p>
-                    
-                    <div class="planet-stats">
-                        <div class="stat">
-                            <h3>Distance from Sun</h3>
-                            <p>778.5 million km</p>
-                        </div>
-                        <div class="stat">
-                            <h3>Diameter</h3>
-                            <p>142,984 km</p>
-                        </div>
-                        <div class="stat">
-                            <h3>Day Length</h3>
-                            <p>9.9 hours</p>
-                        </div>
-                        <div class="stat">
-                            <h3>Year Length</h3>
-                            <p>11.9 Earth years</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
+    <main class="jupiter" data-template="jupiter">
+      <section class="page-content">
+        <navigation-component></navigation-component>
+        <article>
+          <section class="page-header">
+            <img
+              src="https://frontend-web-app.b-cdn.net/jupiter.webp"
+              alt="Earth"
+            />
+          </section>
+          <section class="page-body">
+            <h1>Jupiter</h1>
+            <p>
+              Jupiter is the fifth planet from the Sun and the largest in the
+              Solar System. It is a gas giant with a mass more than two and a
+              half times that of all the other planets in the Solar System
+              combined.
+            </p>
+
+            <h2>Astrology</h2>
+            <p>
+              In astrology, Jupiter represents expansion, wisdom, and abundance.
+              Known as the "Greater Benefic," Jupiter governs higher learning,
+              philosophy, religion, and long-distance travel. It's associated
+              with the zodiac sign Sagittarius and embodies the qualities of
+              optimism, generosity, and spiritual growth. Jupiter brings good
+              fortune and represents our quest for meaning and understanding.
+            </p>
+
+            <h2>Alchemy</h2>
+            <p>
+              Within alchemical traditions, Jupiter symbolizes the principle of
+              expansion and the element of Air. It represents the process of
+              sublimation, where matter is elevated to a higher state. Jupiter
+              embodies the transformative power of knowledge and wisdom,
+              representing the alchemical stage where understanding leads to
+              spiritual elevation and the expansion of consciousness.
+            </p>
+
+            <h2>Astronomy</h2>
+            <p>
+              Jupiter is a massive gas giant composed primarily of hydrogen and
+              helium. Its iconic Great Red Spot is a persistent storm system
+              larger than Earth. Jupiter has at least 79 known moons, including
+              the four Galilean moons: Io, Europa, Ganymede, and Callisto, which
+              were discovered by Galileo in 1610.
+            </p>
+
+            <table>
+              <tr>
+                <th>Distance from Sun</th>
+                <td>778.5 million km</td>
+              </tr>
+              <tr>
+                <th>Diameter</th>
+                <td>142,984 km</td>
+              </tr>
+              <tr>
+                <th>Day Length</th>
+                <td>9.9 hours</td>
+              </tr>
+              <tr>
+                <th>Year Length</th>
+                <td>11.9 Earth years</td>
+              </tr>
+            </table>
+
+            <h2>Major Moons of Jupiter</h2>
+            <table>
+              <tr>
+                <th>Moon Name</th>
+                <th>Diameter (km)</th>
+                <th>Discovery Year</th>
+                <th>Notable Features</th>
+              </tr>
+              <tr>
+                <td>Ganymede</td>
+                <td>5,268</td>
+                <td>1610</td>
+                <td>Largest moon in Solar System</td>
+              </tr>
+              <tr>
+                <td>Callisto</td>
+                <td>4,821</td>
+                <td>1610</td>
+                <td>Most heavily cratered surface</td>
+              </tr>
+              <tr>
+                <td>Io</td>
+                <td>3,643</td>
+                <td>1610</td>
+                <td>Most volcanically active body</td>
+              </tr>
+              <tr>
+                <td>Europa</td>
+                <td>3,122</td>
+                <td>1610</td>
+                <td>Subsurface ocean potential</td>
+              </tr>
+              <tr>
+                <td>Amalthea</td>
+                <td>167</td>
+                <td>1892</td>
+                <td>Irregular shape, reddish color</td>
+              </tr>
+              <tr>
+                <td>Himalia</td>
+                <td>139</td>
+                <td>1904</td>
+                <td>Largest irregular satellite</td>
+              </tr>
+              <tr>
+                <td>Thebe</td>
+                <td>98</td>
+                <td>1979</td>
+                <td>Small inner moon</td>
+              </tr>
+              <tr>
+                <td>Elara</td>
+                <td>86</td>
+                <td>1905</td>
+                <td>Irregular outer moon</td>
+              </tr>
+            </table>
+          </section>
+        </article>
+      </section>
+    </main>
 
     <script src="../app/App.js" type="module"></script>
-</body>
+  </body>
 </html>
