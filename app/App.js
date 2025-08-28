@@ -10,6 +10,11 @@ import { Earth } from "./pages/Earth.js";
 import { Jupiter } from "./pages/Jupiter.js";
 import { Mars } from "./pages/Mars.js";
 import { Mercury } from "./pages/Mercury.js";
+import { Neptune } from "./pages/Neptune.js";
+import { Pluto } from "./pages/Pluto.js";
+import { Saturn } from "./pages/Saturn.js";
+import { Uranus } from "./pages/Uranus.js";
+import { Venus } from "./pages/Venus.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
 import { $, $$, setupHelpers } from "./utils/Helpers.js";
@@ -24,7 +29,7 @@ class App {
     this.setupPages();
     this.setupApp();
     this.setupEventListeners();
-    // this.createPreloader();
+    this.createPreloader();
   }
 
 
@@ -43,6 +48,11 @@ class App {
       jupiter: new Jupiter(),
       mars: new Mars(),
       mercury: new Mercury(),
+      neptune: new Neptune(),
+      pluto: new Pluto(),
+      saturn: new Saturn(),
+      uranus: new Uranus(),
+      venus: new Venus(),
     };
 
     this.content = $("main");

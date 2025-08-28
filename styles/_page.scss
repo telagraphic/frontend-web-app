@@ -9,8 +9,10 @@
 .page {
   &-header {
     img {
-      max-inline-size: 100%;
+      width: 100vw;
+      height: 100vh;
       object-fit: cover;
+      max-inline-size: none; // Override global img constraint
     }
   }
 
