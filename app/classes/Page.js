@@ -57,6 +57,14 @@ export default class Page {
     this.createAnimations();
   }
 
+  /**
+   * Remove page state to avoid memory leaks (duplicate animations on page return, etc...)
+   * Acts like an automatic "event" for child classes
+   */
+  destroy() {
+
+  }
+
   createAnimations() {
     this.animations = [];
 
@@ -100,6 +108,7 @@ export default class Page {
    */
   async hide() {
     this.removeEventListeners();
+    this.destroy();
 
     /**
      * Executes CSS Animation Keyframe
@@ -114,20 +123,21 @@ export default class Page {
     await this.animation.GSAPShowTransition(this.transitionOverlay);
   }
 
+
   /**
    * Preload images for the page, need to fix when first page is /about or /gallery
    * @returns {Promise} Resolves when images are loaded
    */
-  async preloadImages() {
-    return new Promise((resolve) => {
-      imageElements.forEach(async (element) => {
-        this.asyncLoadedImages.push(new AsyncLoad(element));
-      });
+  // async preloadImages() {
+  //   return new Promise((resolve) => {
+  //     imageElements.forEach(async (element) => {
+  //       this.asyncLoadedImages.push(new AsyncLoad(element));
+  //     });
 
-      // images at the bottom of the screen are loaded but don't add to the content height
-      this.smoothScroll.onResize();
-    });
-  }
+  //     // images at the bottom of the screen are loaded but don't add to the content height
+  //     this.smoothScroll.onResize();
+  //   });
+  // }
 
   /**
    * Initalizes the smoothScroll object for the page

@@ -193,7 +193,6 @@ export class Router {
     const imageElements = Array.from(
       document.querySelectorAll("img[data-src]")
     );
-    console.log("preloadImages", imageElements);
     if (imageElements.length === 0) return;
 
     const imagePromises = imageElements.map((element) => {
