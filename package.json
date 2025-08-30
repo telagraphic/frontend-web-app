@@ -11,8 +11,8 @@
     "preview": "vite preview",
     "deploy": "vite build",
     "sass:watch": "sass --watch styles/styles.scss:dist/css/styles.css --style=expanded --source-map",
-    "sass:build": "sass styles/styles.scss:dist/css/styles.css --style=compressed --no-source-map",
-    "sass:dev": "sass styles/styles.scss:dist/css/styles.css --style=expanded --source-map",
+    "sass:build": "sass styles/styles.scss styles/styles.css --style=compressed --no-source-map",
+    "sass:dev": "sass styles/styles.scss styles/styles.css --style=expanded --source-map",
     "sass:check": "sass styles/styles.scss --style=expanded --no-source-map --quiet",
     "build:css": "npm run sass:build",
     "watch:css": "npm run sass:watch",
@@ -28,11 +28,17 @@
     "cssnano": "^7.1.0",
     "glob": "^11.0.3",
     "postcss": "^8.5.6",
-    "sass": "^1.90.0"
+    "sass": "^1.90.0",
+    "@types/bun": "latest"
   },
   "browserslist": [
     "defaults",
     "not ie <= 11",
     "maintained node versions"
-  ]
+  ],
+  "name": "frontend-web-app",
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5"
+  }
 }

@@ -4,6 +4,15 @@
 ### DO
 
 
+- Setup Bun and static routes
+- Add hono and routes
+- Setup static file serving
+- Setup template engine
+- Update router, named routes and remove un-needed methods
+- Add API calls and test
+
+
+
 
 
 ## design

@@ -41,18 +41,18 @@ export class Router {
   setupRoutes() {
     this.validRoutes = new Map();
     this.validRoutes.set("home", "index.html");
-    this.validRoutes.set("about", "pages/about.html");
-    this.validRoutes.set("gallery", "pages/gallery.html");
-    this.validRoutes.set("earth", "pages/earth.html");
-    this.validRoutes.set("mercury", "pages/mercury.html");
-    this.validRoutes.set("venus", "pages/venus.html");
-    this.validRoutes.set("mars", "pages/mars.html");
-    this.validRoutes.set("jupiter", "pages/jupiter.html");
-    this.validRoutes.set("saturn", "pages/saturn.html");
-    this.validRoutes.set("uranus", "pages/uranus.html");
-    this.validRoutes.set("neptune", "pages/neptune.html");
-    this.validRoutes.set("pluto", "pages/pluto.html");
-    this.validRoutes.set("moons", "pages/moons.html");
+    this.validRoutes.set("about", "/about");
+    this.validRoutes.set("gallery", "/gallery");
+    this.validRoutes.set("earth", "/earth");
+    this.validRoutes.set("mercury", "/mercury");
+    this.validRoutes.set("venus", "/venus");
+    this.validRoutes.set("mars", "/mars");
+    this.validRoutes.set("jupiter", "/jupiter");
+    this.validRoutes.set("saturn", "/saturn");
+    this.validRoutes.set("uranus", "/uranus");
+    this.validRoutes.set("neptune", "/neptune");
+    this.validRoutes.set("pluto", "/pluto");
+    this.validRoutes.set("moons", "/moons");
   }
 
   /**
