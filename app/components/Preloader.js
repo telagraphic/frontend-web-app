@@ -26,7 +26,7 @@ export class Preloader extends Component {
    * Wait for images to load and then update the DOM with the path
    */
   createLoader() {
-    Object.entries(this.elements.images).forEach(([position, element]) => {
+    Object.values(this.elements.images).forEach((element) => {
       // Call onload to register the event listener before the image is loaded, cached images will trigger the event listener
       element.onload = () => this.updatePreloader(element);
       element.src = element.getAttribute("data-src");
