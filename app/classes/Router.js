@@ -40,7 +40,7 @@ export class Router {
    */
   setupRoutes() {
     this.validRoutes = new Map();
-    this.validRoutes.set("home", "index.html");
+    this.validRoutes.set("home", "/");
     this.validRoutes.set("about", "/about");
     this.validRoutes.set("gallery", "/gallery");
     this.validRoutes.set("earth", "/earth");
@@ -130,6 +130,7 @@ export class Router {
       return;
     }
 
+    console.log(`📦 Requesting page: ${routePath}`);
     try {
       const response = await fetch(routePath);
       if (response.ok) {
