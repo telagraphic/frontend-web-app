@@ -4,6 +4,7 @@
 
 /images
 /dist
+/temp_bundles
 
 ##########################
 # config/config.js

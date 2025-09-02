@@ -8,14 +8,15 @@ A modern single-page application built with vanilla JavaScript, SCSS, and GSAP a
 ### Development
 ```bash
 pnpm install
-pnpm run dev
+bun run dev
 ```
 
 Visit `http://localhost:3000` - Vite will handle live reloading, SCSS compilation, and HMR.
 
 ### Production Build
 ```bash
-pnpm run build
+bun run build
+bun run start
 ```
 
 Visit `http://localhost:4173` - Vite will handle live reloading, SCSS compilation, and HMR.
