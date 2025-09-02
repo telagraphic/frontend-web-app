@@ -10,6 +10,8 @@
 - Setup template engine
 - Update router, named routes and remove un-needed methods
 - Add API calls and test
+- Document SSG pages and dynamic SSR page generation with nunjucks
+- Refactor code for spa-api-bun-setup-templating-engine
 
 
 
