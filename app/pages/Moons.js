@@ -44,11 +44,11 @@ export class Moons extends Page {
    */
   setupAnimations() {
     this.containers = Object.values(this.elements).filter(
-      (element) => element && element.classList.contains("container")
+      (element) => element && element.classList.contains("container"),
     );
     this.containers.forEach((container, index) => {
       this.moonAnimations.push(
-        this.createAnimation(container, this.columnDurations[index])
+        this.createAnimation(container, this.columnDurations[index]),
       );
     });
   }
@@ -94,7 +94,7 @@ export class Moons extends Page {
           animation(this.increment);
         });
       },
-      { passive: true }
+      { passive: true },
     );
   }
 

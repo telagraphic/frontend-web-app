@@ -1,21 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Venus - Planet</title>
-    <link rel="stylesheet" href="../styles/styles.css" />
+    <title>Venus</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <script src="/app/App.js" type="module"></script>
   </head>
   <body>
     <section class="transition-overlay"></section>
     <section class="preloader">
-      <h1>Loading</h1>
-      <p>%</p>
+      <h1>Preloading...</h1>
+      <p>%%</p>
     </section>
 
-    <main class="venus" data-template="venus">
+    <main class="about" data-template="about">
       <section class="page-content">
-        <navigation-component></navigation-component>
+        <nav class="navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="gallery">Gallery</a></li>
+            <li><a href="mercury">Mercury</a></li>
+            <li><a href="venus">Venus</a></li>
+            <li><a href="earth">Earth</a></li>
+            <li><a href="mars">Mars</a></li>
+            <li><a href="jupiter">Jupiter</a></li>
+            <li><a href="saturn">Saturn</a></li>
+            <li><a href="uranus">Uranus</a></li>
+            <li><a href="neptune">Neptune</a></li>
+            <li><a href="pluto">Pluto</a></li>
+            <li><a href="moons">Moons</a></li>
+          </ul>
+        </nav>
+
         <article>
           <section class="page-header">
             <img
@@ -26,52 +44,63 @@
           <section class="page-body">
             <h1>Venus</h1>
             <p>
-              Venus, the second planet from the Sun, is often called Earth's "sister planet" due to its 
-              similar size and mass. Named after the Roman goddess of love and beauty, Venus is the 
-              brightest natural object in Earth's night sky after the Moon. This terrestrial planet has 
-              a thick atmosphere composed primarily of carbon dioxide, creating a runaway greenhouse effect 
-              that makes Venus the hottest planet in our solar system, with surface temperatures reaching 
-              900°F (475°C).
+              Venus, the second planet from the Sun, is often called Earth's
+              "sister planet" due to its similar size and mass. Named after the
+              Roman goddess of love and beauty, Venus is the brightest natural
+              object in Earth's night sky after the Moon. This terrestrial
+              planet has a thick atmosphere composed primarily of carbon
+              dioxide, creating a runaway greenhouse effect that makes Venus the
+              hottest planet in our solar system, with surface temperatures
+              reaching 900°F (475°C).
             </p>
 
             <h2>Astrology</h2>
             <p>
-              In astrology, Venus represents love, beauty, harmony, and values. Known as the "Planet of 
-              Love and Beauty," Venus governs our relationships, artistic sensibilities, and what we find 
-              attractive and valuable. It's associated with the zodiac signs Taurus and Libra, embodying 
-              qualities of grace, charm, diplomacy, and the pursuit of pleasure and harmony. Venus represents 
-              our capacity for love, our aesthetic preferences, and our ability to create beauty and 
-              maintain harmonious relationships with others.
+              In astrology, Venus represents love, beauty, harmony, and values.
+              Known as the "Planet of Love and Beauty," Venus governs our
+              relationships, artistic sensibilities, and what we find attractive
+              and valuable. It's associated with the zodiac signs Taurus and
+              Libra, embodying qualities of grace, charm, diplomacy, and the
+              pursuit of pleasure and harmony. Venus represents our capacity for
+              love, our aesthetic preferences, and our ability to create beauty
+              and maintain harmonious relationships with others.
             </p>
 
             <h2>Alchemy</h2>
             <p>
-              Within alchemical traditions, Venus symbolizes the principle of conjunction and the element 
-              of Copper in its most refined and beautiful form. It represents the process of union and 
-              harmony, where opposites come together to create something greater than their individual 
-              parts. Venus embodies the principle of transformation through love and represents the 
-              alchemical stage where consciousness becomes refined and capable of perceiving beauty, 
-              creating harmony, and achieving balance between the material and spiritual aspects of existence.
+              Within alchemical traditions, Venus symbolizes the principle of
+              conjunction and the element of Copper in its most refined and
+              beautiful form. It represents the process of union and harmony,
+              where opposites come together to create something greater than
+              their individual parts. Venus embodies the principle of
+              transformation through love and represents the alchemical stage
+              where consciousness becomes refined and capable of perceiving
+              beauty, creating harmony, and achieving balance between the
+              material and spiritual aspects of existence.
             </p>
 
             <h2>Astronomy</h2>
             <p>
-              Venus is a terrestrial planet with a diameter of about 7,521 miles (12,104 kilometers), 
-              making it nearly the same size as Earth. Its surface is hidden beneath a thick atmosphere 
-              of carbon dioxide (96.5%) with clouds of sulfuric acid, creating a perpetual overcast that 
-              reflects about 70% of incoming sunlight. Venus rotates very slowly and in the opposite 
-              direction to most planets (retrograde rotation), with one Venusian day lasting 243 Earth 
+              Venus is a terrestrial planet with a diameter of about 7,521 miles
+              (12,104 kilometers), making it nearly the same size as Earth. Its
+              surface is hidden beneath a thick atmosphere of carbon dioxide
+              (96.5%) with clouds of sulfuric acid, creating a perpetual
+              overcast that reflects about 70% of incoming sunlight. Venus
+              rotates very slowly and in the opposite direction to most planets
+              (retrograde rotation), with one Venusian day lasting 243 Earth
               days, longer than its year of 225 Earth days.
             </p>
 
             <h2>Venus's Surface Features</h2>
             <p>
-              Venus has no moons, but its surface features are fascinating and unique. The planet's 
-              surface is dominated by vast plains covered in volcanic rock, with numerous volcanoes, 
-              impact craters, and mountain ranges. The highest point on Venus is Maxwell Montes, which 
-              rises about 7 miles (11 kilometers) above the average surface level. Venus also has 
-              numerous coronae (circular features formed by volcanic activity) and tesserae (highly 
-              deformed terrain), indicating a geologically active past.
+              Venus has no moons, but its surface features are fascinating and
+              unique. The planet's surface is dominated by vast plains covered
+              in volcanic rock, with numerous volcanoes, impact craters, and
+              mountain ranges. The highest point on Venus is Maxwell Montes,
+              which rises about 7 miles (11 kilometers) above the average
+              surface level. Venus also has numerous coronae (circular features
+              formed by volcanic activity) and tesserae (highly deformed
+              terrain), indicating a geologically active past.
             </p>
 
             <table>
@@ -175,6 +204,6 @@
       </section>
     </main>
 
-    <script src="../app/App.js" type="module"></script>
+    <script src="/app/App.js" type="module"></script>
   </body>
 </html>

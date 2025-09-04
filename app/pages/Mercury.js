@@ -14,5 +14,4 @@ export class Mercury extends Page {
   create() {
     super.create({});
   }
-
 }

@@ -1,7 +1,7 @@
 import { $, $$, setupHelpers } from "../utils/Helpers.js";
 
 export default class Component extends EventTarget {
-  constructor({ element, elements, transitionOverlay }) {
+  constructor({ element, elements }) {
     super();
     this.selector = element;
     this.selectorChildren = { ...elements };
@@ -13,6 +13,7 @@ export default class Component extends EventTarget {
 
   /**
    * Create a page object of elements
+   * Takes in a CSS selector or an HTMLElement
    */
   create() {
     /**
@@ -21,9 +22,9 @@ export default class Component extends EventTarget {
     if (this.selector instanceof window.HTMLElement) {
       // If selector is already a DOM element, use it directly
       this.element = this.selector;
-    } else if (typeof this.selector === 'string') {
+    } else if (typeof this.selector === "string") {
       // If selector is a string, query for the element
-      this.element = document.querySelector(this.selector);
+      this.element = $(this.selector);
     } else {
       // Fallback for other cases
       this.element = null;
@@ -32,20 +33,24 @@ export default class Component extends EventTarget {
     this.elements = {};
 
     Object.entries(this.selectorChildren).forEach(([key, selector]) => {
+      // Handle pre-selected elements (HTMLElement, NodeList, or Array)
       if (
         selector instanceof window.HTMLElement ||
-        selector instanceof window.NodeList
+        selector instanceof window.NodeList ||
+        Array.isArray(selector)
       ) {
         this.elements[key] = selector;
-      } else if (Array.isArray(selector)) {
-        this.elements[key] = selector;
+        return;
+      }
+
+      // Handle selector strings
+      const elements = $$(selector);
+      if (elements.length === 0) {
+        this.elements[key] = null;
+      } else if (elements.length === 1) {
+        this.elements[key] = $(selector);
       } else {
-        this.elements[key] = document.querySelectorAll(selector);
-        if (this.elements[key].length === 0) {
-          this.elements[key] = null;
-        } else if (this.elements[key].length === 1) {
-          this.elements[key] = document.querySelector(selector);
-        }
+        this.elements[key] = Array.from(elements);
       }
     });
   }

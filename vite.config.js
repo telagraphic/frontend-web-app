@@ -2,6 +2,33 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 import { glob } from "glob";
 import path from "path";
+import { minify } from "html-minifier-terser";
+import { nunjucksPlugin } from "./vite-plugins/nunjucks-plugin.js";
+
+// HTML minification plugin for production builds
+function htmlMinifyPlugin() {
+  return {
+    name: 'html-minify',
+    enforce: 'post',
+    apply: 'build',
+    async transformIndexHtml(html) {
+      return minify(html, {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        minifyCSS: true,
+        minifyJS: true,
+        removeEmptyAttributes: true,
+        removeOptionalTags: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        sortAttributes: true,
+        sortClassName: true,
+      });
+    },
+  };
+}
 
 export default defineConfig({
   // Base URL for assets - "./" means relative paths for deployment flexibility
@@ -27,18 +54,15 @@ export default defineConfig({
       input: {
         // Entry point - tells Vite where to start building from
         main: resolve(__dirname, "index.html"),
-        // Automatically include all HTML files from pages directory
-        ...Object.fromEntries(
-          glob.sync("pages/*.html").map(file => [
-            path.basename(file, ".html"),
-            resolve(__dirname, file)
-          ])
-        )
+        // Note: Generated pages are handled by the nunjucks plugin
+        // and don't need to be processed by Vite's input system
       },
       output: {
         // Organize output files - Control where different file types go
         entryFileNames: "assets/js/[name]-[hash].js", // Main JS files
         chunkFileNames: "assets/js/[name]-[hash].js", // Code-split chunks
+        // Disable code splitting to combine all JS into fewer files
+        manualChunks: undefined,
         assetFileNames: (assetInfo) => {
           // CSS, images, fonts, etc.
           const info = assetInfo.name.split(".");
@@ -67,6 +91,9 @@ export default defineConfig({
 
     // Minification - Compress and optimize JS/CSS for smaller file sizes
     minify: true,
+    
+    // Generate manifest.json for asset path resolution
+    manifest: true,
   },
 
   // CSS configuration - Controls how CSS and preprocessors are handled
@@ -124,6 +151,12 @@ export default defineConfig({
 
   // Plugin configuration - Extend Vite's functionality
   plugins: [
+    // Nunjucks template processing
+    nunjucksPlugin(),
+    
+    // HTML minification for production builds
+    htmlMinifyPlugin(),
+    
     // Copy _redirects file to dist for Netlify
     {
       name: 'copy-netlify-files',
@@ -157,6 +190,6 @@ export default defineConfig({
 
   // Optimize dependencies - Pre-bundle these packages for faster dev server startup
   optimizeDeps: {
-    include: ["gsap", "event-emitter"], // Your main dependencies
+    include: ["gsap", "nunjucks"], // Your main dependencies
   },
 });

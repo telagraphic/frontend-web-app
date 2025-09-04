@@ -1,10 +1,8 @@
 import { Animation } from "../classes/Animation.js";
 import { gsap } from "gsap/index.js";
 
-
-  
 /**
- * Title animations that refrerence 
+ * Title animations that refrerence
  */
 export default class Titles extends Animation {
   constructor(element, elements) {
@@ -27,8 +25,8 @@ export default class Titles extends Animation {
       {
         autoAlpha: 1,
         duration: 0.5,
-        ease:  "power2.inOut",
-      }
+        ease: "power2.inOut",
+      },
     );
   }
 

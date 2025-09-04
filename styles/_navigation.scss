@@ -1,5 +1,6 @@
 nav {
-  z-index: 200;
+  z-index: 1001;
+  position: relative;
   ul {
     display: flex;
     gap: .125rem;
@@ -17,6 +18,10 @@ nav {
     text-decoration: none;
     transition: color 0.3s ease;
     color: #000000;
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1002;
 
     &:hover {
       color: #000000;

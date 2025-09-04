@@ -1,22 +1,18 @@
 import { SmoothScroll } from "./SmoothScroll.js";
 import { Animation } from "./Animation.js";
 import Titles from "../animation/Titles.js";
-import AsyncLoad from "./AsyncLoad.js";
-import { NavigationComponent } from "../components/NavigationComponent.js";
-import { BackgroundColors } from "./Colors.js";
 import { $, $$, setupHelpers } from "../utils/Helpers.js";
 
 export default class Page {
   constructor({ id, element, elements, transitionOverlay }) {
     this.selector = element;
     this.selectorChildren = {
-      ...elements,
       titleAnimations: '[data-animation="title"]',
+      ...elements,
     };
     this.id = id;
     this.transitionOverlay =
       transitionOverlay || document.querySelector(".transition-overlay");
-    // this.animations = new Animations("[data-template]", this.selectorChildren);
     this.animation = new Animation();
     this.preloadImagesSelector = "img[data-src]";
     setupHelpers();
@@ -26,28 +22,32 @@ export default class Page {
    * Create a page object of elements
    * Initalize any other components for the page
    */
-  async create({isScrollSmooth = true}) {
+  async create({ isScrollSmooth = true }) {
     /**
      * Changing the markup structure might break the first two elements
      */
-    this.element = document.querySelector("[data-template]");
+    this.element = $(this.selector);
     this.elements = {};
 
     Object.entries(this.selectorChildren).forEach(([key, selector]) => {
+      // Handle pre-selected elements (HTMLElement, NodeList, or Array)
       if (
         selector instanceof window.HTMLElement ||
-        selector instanceof window.NodeList
+        selector instanceof window.NodeList ||
+        Array.isArray(selector)
       ) {
         this.elements[key] = selector;
-      } else if (Array.isArray(selector)) {
-        this.elements[key] = selector;
+        return;
+      }
+
+      // Handle selector strings
+      const elements = $$(selector);
+      if (elements.length === 0) {
+        this.elements[key] = null;
+      } else if (elements.length === 1) {
+        this.elements[key] = $(selector);
       } else {
-        this.elements[key] = document.querySelectorAll(selector);
-        if (this.elements[key].length === 0) {
-          this.elements[key] = null;
-        } else if (this.elements[key].length === 1) {
-          this.elements[key] = document.querySelector(selector);
-        }
+        this.elements[key] = Array.from(elements);
       }
     });
 
@@ -61,15 +61,17 @@ export default class Page {
    * Remove page state to avoid memory leaks (duplicate animations on page return, etc...)
    * Acts like an automatic "event" for child classes
    */
-  destroy() {
+  destroy() {}
 
-  }
-
+  /**
+   * Create the title animations the page
+   */
   createAnimations() {
     this.animations = [];
 
     if (this.elements.titleAnimations) {
       this.titleAnimations = [];
+
       this.elements.titleAnimations.forEach((element) => {
         this.titleAnimations.push(new Titles(element));
       });
@@ -85,21 +87,7 @@ export default class Page {
    * Show the page
    */
   async show() {
-    // TODO: this is throwing an undefined
-    // this.setupEventListeners();
-    /**
-     * Execute a CSS Animation Keyframe
-     * @param {*} element
-     */
-    const animationCallback = (element) => {
-      element.classList.add("show-element");
-      element.classList.remove("hide-element");
-    };
-
-    
-    // await this.animations.onCSSAnimation(this.element, animationCallback);
-    // await this.animation.GSAPShowAnimation(this.element);
-
+    this.setupEventListeners();
     await this.animation.GSAPHideTransition(this.transitionOverlay);
   }
 
@@ -109,35 +97,8 @@ export default class Page {
   async hide() {
     this.removeEventListeners();
     this.destroy();
-
-    /**
-     * Executes CSS Animation Keyframe
-     * @param {*} element
-     */
-    const callback = (element) => {
-      element.classList.remove("show-element");
-      element.classList.add("hide-element");
-    };
-    // await this.animations.onCSSAnimation(this.element, callback);
-    // await this.animation.GSAPHideAnimation(this.element);
     await this.animation.GSAPShowTransition(this.transitionOverlay);
   }
-
-
-  /**
-   * Preload images for the page, need to fix when first page is /about or /gallery
-   * @returns {Promise} Resolves when images are loaded
-   */
-  // async preloadImages() {
-  //   return new Promise((resolve) => {
-  //     imageElements.forEach(async (element) => {
-  //       this.asyncLoadedImages.push(new AsyncLoad(element));
-  //     });
-
-  //     // images at the bottom of the screen are loaded but don't add to the content height
-  //     this.smoothScroll.onResize();
-  //   });
-  // }
 
   /**
    * Initalizes the smoothScroll object for the page
@@ -148,8 +109,8 @@ export default class Page {
     return new Promise((resolve) => {
       setTimeout(() => {
         this.smoothScroll = new SmoothScroll({
-          container: document.body,
-          wrapper: document.querySelector("section.page-content"),
+          container: $("main"),
+          wrapper: $("section.page-content"),
           easingType: "linear",
         });
         this.smoothScroll.create();
@@ -165,7 +126,6 @@ export default class Page {
    * Setup page event listeners
    */
   setupEventListeners() {
-    this.smoothScroll.setupEventListeners();
     document.addEventListener("resize", () => {
       console.log("resize");
     });

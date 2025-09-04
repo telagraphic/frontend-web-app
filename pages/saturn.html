@@ -1,21 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Saturn - Planet</title>
-    <link rel="stylesheet" href="../styles/styles.css" />
+    <title>Saturn</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <script src="/app/App.js" type="module"></script>
   </head>
   <body>
     <section class="transition-overlay"></section>
     <section class="preloader">
-      <h1>Loading</h1>
-      <p>%</p>
+      <h1>Preloading...</h1>
+      <p>%%</p>
     </section>
 
-    <main class="saturn" data-template="saturn">
+    <main class="about" data-template="about">
       <section class="page-content">
-        <navigation-component></navigation-component>
+        <nav class="navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="gallery">Gallery</a></li>
+            <li><a href="mercury">Mercury</a></li>
+            <li><a href="venus">Venus</a></li>
+            <li><a href="earth">Earth</a></li>
+            <li><a href="mars">Mars</a></li>
+            <li><a href="jupiter">Jupiter</a></li>
+            <li><a href="saturn">Saturn</a></li>
+            <li><a href="uranus">Uranus</a></li>
+            <li><a href="neptune">Neptune</a></li>
+            <li><a href="pluto">Pluto</a></li>
+            <li><a href="moons">Moons</a></li>
+          </ul>
+        </nav>
+
         <article>
           <section class="page-header">
             <img
@@ -26,53 +44,64 @@
           <section class="page-body">
             <h1>Saturn</h1>
             <p>
-              Saturn, the sixth planet from the Sun, is the second-largest planet in our Solar System and 
-              is famous for its spectacular ring system. Named after the Roman god of agriculture and wealth, 
-              Saturn is a gas giant with a distinctive golden-yellow appearance. Located approximately 
-              886 million miles (1.4 billion kilometers) from Earth, Saturn completes one orbit around 
-              the Sun every 29.5 Earth years, and its beautiful rings make it one of the most recognizable 
-              objects in our solar system.
+              Saturn, the sixth planet from the Sun, is the second-largest
+              planet in our Solar System and is famous for its spectacular ring
+              system. Named after the Roman god of agriculture and wealth,
+              Saturn is a gas giant with a distinctive golden-yellow appearance.
+              Located approximately 886 million miles (1.4 billion kilometers)
+              from Earth, Saturn completes one orbit around the Sun every 29.5
+              Earth years, and its beautiful rings make it one of the most
+              recognizable objects in our solar system.
             </p>
 
             <h2>Astrology</h2>
             <p>
-              In astrology, Saturn represents discipline, responsibility, structure, and life lessons. 
-              Known as the "Planet of Karma and Time," Saturn governs our sense of duty, limitations, 
-              and the wisdom that comes through experience and hard work. It's associated with the 
-              zodiac signs Capricorn and Aquarius, embodying qualities of patience, perseverance, and 
-              the ability to build lasting foundations. Saturn represents our capacity for self-discipline, 
-              the lessons we must learn through challenges, and the rewards that come from sustained effort.
+              In astrology, Saturn represents discipline, responsibility,
+              structure, and life lessons. Known as the "Planet of Karma and
+              Time," Saturn governs our sense of duty, limitations, and the
+              wisdom that comes through experience and hard work. It's
+              associated with the zodiac signs Capricorn and Aquarius, embodying
+              qualities of patience, perseverance, and the ability to build
+              lasting foundations. Saturn represents our capacity for
+              self-discipline, the lessons we must learn through challenges, and
+              the rewards that come from sustained effort.
             </p>
 
             <h2>Alchemy</h2>
             <p>
-              Within alchemical traditions, Saturn symbolizes the principle of coagulation and the element 
-              of Lead in its most dense and structured form. It represents the process of crystallization 
-              and solidification, where matter takes on definite form and structure. Saturn embodies the 
-              principle of transformation through discipline and represents the alchemical stage where 
-              consciousness becomes structured and capable of manifesting concrete reality through 
+              Within alchemical traditions, Saturn symbolizes the principle of
+              coagulation and the element of Lead in its most dense and
+              structured form. It represents the process of crystallization and
+              solidification, where matter takes on definite form and structure.
+              Saturn embodies the principle of transformation through discipline
+              and represents the alchemical stage where consciousness becomes
+              structured and capable of manifesting concrete reality through
               systematic work and patient application of knowledge.
             </p>
 
             <h2>Astronomy</h2>
             <p>
-              Saturn is a gas giant with a diameter of about 74,898 miles (120,536 kilometers), making it 
-              the second-largest planet in our solar system after Jupiter. Its atmosphere is composed 
-              primarily of hydrogen (96%) and helium (3%), with trace amounts of methane, ammonia, and 
-              other gases. Saturn's most distinctive feature is its magnificent ring system, which consists 
-              of thousands of individual ringlets made primarily of ice particles, rock, and dust. The 
-              planet has a low density, so much so that it would float in water if there were an ocean 
-              large enough to hold it.
+              Saturn is a gas giant with a diameter of about 74,898 miles
+              (120,536 kilometers), making it the second-largest planet in our
+              solar system after Jupiter. Its atmosphere is composed primarily
+              of hydrogen (96%) and helium (3%), with trace amounts of methane,
+              ammonia, and other gases. Saturn's most distinctive feature is its
+              magnificent ring system, which consists of thousands of individual
+              ringlets made primarily of ice particles, rock, and dust. The
+              planet has a low density, so much so that it would float in water
+              if there were an ocean large enough to hold it.
             </p>
 
             <h2>Saturn's Moons</h2>
             <p>
-              Saturn has 146 confirmed moons, making it the planet with the most moons in our solar system. 
-              The largest and most significant is Titan, which is the second-largest moon in the solar 
-              system and the only moon with a substantial atmosphere. Other notable moons include Enceladus, 
-              which has geysers of water ice, and Iapetus, which has a distinctive two-tone appearance. 
-              Many of Saturn's smaller moons are shepherd moons that help maintain the structure of the 
-              planet's rings.
+              Saturn has 146 confirmed moons, making it the planet with the most
+              moons in our solar system. The largest and most significant is
+              Titan, which is the second-largest moon in the solar system and
+              the only moon with a substantial atmosphere. Other notable moons
+              include Enceladus, which has geysers of water ice, and Iapetus,
+              which has a distinctive two-tone appearance. Many of Saturn's
+              smaller moons are shepherd moons that help maintain the structure
+              of the planet's rings.
             </p>
 
             <table>
@@ -176,6 +205,6 @@
       </section>
     </main>
 
-    <script src="../app/App.js" type="module"></script>
+    <script src="/app/App.js" type="module"></script>
   </body>
 </html>

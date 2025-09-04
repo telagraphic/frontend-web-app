@@ -14,5 +14,4 @@ export class Saturn extends Page {
   create() {
     super.create({});
   }
-
 }

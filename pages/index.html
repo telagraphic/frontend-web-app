@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Front End Web App</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <script src="/app/App.js" type="module"></script>
+  </head>
+  <body>
+    <section class="transition-overlay"></section>
+    <section class="preloader">
+      <h1>Preloading...</h1>
+      <p>%%</p>
+    </section>
+
+    <main class="home" data-template="home">
+      <section class="page-content">
+        <nav class="navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="gallery">Gallery</a></li>
+            <li><a href="mercury">Mercury</a></li>
+            <li><a href="venus">Venus</a></li>
+            <li><a href="earth">Earth</a></li>
+            <li><a href="mars">Mars</a></li>
+            <li><a href="jupiter">Jupiter</a></li>
+            <li><a href="saturn">Saturn</a></li>
+            <li><a href="uranus">Uranus</a></li>
+            <li><a href="neptune">Neptune</a></li>
+            <li><a href="pluto">Pluto</a></li>
+            <li><a href="moons">Moons</a></li>
+          </ul>
+        </nav>
+
+        <article>
+          <section class="page-header">
+            <img
+              data-src="https://frontend-web-app.b-cdn.net/mars.webp"
+              alt="Mars"
+            />
+          </section>
+          <section class="page-body">
+            <h1 data-animation="title">Welcome to the Solar System</h1>
+            <p>
+              Mars is the fourth planet from the Sun and the second-smallest
+              planet in the Solar System, being larger than only Mercury. Mars
+              is often called the 'Red Planet' due to its reddish appearance,
+              which is distinctive among the astronomical bodies visible to the
+              naked eye.
+            </p>
+
+            <p>
+              This is the about page content. Lorem ipsum dolor sit amet,
+              consectetur adipiscing elit. Suspendisse dapibus dolor vitae
+              ultricies condimentum. Etiam ullamcorper tristique urna eget
+              commodo. Quisque eu tellus rutrum, tristique risus vitae,
+              porttitor est.
+            </p>
+
+            <h2 data-animation="title">Our Mission</h2>
+
+            <p>
+              Etiam posuere dolor ac sem dapibus consectetur. Vestibulum finibus
+              elit quis laoreet rutrum. Proin tincidunt erat et dictum tempus.
+              Praesent sed nulla interdum, dapibus tellus et, pulvinar enim.
+            </p>
+
+            <img
+              data-animation="title"
+              alt="About Image"
+              data-src="https://frontend-web-app.b-cdn.net/planet.webp"
+            />
+          </section>
+        </article>
+      </section>
+    </main>
+
+    <script src="/app/App.js" type="module"></script>
+  </body>
+</html>

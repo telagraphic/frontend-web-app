@@ -3,6 +3,8 @@
 A modern single-page application built with vanilla JavaScript, SCSS, and GSAP animations.
 
 
+
+
 ## 🚀 Quick Start
 
 ### Development
@@ -32,13 +34,13 @@ web-app/
 │   ├── about.html
 │   └── gallery.html
 ├── app/                # JavaScript modules
-│   ├── App.js         # Main application entry
-│   ├── Router.js      # SPA client-side routing
-│   ├── classes/       # Utility classes
-│   ├── components/    # Reusable components
-│   └── pages/         # Page-specific logic
+│   ├── App.js          # Main application entry
+│   ├── Router.js       # SPA client-side routing
+│   ├── classes/        # Utility classes
+│   ├── components/     # Reusable components
+│   └── pages/          # Page-specific logic
 ├── styles/             # SCSS stylesheets
-│   ├── styles.scss    # Main stylesheet
+│   ├── styles.scss     # Main stylesheet
 │   ├── _base.scss
 │   ├── _animations.scss
 │   └── ...

@@ -1,7 +1,8 @@
 import Component from "../classes/Component.js";
+import { $, $$, setupHelpers } from "../utils/Helpers.js";
 
 /**
- * Preloader element is displayed until all images are loaded and ready to be displayed 
+ * Preloader element is displayed until all images are loaded and ready to be displayed
  */
 
 export class Preloader extends Component {
@@ -14,11 +15,10 @@ export class Preloader extends Component {
         images: Array.from(document.querySelectorAll("img")),
       },
     });
-
+    setupHelpers();
     this.images = Array.from(this.elements.images);
     this.images.length;
-    this.imagesLoaded = 0
-
+    this.imagesLoaded = 0;
     this.createLoader();
   }
 

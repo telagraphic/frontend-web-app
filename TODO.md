@@ -11,17 +11,9 @@
 - add basic styles, open props?
 - implement gsap animations for the other pages
 
-## animations
-
-## bun/hono api
-- replace vite with bun?
-- setup project
-- document /routes for server api to serve pages for jamstack + api
-
-
-
 
 ## refactoring
+- add documentation
 - update prefix, normalize-wheel packages
 - add dom lookups and event handlers syntax
 - review redirect back to home state
@@ -29,23 +21,18 @@
 - update router to hide/show templates
 - add named routes function? might not need to current setup? how will this affect loading index.html || /index in markup
 
-
-## package
-
-package this as:
-
-1. static jamstack SPA
-  - link click hijacking
-  - template hide/showing
-2. dynamic jamstack SPA with API
-  -
-
 ### DOING
 
 
 
 
 ### DONE
+
+
+**9/3**
+
+- added nunjucks for static site creation
+- 
 
 
 **8/26/**

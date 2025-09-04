@@ -1,21 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neptune - Planet</title>
-    <link rel="stylesheet" href="../styles/styles.css" />
+    <title>Neptune</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <script src="/app/App.js" type="module"></script>
   </head>
   <body>
     <section class="transition-overlay"></section>
     <section class="preloader">
-      <h1>Loading</h1>
-      <p>%</p>
+      <h1>Preloading...</h1>
+      <p>%%</p>
     </section>
 
-    <main class="neptune" data-template="neptune">
+    <main class="about" data-template="about">
       <section class="page-content">
-        <navigation-component></navigation-component>
+        <nav class="navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="gallery">Gallery</a></li>
+            <li><a href="mercury">Mercury</a></li>
+            <li><a href="venus">Venus</a></li>
+            <li><a href="earth">Earth</a></li>
+            <li><a href="mars">Mars</a></li>
+            <li><a href="jupiter">Jupiter</a></li>
+            <li><a href="saturn">Saturn</a></li>
+            <li><a href="uranus">Uranus</a></li>
+            <li><a href="neptune">Neptune</a></li>
+            <li><a href="pluto">Pluto</a></li>
+            <li><a href="moons">Moons</a></li>
+          </ul>
+        </nav>
+
         <article>
           <section class="page-header">
             <img
@@ -26,49 +44,58 @@
           <section class="page-body">
             <h1>Neptune</h1>
             <p>
-              Neptune is the eighth and farthest known planet from the Sun in our Solar System. 
-              This ice giant, named after the Roman god of the sea, has a deep blue appearance 
-              caused by methane in its atmosphere. Located approximately 2.8 billion miles from 
-              Earth, Neptune completes one orbit around the Sun every 165 Earth years, meaning 
-              it has only completed one full orbit since its discovery in 1846.
+              Neptune is the eighth and farthest known planet from the Sun in
+              our Solar System. This ice giant, named after the Roman god of the
+              sea, has a deep blue appearance caused by methane in its
+              atmosphere. Located approximately 2.8 billion miles from Earth,
+              Neptune completes one orbit around the Sun every 165 Earth years,
+              meaning it has only completed one full orbit since its discovery
+              in 1846.
             </p>
 
             <h2>Astrology</h2>
             <p>
-              In astrology, Neptune represents spirituality, dreams, illusions, and transcendence. 
-              Known as the "Planet of Dreams and Mysticism," Neptune governs our connection to 
-              the divine, artistic inspiration, and the dissolution of boundaries. It's associated 
-              with the zodiac sign Pisces, embodying qualities of compassion, intuition, and 
-              spiritual awareness. Neptune represents our capacity for unconditional love, 
-              creativity, and the ability to transcend material reality through imagination and faith.
+              In astrology, Neptune represents spirituality, dreams, illusions,
+              and transcendence. Known as the "Planet of Dreams and Mysticism,"
+              Neptune governs our connection to the divine, artistic
+              inspiration, and the dissolution of boundaries. It's associated
+              with the zodiac sign Pisces, embodying qualities of compassion,
+              intuition, and spiritual awareness. Neptune represents our
+              capacity for unconditional love, creativity, and the ability to
+              transcend material reality through imagination and faith.
             </p>
 
             <h2>Alchemy</h2>
             <p>
-              Within alchemical traditions, Neptune symbolizes the principle of dissolution and 
-              the element of Water. It represents the process of purification through dissolution, 
-              where matter is broken down to reveal its spiritual essence. Neptune embodies the 
-              principle of transformation through surrender and represents the alchemical stage 
-              where consciousness becomes fluid and capable of merging with the universal ocean 
-              of consciousness, transcending individual identity.
+              Within alchemical traditions, Neptune symbolizes the principle of
+              dissolution and the element of Water. It represents the process of
+              purification through dissolution, where matter is broken down to
+              reveal its spiritual essence. Neptune embodies the principle of
+              transformation through surrender and represents the alchemical
+              stage where consciousness becomes fluid and capable of merging
+              with the universal ocean of consciousness, transcending individual
+              identity.
             </p>
 
             <h2>Astronomy</h2>
             <p>
-              Neptune is an ice giant with a diameter of about 30,775 miles (49,528 kilometers), 
-              making it the fourth-largest planet by diameter and the third-largest by mass. 
-              Its atmosphere is composed primarily of hydrogen (80%) and helium (19%), with 
-              trace amounts of methane that give it its distinctive blue color. Neptune has 
-              the most active weather system in the solar system, with wind speeds reaching 
-              up to 1,200 miles per hour (2,100 km/h) - the fastest planetary winds known.
+              Neptune is an ice giant with a diameter of about 30,775 miles
+              (49,528 kilometers), making it the fourth-largest planet by
+              diameter and the third-largest by mass. Its atmosphere is composed
+              primarily of hydrogen (80%) and helium (19%), with trace amounts
+              of methane that give it its distinctive blue color. Neptune has
+              the most active weather system in the solar system, with wind
+              speeds reaching up to 1,200 miles per hour (2,100 km/h) - the
+              fastest planetary winds known.
             </p>
 
             <h2>Neptune's Moons</h2>
             <p>
-              Neptune has 14 known moons, each with unique characteristics and fascinating 
-              origins. The largest and most significant is Triton, which was discovered just 
-              17 days after Neptune itself. Triton is unique among large moons as it orbits 
-              in a retrograde direction, suggesting it was captured from the Kuiper Belt.
+              Neptune has 14 known moons, each with unique characteristics and
+              fascinating origins. The largest and most significant is Triton,
+              which was discovered just 17 days after Neptune itself. Triton is
+              unique among large moons as it orbits in a retrograde direction,
+              suggesting it was captured from the Kuiper Belt.
             </p>
 
             <table>
@@ -196,6 +223,6 @@
       </section>
     </main>
 
-    <script src="../app/App.js" type="module"></script>
+    <script src="/app/App.js" type="module"></script>
   </body>
 </html>

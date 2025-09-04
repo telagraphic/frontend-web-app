@@ -7,13 +7,10 @@ export class Animation extends Component {
       element,
       elements,
     });
-
-    // this.createIntersectionObserver();
   }
 
   /**
    * Create an Intersection Observer for the element to animate in and out
-   * Uses
    */
   createIntersectionObserver() {
     const observer = new IntersectionObserver((entries) => {
@@ -32,14 +29,12 @@ export class Animation extends Component {
   /**
    * This parent class will call the overriden methods in the child class in the Intersection Observer
    */
-  animateIn() {
-  }
+  animateIn() {}
 
   /**
    * This parent class will call the overriden methods in the child class in the Intersection Observer
    */
-  animateOut() {
-  }
+  animateOut() {}
 
   /**
    * Run the transition callback in an RAF, remove the listener when done
@@ -63,7 +58,7 @@ export class Animation extends Component {
           // console.log("Transition ended");
           resolve();
         },
-        { once: true }
+        { once: true },
       );
 
       requestAnimationFrame(() => {
@@ -92,7 +87,7 @@ export class Animation extends Component {
         () => {
           // console.log("Animation started");
         },
-        { once: true }
+        { once: true },
       );
 
       element.addEventListener(
@@ -102,7 +97,7 @@ export class Animation extends Component {
           element.classList.remove("show-element");
           resolve();
         },
-        { once: true }
+        { once: true },
       );
 
       requestAnimationFrame(() => {
@@ -141,7 +136,6 @@ export class Animation extends Component {
     });
   }
 
-
   async GSAPShowTransition(element) {
     return new Promise((resolve) => {
       const showTimeline = gsap.timeline();
@@ -156,7 +150,6 @@ export class Animation extends Component {
       });
     });
   }
-
 
   async GSAPHideTransition(element) {
     return new Promise((resolve) => {
@@ -174,4 +167,3 @@ export class Animation extends Component {
     });
   }
 }
-

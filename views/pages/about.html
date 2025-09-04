@@ -1,0 +1,33 @@
+{% extends "layouts/page.html" %}
+{% block title %}About - Solar System Explorer{% endblock %}
+{% block content %}
+<main class="about" data-template="about">
+  <section class="page-content">
+    {% include "partials/navigation.html" %}
+    <article>
+      <h1 data-animation="title">About</h1>
+
+      <p>
+        This is the about page content. Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit. Suspendisse dapibus dolor vitae ultricies condimentum.
+        Etiam ullamcorper tristique urna eget commodo. Quisque eu tellus rutrum,
+        tristique risus vitae, porttitor est.
+      </p>
+
+      <h2 data-animation="title">Our Mission</h2>
+
+      <p>
+        Etiam posuere dolor ac sem dapibus consectetur. Vestibulum finibus elit
+        quis laoreet rutrum. Proin tincidunt erat et dictum tempus. Praesent sed
+        nulla interdum, dapibus tellus et, pulvinar enim.
+      </p>
+
+      <img
+        data-animation="title"
+        alt="About Image"
+        data-src="https://frontend-web-app.b-cdn.net/planet.webp"
+      />
+    </article>
+  </section>
+</main>
+{% endblock %}
