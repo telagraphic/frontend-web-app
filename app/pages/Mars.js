@@ -14,5 +14,4 @@ export class Mars extends Page {
   create() {
     super.create({});
   }
-
 }

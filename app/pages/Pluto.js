@@ -14,5 +14,4 @@ export class Pluto extends Page {
   create() {
     super.create({});
   }
-
 }

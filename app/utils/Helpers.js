@@ -3,20 +3,20 @@ export const $$ = (elements) => document.querySelectorAll(elements);
 
 // Helper function to add methods to HTMLElement prototype
 export function setupElementPrototype() {
-  HTMLElement.prototype.on = function(event, callback, options) { 
+  HTMLElement.prototype.on = function (event, callback, options) {
     return this.addEventListener(event, callback, options);
   };
-  
-  HTMLElement.prototype.off = function(event, callback) { 
+
+  HTMLElement.prototype.off = function (event, callback) {
     return this.removeEventListener(event, callback);
   };
-  
-  HTMLElement.prototype.$ = function(selector) { 
-    return this.querySelector(selector); 
+
+  HTMLElement.prototype.$ = function (selector) {
+    return this.querySelector(selector);
   };
-  
-  HTMLElement.prototype.$$ = function(selector) { 
-    return this.querySelectorAll(selector); 
+
+  HTMLElement.prototype.$$ = function (selector) {
+    return this.querySelectorAll(selector);
   };
 }
 

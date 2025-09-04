@@ -153,7 +153,7 @@ export class Router {
     const newPageHTML = await response.text();
     const newPageDOM = new DOMParser().parseFromString(
       newPageHTML,
-      "text/html"
+      "text/html",
     );
 
     const pageContent = newPageDOM.querySelector("main");
@@ -169,7 +169,7 @@ export class Router {
     this.mainElement.replaceChildren(newPageFragment);
     this.mainElement.setAttribute(
       "data-template",
-      `${this.template.toString()}`
+      `${this.template.toString()}`,
     );
 
     // Update main element classes, will be undefined on an invalid route
@@ -192,7 +192,7 @@ export class Router {
    */
   async preloadImages() {
     const imageElements = Array.from(
-      document.querySelectorAll("img[data-src]")
+      document.querySelectorAll("img[data-src]"),
     );
     if (imageElements.length === 0) return;
 
@@ -300,7 +300,7 @@ export class Router {
         this.pageHistory.pushState(
           { route: routeForHistory },
           "",
-          urlForHistory
+          urlForHistory,
         );
       }
       resolve();
@@ -331,7 +331,7 @@ export class Router {
         window.dispatchEvent(
           new CustomEvent("hard-refresh", {
             detail: { route: route },
-          })
+          }),
         );
       } else {
         this.redirectToHome();

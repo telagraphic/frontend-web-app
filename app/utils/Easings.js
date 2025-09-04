@@ -4,7 +4,7 @@
  */
 
 export class Easings {
-  constructor(defaultType = 'linear') {
+  constructor(defaultType = "linear") {
     // Default easing configuration
     this.ease = 0.08;
     this.springStrength = 0.1;
@@ -116,7 +116,7 @@ export class Easings {
     if (this.easingFunctions[type]) {
       this.currentType = type;
       // Reset velocity when switching to spring easing
-      if (type === 'spring') {
+      if (type === "spring") {
         this.resetVelocity();
       }
       return true;
@@ -130,14 +130,6 @@ export class Easings {
    */
   getEasingType() {
     return this.currentType;
-  }
-
-  /**
-   * Get all available easing types
-   * @returns {Array} Array of available easing type names
-   */
-  getAvailableEasingTypes() {
-    return Object.keys(this.easingFunctions);
   }
 
   /**

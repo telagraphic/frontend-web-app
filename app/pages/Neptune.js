@@ -14,5 +14,4 @@ export class Neptune extends Page {
   create() {
     super.create({});
   }
-
 }

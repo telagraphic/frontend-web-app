@@ -1,6 +1,18 @@
 import Component from "../classes/Component.js";
 import { gsap } from "gsap/index.js";
-import { RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE, PINK, BROWN, GRAY, BLACK, WHITE } from "../utils/Colors.js";
+import {
+  RED,
+  GREEN,
+  BLUE,
+  YELLOW,
+  PURPLE,
+  ORANGE,
+  PINK,
+  BROWN,
+  GRAY,
+  BLACK,
+  WHITE,
+} from "../utils/Colors.js";
 
 export class Navigation extends Component {
   constructor({ currentPage }) {
@@ -30,19 +42,19 @@ export class Navigation extends Component {
         color: PURPLE,
         duration: 0.3,
         ease: "power2.inOut",
-      })
+      });
     } else if (currentPage.id === "about") {
       gsap.to(this.elements.links, {
         color: RED,
         duration: 0.3,
         ease: "power2.inOut",
-      })
+      });
     } else if (currentPage.id === "gallery") {
       gsap.to(this.elements.links, {
         color: RED,
         duration: 0.3,
         ease: "power2.inOut",
-      })
+      });
     }
   }
 }

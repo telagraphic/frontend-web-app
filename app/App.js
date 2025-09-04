@@ -19,11 +19,10 @@ import { Moons } from "./pages/Moons.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
 import { $, $$, setupHelpers } from "./utils/Helpers.js";
-import "../styles/styles.scss";
 
 class App {
   constructor() {
-    setupHelpers(); 
+    setupHelpers();
     this.pageHistory = window.history;
     this.mainElement = document.querySelector("main");
     this.router = new Router();
@@ -32,8 +31,6 @@ class App {
     this.setupEventListeners();
     this.createPreloader();
   }
-
-
 
   /**
    * Register page classes using the data-template field in the main element
@@ -58,17 +55,17 @@ class App {
     };
 
     this.content = $("main");
-    
+
     // If a specific page is provided, use it; otherwise read from DOM
     if (specificPage) {
       this.template = specificPage;
     } else {
       this.template = this.content.getAttribute("data-template");
     }
-    
+
     this.currentPage = this.pages[this.template];
     this.currentPage.create();
-    
+
     // Create navigation after setting the correct currentPage
     this.createNavigation();
   }
@@ -91,7 +88,6 @@ class App {
       currentPage: this.currentPage,
     });
   }
-
 
   /**
    * Display preloader on first page visit
@@ -127,14 +123,19 @@ class App {
    *
    */
   async onPageChange(href) {
-    const isValidRoute = this.router.validateRoute(href, window.location.pathname);
-    
+    const isValidRoute = this.router.validateRoute(
+      href,
+      window.location.pathname,
+    );
+
     if (!isValidRoute.isValid) {
-      if (isValidRoute.action === 'skip') return;
-      if (isValidRoute.action === 'redirect') return window.location.href = isValidRoute.url;
-      if (isValidRoute.action === 'redirect-home') return this.router.redirectToHome();
+      if (isValidRoute.action === "skip") return;
+      if (isValidRoute.action === "redirect")
+        return (window.location.href = isValidRoute.url);
+      if (isValidRoute.action === "redirect-home")
+        return this.router.redirectToHome();
     }
-  
+
     await this.currentPage.hide();
     await this.router.updatePage(href, isValidRoute.normalizedPath);
     this.currentPage = this.pages[this.router.template];
@@ -144,7 +145,6 @@ class App {
   }
 
   setupEventListeners() {
-
     // Update the currentPage when the hard-refresh event is triggered
     window.addEventListener("hard-refresh", (event) => {
       // Extract the route from the event detail
@@ -155,7 +155,6 @@ class App {
   }
 
   removeEventListeners() {}
-
 }
 
 const app = new App();
