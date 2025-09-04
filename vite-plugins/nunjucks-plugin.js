@@ -87,6 +87,7 @@ async function generateStaticPages() {
 export function nunjucksPlugin() {
   return {
     name: 'nunjucks',
+    apply: 'build', // Only run during production builds
     async writeBundle() {
       // Generate static pages after Vite's build process
       await generateStaticPages();

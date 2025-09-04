@@ -1,100 +1,107 @@
 /* @link https://utopia.fyi/type/calculator?c=360,18,1.2,1240,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
 
 :root {
-    --step--2: clamp(0.7813rem, 0.7736rem + 0.0341vw, 0.8rem);
-    --step--1: clamp(0.9375rem, 0.9119rem + 0.1136vw, 1rem);
-    --step-0: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem);
-    --step-1: clamp(1.35rem, 1.2631rem + 0.3864vw, 1.5625rem);
-    --step-2: clamp(1.62rem, 1.4837rem + 0.6057vw, 1.9531rem);
-    --step-3: clamp(1.944rem, 1.7405rem + 0.9044vw, 2.4414rem);
-    --step-4: clamp(2.3328rem, 2.0387rem + 1.3072vw, 3.0518rem);
-    --step-5: clamp(2.7994rem, 2.384rem + 1.8461vw, 3.8147rem);
-  }
+  --step--2: clamp(0.7813rem, 0.7736rem + 0.0341vw, 0.8rem);
+  --step--1: clamp(0.9375rem, 0.9119rem + 0.1136vw, 1rem);
+  --step-0: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem);
+  --step-1: clamp(1.35rem, 1.2631rem + 0.3864vw, 1.5625rem);
+  --step-2: clamp(1.62rem, 1.4837rem + 0.6057vw, 1.9531rem);
+  --step-3: clamp(1.944rem, 1.7405rem + 0.9044vw, 2.4414rem);
+  --step-4: clamp(2.3328rem, 2.0387rem + 1.3072vw, 3.0518rem);
+  --step-5: clamp(2.7994rem, 2.384rem + 1.8461vw, 3.8147rem);
+}
 
 h1 {
-    font-size: var(--step-4);
+  font-size: var(--step-4);
 }
 
 h2 {
-    font-size: var(--step-3);
+  font-size: var(--step-3);
 }
 
 h3 {
-    font-size: var(--step-2);
+  font-size: var(--step-2);
 }
 
-
 p {
-    max-inline-size: 60ch;
+  max-inline-size: 60ch;
 }
 
 img {
-    max-inline-size: 55%;
-    height: auto;
+  max-inline-size: 55%;
+  height: auto;
 }
 
 // Responsive image containers for lazy loading
 .image-container {
-    position: relative;
-    background: #f0f0f0; /* placeholder color */
-    overflow: hidden;
-    border-radius: 8px;
-    
-    // Default aspect ratio
-    aspect-ratio: 16/9;
-    
-    // Responsive breakpoints
-    @media (max-width: 768px) {
-        aspect-ratio: 4/3;
+  position: relative;
+  background: #f0f0f0; /* placeholder color */
+  overflow: hidden;
+  border-radius: 8px;
+
+  // Default aspect ratio
+  aspect-ratio: 16/9;
+
+  // Responsive breakpoints
+  @media (max-width: 768px) {
+    aspect-ratio: 4/3;
+  }
+
+  @media (max-width: 480px) {
+    aspect-ratio: 1/1;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+
+    // Fade in when loaded
+    opacity: 0;
+    &.loaded {
+      opacity: 1;
     }
-    
-    @media (max-width: 480px) {
-        aspect-ratio: 1/1;
-    }
-    
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: opacity 0.3s ease;
-        
-        // Fade in when loaded
-        opacity: 0;
-        &.loaded {
-            opacity: 1;
-        }
-    }
-    
-    // Loading state
-    &::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 20px;
-        height: 20px;
-        margin: -10px 0 0 -10px;
-        border: 2px solid #ddd;
-        border-top-color: #666;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        z-index: 1;
-    }
-    
-    &.loaded::before {
-        display: none;
-    }
+  }
+
+  // Loading state
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #ddd;
+    border-top-color: #666;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+  }
+
+  &.loaded::before {
+    display: none;
+  }
 }
 
 // Loading spinner animation
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // Utility classes for different aspect ratios
-.aspect-square { aspect-ratio: 1/1; }
-.aspect-video { aspect-ratio: 16/9; }
-.aspect-photo { aspect-ratio: 4/3; }
-.aspect-portrait { aspect-ratio: 3/4; }
+.aspect-square {
+  aspect-ratio: 1/1;
+}
+.aspect-video {
+  aspect-ratio: 16/9;
+}
+.aspect-photo {
+  aspect-ratio: 4/3;
+}
+.aspect-portrait {
+  aspect-ratio: 3/4;
+}

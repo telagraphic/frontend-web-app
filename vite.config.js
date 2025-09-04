@@ -1,34 +1,7 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
-import { glob } from "glob";
-import path from "path";
-import { minify } from "html-minifier-terser";
 import { nunjucksPlugin } from "./vite-plugins/nunjucks-plugin.js";
-
-// HTML minification plugin for production builds
-function htmlMinifyPlugin() {
-  return {
-    name: 'html-minify',
-    enforce: 'post',
-    apply: 'build',
-    async transformIndexHtml(html) {
-      return minify(html, {
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        minifyCSS: true,
-        minifyJS: true,
-        removeEmptyAttributes: true,
-        removeOptionalTags: true,
-        removeScriptTypeAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-        sortAttributes: true,
-        sortClassName: true,
-      });
-    },
-  };
-}
+import { templateHmrPlugin } from "./vite-plugins/template-hmr-plugin.js";
 
 export default defineConfig({
   // Base URL for assets - "./" means relative paths for deployment flexibility
@@ -151,11 +124,11 @@ export default defineConfig({
 
   // Plugin configuration - Extend Vite's functionality
   plugins: [
-    // Nunjucks template processing
-    nunjucksPlugin(),
+    // Template HMR for development
+    templateHmrPlugin(),
     
-    // HTML minification for production builds
-    htmlMinifyPlugin(),
+    // Nunjucks template processing for production
+    nunjucksPlugin(),
     
     // Copy _redirects file to dist for Netlify
     {

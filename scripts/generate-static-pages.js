@@ -25,8 +25,8 @@ async function generateStaticPages() {
     },
     production: {
       // Use source paths - Vite will process and resolve these
-      cssPath: '/styles/styles.scss',
-      jsPath: '/app/App.js'
+      cssPath: './styles/styles.scss',
+      jsPath: './app/App.js'
     }
   };
 
@@ -49,7 +49,7 @@ async function generateStaticPages() {
       
       // Determine output path
       let outputPath;
-      if (file === 'home.html') {
+      if (file === 'index.html') {
         outputPath = `${distDir.pathname}index.html`;
       } else {
         outputPath = `${distDir.pathname}${file}`;
