@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "deploy": "bun run build:full",
     "clean": "rm -rf dist",
     "build:clean": "bun run clean && bun run build",
     "build:check": "bun run lint:js && bun run lint:css && bun run lint:html",
