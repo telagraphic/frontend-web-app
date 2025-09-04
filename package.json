@@ -31,7 +31,6 @@
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "autoprefixer": "^10.4.21",
-    "chokidar": "^4.0.3",
     "cross-env": "^10.0.0",
     "cssnano": "^7.1.0",
     "eslint": "^9.34.0",
