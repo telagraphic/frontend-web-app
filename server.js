@@ -16,9 +16,12 @@ nunjucks.configure("./views", {
  * Serve static files from the dist directory
  * Not working with Bun
  */
-app.use("/dist/*", serveStatic({ 
-  root: "./dist/",
-}));
+app.use(
+  "/dist/*",
+  serveStatic({
+    root: "./dist/",
+  }),
+);
 
 /**
  * Custom bun middleware to serve static files from the dist directory
@@ -26,19 +29,19 @@ app.use("/dist/*", serveStatic({
 app.use("/dist/*", async (c, next) => {
   const pathname = c.req.path;
   const filePath = `.${pathname}`;
-  
+
   const file = Bun.file(filePath);
-  
-  if (await file.exists() && file.size > 0) {
+
+  if ((await file.exists()) && file.size > 0) {
     let contentType = "text/plain";
     if (pathname.endsWith(".css")) contentType = "text/css";
     if (pathname.endsWith(".js")) contentType = "text/javascript";
-    
+
     return new Response(file, {
-      headers: { "Content-Type": contentType }
+      headers: { "Content-Type": contentType },
     });
   }
-  
+
   await next();
 });
 
@@ -69,7 +72,6 @@ async function renderPageWithNunjucks(pathname) {
     }
     const templatePath = `pages/${routeName}.html`;
     return nunjucks.render(templatePath, templateData);
-
   } catch (error) {
     console.error(`Failed to render ${pathname}:`, error);
     return new Response("Template rendering failed", { status: 500 });
@@ -81,7 +83,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 Bun.serve({
   fetch: app.fetch,
-  port: process.env.PORT || 3030,
+  port: process.env.PORT || 3000,
 });
 
 if (!isProduction) {
@@ -151,7 +153,7 @@ const routeDataHandlers = {
 
       // Example: NASA API call
       const response = await fetch(
-        "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"
+        "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY",
       );
 
       if (!response.ok) {
@@ -196,7 +198,7 @@ async function fetchRouteData(pathname) {
     const duration = Date.now() - startTime;
     console.log(
       `✅ Data fetched for ${pathname} in ${duration}ms:`,
-      Object.keys(data)
+      Object.keys(data),
     );
 
     return data;
