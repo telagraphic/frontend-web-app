@@ -1,4 +1,4 @@
-import { gsap } from "gsap/index.js";
+
 
 
 /**

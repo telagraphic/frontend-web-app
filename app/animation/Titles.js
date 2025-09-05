@@ -1,5 +1,5 @@
 import { Animation } from "../classes/Animation.js";
-import { gsap } from "gsap/index.js";
+
 
 
   

@@ -1,21 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Uranus - Planet</title>
+    <title>Uranus</title>
     <link rel="stylesheet" href="../styles/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="../app/App.js" type="module"></script>
   </head>
   <body>
     <section class="transition-overlay"></section>
     <section class="preloader">
-      <h1>Loading</h1>
-      <p>%</p>
+      <h1>Preloading...</h1>
+      <p>%%</p>
     </section>
 
-    <main class="uranus" data-template="uranus">
+    <main class="about" data-template="about">
       <section class="page-content">
-        <navigation-component></navigation-component>
+        <nav class="navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="gallery">Gallery</a></li>
+            <li><a href="mercury">Mercury</a></li>
+            <li><a href="venus">Venus</a></li>
+            <li><a href="earth">Earth</a></li>
+            <li><a href="mars">Mars</a></li>
+            <li><a href="jupiter">Jupiter</a></li>
+            <li><a href="saturn">Saturn</a></li>
+            <li><a href="uranus">Uranus</a></li>
+            <li><a href="neptune">Neptune</a></li>
+            <li><a href="pluto">Pluto</a></li>
+            <li><a href="moons">Moons</a></li>
+          </ul>
+        </nav>
+
         <article>
           <section class="page-header">
             <img
@@ -189,7 +208,5 @@
         </article>
       </section>
     </main>
-
-    <script src="../app/App.js" type="module"></script>
   </body>
 </html>

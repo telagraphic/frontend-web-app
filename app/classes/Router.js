@@ -40,7 +40,7 @@ export class Router {
    */
   setupRoutes() {
     this.validRoutes = new Map();
-    this.validRoutes.set("home", "index.html");
+    this.validRoutes.set("home", "/");
     this.validRoutes.set("about", "/about");
     this.validRoutes.set("gallery", "/gallery");
     this.validRoutes.set("earth", "/earth");
@@ -135,11 +135,11 @@ export class Router {
       if (response.ok) {
         this.newPage = response;
       } else {
-        throw new Error("Failed to fetch page: ${routePath}");
+        throw new Error(`Failed to fetch page: ${routePath}`);
         this.redirectToHome();
       }
     } catch (error) {
-      throw new Error("Network error: ${error.message}");
+      throw new Error(`Network error: ${error.message}`);
       this.redirectToHome();
     }
   }

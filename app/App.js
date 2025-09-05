@@ -19,7 +19,6 @@ import { Moons } from "./pages/Moons.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
 import { $, $$, setupHelpers } from "./utils/Helpers.js";
-import "../styles/styles.scss";
 
 class App {
   constructor() {

@@ -1,4 +1,3 @@
-import { gsap } from "gsap";
 import { $, $$, setupHelpers } from "../utils/Helpers.js";
 import { Easings } from "../utils/Easings.js";
 // Fix with web pack or vite

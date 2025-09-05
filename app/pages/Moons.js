@@ -1,5 +1,5 @@
 import Page from "../classes/Page.js";
-import { gsap } from "gsap/index.js";
+
 
 /**
  * Moons page is a simple page with 4 containers that move up and down when the wheel is scrolled

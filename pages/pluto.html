@@ -1,21 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pluto - Dwarf Planet</title>
-    <link rel="stylesheet" href="../styles/styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pluto</title>
+    <link rel="stylesheet" href="../styles/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="../app/App.js" type="module"></script>
+  </head>
+  <body>
     <section class="transition-overlay"></section>
     <section class="preloader">
-      <h1>Loading</h1>
-      <p>%</p>
+      <h1>Preloading...</h1>
+      <p>%%</p>
     </section>
 
-    <main class="pluto" data-template="pluto">
+    <main class="about" data-template="about">
       <section class="page-content">
-        <navigation-component></navigation-component>
+        <nav class="navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="gallery">Gallery</a></li>
+            <li><a href="mercury">Mercury</a></li>
+            <li><a href="venus">Venus</a></li>
+            <li><a href="earth">Earth</a></li>
+            <li><a href="mars">Mars</a></li>
+            <li><a href="jupiter">Jupiter</a></li>
+            <li><a href="saturn">Saturn</a></li>
+            <li><a href="uranus">Uranus</a></li>
+            <li><a href="neptune">Neptune</a></li>
+            <li><a href="pluto">Pluto</a></li>
+            <li><a href="moons">Moons</a></li>
+          </ul>
+        </nav>
+
         <article>
           <section class="page-header">
             <img
@@ -26,49 +45,63 @@
           <section class="page-body">
             <h1>Pluto</h1>
             <p>
-              Pluto, once considered the ninth planet of our Solar System, is now classified as a dwarf planet 
-              and the largest known object in the Kuiper Belt. Discovered in 1930 by Clyde Tombaugh, Pluto 
-              was reclassified as a dwarf planet in 2006 by the International Astronomical Union. This 
-              distant world, named after the Roman god of the underworld, orbits the Sun at an average 
-              distance of 3.7 billion miles (5.9 billion kilometers) and completes one orbit every 248 Earth years.
+              Pluto, once considered the ninth planet of our Solar System, is
+              now classified as a dwarf planet and the largest known object in
+              the Kuiper Belt. Discovered in 1930 by Clyde Tombaugh, Pluto was
+              reclassified as a dwarf planet in 2006 by the International
+              Astronomical Union. This distant world, named after the Roman god
+              of the underworld, orbits the Sun at an average distance of 3.7
+              billion miles (5.9 billion kilometers) and completes one orbit
+              every 248 Earth years.
             </p>
 
             <h2>Astrology</h2>
             <p>
-              In astrology, Pluto represents transformation, power, regeneration, and the subconscious mind. 
-              Known as the "Planet of Death and Rebirth," Pluto governs deep psychological processes, 
-              hidden truths, and profound personal transformation. It's associated with the zodiac sign 
-              Scorpio, embodying qualities of intensity, passion, and the ability to penetrate beneath 
-              the surface. Pluto represents our capacity for deep psychological healing, the destruction 
-              of old patterns, and the emergence of new beginnings through profound change.
+              In astrology, Pluto represents transformation, power,
+              regeneration, and the subconscious mind. Known as the "Planet of
+              Death and Rebirth," Pluto governs deep psychological processes,
+              hidden truths, and profound personal transformation. It's
+              associated with the zodiac sign Scorpio, embodying qualities of
+              intensity, passion, and the ability to penetrate beneath the
+              surface. Pluto represents our capacity for deep psychological
+              healing, the destruction of old patterns, and the emergence of new
+              beginnings through profound change.
             </p>
 
             <h2>Alchemy</h2>
             <p>
-              Within alchemical traditions, Pluto symbolizes the principle of putrefaction and the element 
-              of Earth in its most transformative state. It represents the process of death and rebirth, 
-              where matter must decay and decompose before it can be purified and reborn. Pluto embodies 
-              the principle of transformation through destruction and represents the alchemical stage 
-              where consciousness must descend into the depths of the unconscious to retrieve hidden 
-              wisdom and emerge renewed through the process of psychological alchemy.
+              Within alchemical traditions, Pluto symbolizes the principle of
+              putrefaction and the element of Earth in its most transformative
+              state. It represents the process of death and rebirth, where
+              matter must decay and decompose before it can be purified and
+              reborn. Pluto embodies the principle of transformation through
+              destruction and represents the alchemical stage where
+              consciousness must descend into the depths of the unconscious to
+              retrieve hidden wisdom and emerge renewed through the process of
+              psychological alchemy.
             </p>
 
             <h2>Astronomy</h2>
             <p>
-              Pluto is a dwarf planet with a diameter of about 1,473 miles (2,377 kilometers), making it 
-              smaller than Earth's Moon. Its surface is covered with frozen nitrogen, methane, and carbon 
-              monoxide, creating a complex and varied landscape. Pluto has a thin atmosphere that expands 
-              when it's closer to the Sun and collapses when it's farther away. The dwarf planet has a 
-              highly elliptical orbit that sometimes brings it closer to the Sun than Neptune, though 
-              their orbits never actually cross due to their different orbital planes.
+              Pluto is a dwarf planet with a diameter of about 1,473 miles
+              (2,377 kilometers), making it smaller than Earth's Moon. Its
+              surface is covered with frozen nitrogen, methane, and carbon
+              monoxide, creating a complex and varied landscape. Pluto has a
+              thin atmosphere that expands when it's closer to the Sun and
+              collapses when it's farther away. The dwarf planet has a highly
+              elliptical orbit that sometimes brings it closer to the Sun than
+              Neptune, though their orbits never actually cross due to their
+              different orbital planes.
             </p>
 
             <h2>Pluto's Moons</h2>
             <p>
-              Pluto has five known moons, with Charon being the largest and most significant. Charon is 
-              so large relative to Pluto that some astronomers consider Pluto-Charon to be a binary system. 
-              The other four moons - Nix, Hydra, Kerberos, and Styx - are much smaller and were discovered 
-              between 2005 and 2012 using the Hubble Space Telescope.
+              Pluto has five known moons, with Charon being the largest and most
+              significant. Charon is so large relative to Pluto that some
+              astronomers consider Pluto-Charon to be a binary system. The other
+              four moons - Nix, Hydra, Kerberos, and Styx - are much smaller and
+              were discovered between 2005 and 2012 using the Hubble Space
+              Telescope.
             </p>
 
             <table>
@@ -141,8 +174,5 @@
         </article>
       </section>
     </main>
-
-    <script src="../app/App.js" type="module"></script>
-  
-</body>
+  </body>
 </html>

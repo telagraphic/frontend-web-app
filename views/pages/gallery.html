@@ -1,0 +1,52 @@
+{% extends "layouts/page.html" %}
+{% block title %}Gallery{% endblock %}
+{% block content %}
+<main class="about" data-template="about">
+  <section class="page-content">
+    {% include "partials/navigation.html" %}
+    <article>
+      <h1 data-animation="title">Gallery</h1>
+
+      <p>
+        Welcome to our space gallery. Explore the wonders of our solar system
+        through these amazing images.
+      </p>
+
+      <div class="gallery-grid">
+        <img
+          data-animation="title"
+          alt="Mercury"
+          data-src="https://frontend-web-app.b-cdn.net/planet.webp"
+        />
+
+        <img
+          data-animation="title"
+          alt="Venus"
+          data-src="https://frontend-web-app.b-cdn.net/sun.webp"
+        />
+
+        <img
+          data-animation="title"
+          alt="Earth"
+          data-src="https://frontend-web-app.b-cdn.net/moon.webp"
+        />
+
+        <img
+          data-animation="title"
+          alt="Mars"
+          data-src="https://frontend-web-app.b-cdn.net/planet.webp"
+        />
+      </div>
+
+      <h2 data-animation="title">Planetary Collection</h2>
+
+      <p>
+        Each image in our gallery represents the unique beauty and
+        characteristics of the planets in our solar system. From the rocky
+        surfaces of the inner planets to the gas giants of the outer solar
+        system.
+      </p>
+    </article>
+  </section>
+</main>
+{% endblock %}

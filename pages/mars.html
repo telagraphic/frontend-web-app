@@ -1,21 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mars - Planet</title>
+    <title>Mars</title>
     <link rel="stylesheet" href="../styles/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="../app/App.js" type="module"></script>
   </head>
   <body>
     <section class="transition-overlay"></section>
     <section class="preloader">
-      <h1>Loading</h1>
-      <p>%</p>
+      <h1>Preloading...</h1>
+      <p>%%</p>
     </section>
 
-    <main class="mars" data-template="mars">
+    <main class="about" data-template="about">
       <section class="page-content">
-        <navigation-component></navigation-component>
+        <nav class="navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="gallery">Gallery</a></li>
+            <li><a href="mercury">Mercury</a></li>
+            <li><a href="venus">Venus</a></li>
+            <li><a href="earth">Earth</a></li>
+            <li><a href="mars">Mars</a></li>
+            <li><a href="jupiter">Jupiter</a></li>
+            <li><a href="saturn">Saturn</a></li>
+            <li><a href="uranus">Uranus</a></li>
+            <li><a href="neptune">Neptune</a></li>
+            <li><a href="pluto">Pluto</a></li>
+            <li><a href="moons">Moons</a></li>
+          </ul>
+        </nav>
+
         <article>
           <section class="page-header">
             <img
@@ -26,40 +45,43 @@
           <section class="page-body">
             <h1>Mars</h1>
             <p>
-              Mars is the fourth planet from the Sun and the second-smallest planet 
-              in the Solar System, being larger than only Mercury. Mars is often 
-              called the 'Red Planet' due to its reddish appearance, which is 
-              distinctive among the astronomical bodies visible to the naked eye.
+              Mars is the fourth planet from the Sun and the second-smallest
+              planet in the Solar System, being larger than only Mercury. Mars
+              is often called the 'Red Planet' due to its reddish appearance,
+              which is distinctive among the astronomical bodies visible to the
+              naked eye.
             </p>
 
             <h2>Astrology</h2>
             <p>
-              In astrology, Mars represents energy, action, and desire. Known as 
-              the "Red Planet," Mars governs courage, aggression, passion, and 
-              the drive to achieve goals. It's associated with the zodiac signs 
-              Aries and Scorpio, embodying qualities of leadership, determination, 
-              and the warrior spirit. Mars represents our primal instincts and 
-              the force that drives us to take action and overcome obstacles.
+              In astrology, Mars represents energy, action, and desire. Known as
+              the "Red Planet," Mars governs courage, aggression, passion, and
+              the drive to achieve goals. It's associated with the zodiac signs
+              Aries and Scorpio, embodying qualities of leadership,
+              determination, and the warrior spirit. Mars represents our primal
+              instincts and the force that drives us to take action and overcome
+              obstacles.
             </p>
 
             <h2>Alchemy</h2>
             <p>
-              Within alchemical traditions, Mars symbolizes the principle of 
-              separation and the element of Fire. It represents the process of 
-              calcination, where matter is purified through intense heat and 
-              transformation. Mars embodies the masculine principle of action 
-              and willpower, representing the alchemical stage where raw 
-              materials are broken down and refined through conflict and struggle.
+              Within alchemical traditions, Mars symbolizes the principle of
+              separation and the element of Fire. It represents the process of
+              calcination, where matter is purified through intense heat and
+              transformation. Mars embodies the masculine principle of action
+              and willpower, representing the alchemical stage where raw
+              materials are broken down and refined through conflict and
+              struggle.
             </p>
 
             <h2>Astronomy</h2>
             <p>
-              Mars is a terrestrial planet with a thin atmosphere composed 
-              primarily of carbon dioxide. Its surface features include the 
-              largest volcano in the Solar System, Olympus Mons, and the 
-              deepest canyon, Valles Marineris. Mars has two small moons: 
-              Phobos and Deimos, which are irregularly shaped and may be 
-              captured asteroids.
+              Mars is a terrestrial planet with a thin atmosphere composed
+              primarily of carbon dioxide. Its surface features include the
+              largest volcano in the Solar System, Olympus Mons, and the deepest
+              canyon, Valles Marineris. Mars has two small moons: Phobos and
+              Deimos, which are irregularly shaped and may be captured
+              asteroids.
             </p>
 
             <table>
@@ -106,7 +128,5 @@
         </article>
       </section>
     </main>
-
-    <script src="../app/App.js" type="module"></script>
   </body>
 </html>

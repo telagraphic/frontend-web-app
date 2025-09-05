@@ -1,5 +1,5 @@
 import Component from "../classes/Component.js";
-import { gsap } from "gsap/index.js";
+
 import { RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE, PINK, BROWN, GRAY, BLACK, WHITE } from "../utils/Colors.js";
 
 export class Navigation extends Component {

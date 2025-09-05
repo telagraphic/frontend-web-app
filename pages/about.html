@@ -1,165 +1,63 @@
-<html>
+<!doctype html>
+<html lang="en">
   <head>
-    <title>Front End Web App</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About - Solar System Explorer</title>
     <link rel="stylesheet" href="../styles/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
     <script src="../app/App.js" type="module"></script>
   </head>
-
   <body>
     <section class="transition-overlay"></section>
     <section class="preloader">
-      <h1>Loading</h1>
-      <p>%</p>
+      <h1>Preloading...</h1>
+      <p>%%</p>
     </section>
 
     <main class="about" data-template="about">
       <section class="page-content">
-        <navigation-component></navigation-component>
+        <nav class="navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="gallery">Gallery</a></li>
+            <li><a href="mercury">Mercury</a></li>
+            <li><a href="venus">Venus</a></li>
+            <li><a href="earth">Earth</a></li>
+            <li><a href="mars">Mars</a></li>
+            <li><a href="jupiter">Jupiter</a></li>
+            <li><a href="saturn">Saturn</a></li>
+            <li><a href="uranus">Uranus</a></li>
+            <li><a href="neptune">Neptune</a></li>
+            <li><a href="pluto">Pluto</a></li>
+            <li><a href="moons">Moons</a></li>
+          </ul>
+        </nav>
+
         <article>
           <h1 data-animation="title">About</h1>
 
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            dapibus dolor vitae ultricies condimentum. Etiam ullamcorper
-            tristique urna eget commodo. Quisque eu tellus rutrum, tristique
-            risus vitae, porttitor est. Etiam posuere dolor ac sem dapibus
-            consectetur. Vestibulum finibus elit quis laoreet rutrum. Proin
-            tincidunt erat et dictum tempus. Praesent sed nulla interdum,
-            dapibus tellus et, pulvinar enim. Vestibulum ante ipsum primis in
-            faucibus orci luctus et ultrices posuere cubilia curae; Mauris vitae
-            nulla fringilla, varius metus non, faucibus neque. Curabitur diam
-            lorem, sollicitudin sed nibh in, bibendum egestas ante. Nullam vitae
-            sagittis arcu. Vestibulum iaculis lacinia eros, vel tempus justo. Ut
-            nec purus feugiat, tempor odio eu, tempor ligula. Donec at ante
-            justo. Vivamus dictum libero in risus efficitur accumsan ut ut nisl.
-            Praesent non diam vitae dolor blandit rhoncus ac a eros. In
-            ultricies odio non viverra pretium. Proin auctor volutpat mauris, ac
-            viverra est commodo vel. Vivamus egestas sapien at accumsan
-            ultrices. Duis ultricies lectus orci, non rutrum dui finibus a.
-            Integer vehicula magna eros, eget fermentum ex molestie a. Ut eget
-            sapien purus. Quisque non diam nunc. Curabitur vel porttitor nibh.
-            Morbi rhoncus condimentum elit, quis varius risus tempor in. Integer
-            sit amet lorem ut felis malesuada tempus in vel mauris. Phasellus
-            vehicula, metus in egestas rutrum, turpis lorem vulputate lectus,
-            sed tristique ante nunc nec justo. Aenean gravida lacus id rutrum
-            pellentesque. Nunc dignissim lacus eget bibendum commodo. Nullam
-            orci turpis, interdum sagittis egestas quis, aliquet id nunc.
-            Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-            posuere cubilia curae; Nam dictum arcu sit amet sem tincidunt
-            convallis id sed magna. Donec hendrerit a ipsum nec vestibulum.
-            Donec dictum diam elit. Curabitur bibendum ipsum a ligula efficitur,
-            sed fermentum mi vestibulum. Nullam ac purus pharetra, sodales mi
-            at, egestas lectus. Aenean commodo dolor id diam bibendum mollis.
-            Nam convallis, massa quis pharetra rhoncus, purus odio tempus eros,
-            vel pretium magna nunc at metus. In auctor, nisl at congue luctus
-          </p>
-
-          <h2 data-animation="title">This is a heading</h2>
-
-            <img
-              alt="Random Image"
-              data-src="https://frontend-web-app.b-cdn.net/img3.jpg"
-            />
-
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            dapibus dolor vitae ultricies condimentum. Etiam ullamcorper
-            tristique urna eget commodo. Quisque eu tellus rutrum, tristique
-            risus vitae, porttitor est. Etiam posuere dolor ac sem dapibus
-            consectetur. Vestibulum finibus elit quis laoreet rutrum. Proin
-            tincidunt erat et dictum tempus. Praesent sed nulla interdum,
-            dapibus tellus et, pulvinar enim. Vestibulum ante ipsum primis in
-            faucibus orci luctus et ultrices posuere cubilia curae; Mauris vitae
-            nulla fringilla, varius metus non, faucibus neque. Curabitur diam
-            lorem, sollicitudin sed nibh in, bibendum egestas ante. Nullam vitae
-            sagittis arcu. Vestibulum iaculis lacinia eros, vel tempus justo. Ut
-            nec purus feugiat, tempor odio eu, tempor ligula. Donec at ante
-            justo. Vivamus dictum libero in risus efficitur accumsan ut ut nisl.
-            Praesent non diam vitae dolor blandit rhoncus ac a eros. In
-            ultricies odio non viverra pretium. Proin auctor volutpat mauris, ac
-            viverra est commodo vel. Vivamus egestas sapien at accumsan
-            ultrices. Duis ultricies lectus orci, non rutrum dui finibus a.
-            Integer vehicula magna eros, eget fermentum ex molestie a. Ut eget
-            sapien purus. Quisque non diam nunc. Curabitur vel porttitor nibh.
-            Morbi rhoncus condimentum elit, quis varius risus tempor in. Integer
-            sit amet lorem ut felis malesuada tempus in vel mauris. Phasellus
-            vehicula, metus in egestas rutrum, turpis lorem vulputate lectus,
-            sed tristique ante nunc nec justo. Aenean gravida lacus id rutrum
-            pellentesque. Nunc dignissim lacus eget bibendum commodo. Nullam
-            orci turpis, interdum sagittis egestas quis, aliquet id nunc.
-            Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-            posuere cubilia curae; Nam dictum arcu sit amet sem tincidunt
-            convallis id sed magna. Donec hendrerit a ipsum nec vestibulum.
-            Donec dictum diam elit. Curabitur bibendum ipsum a ligula efficitur,
-            sed fermentum mi vestibulum. Nullam ac purus pharetra, sodales mi
-            at, egestas lectus. Aenean commodo dolor id diam bibendum mollis.
-            Nam convallis, massa quis pharetra rhoncus, purus odio tempus eros,
-            vel pretium magna nunc at metus. In auctor, nisl at congue luctus,
-            orci tellus imperdiet dui, eu feugiat est nisl in nibh. Fusce porta
-            rutrum sagittis. Nam pretium massa ac lorem dictum, at auctor purus
-            dapibus. Aliquam erat volutpat. Integer vitae bibendum elit, quis
-            rhoncus nibh. Pellentesque sapien ante, sollicitudin vitae ipsum
-            nec, finibus vulputate urna. Nulla non enim vitae magna tristique
-            faucibus. Phasellus vitae varius dui, at
-          </p>
-
-          <h3 data-animation="title">This is a heading</h3>
-          <img
-            alt="Random Image"
-            data-src="https://frontend-web-app.b-cdn.net/img1.jpg"
-          />
-
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            dapibus dolor vitae ultricies condimentum. Etiam ullamcorper
-            tristique urna eget commodo. Quisque eu tellus rutrum, tristique
-            risus vitae, porttitor est. Etiam posuere dolor ac sem dapibus
-            consectetur. Vestibulum finibus elit Lorem ipsum dolor sit amet,
+            This is the about page content. Lorem ipsum dolor sit amet,
             consectetur adipiscing elit. Suspendisse dapibus dolor vitae
             ultricies condimentum. Etiam ullamcorper tristique urna eget
             commodo. Quisque eu tellus rutrum, tristique risus vitae, porttitor
-            est. Etiam posuere dolor ac sem dapibus consectetur. Vestibulum
-            finibus elit quis laoreet rutrum. Proin tincidunt erat et dictum
-            tempus. Praesent sed nulla interdum, dapibus tellus et, pulvinar
-            enim. Vestibulum ante ipsum primis in faucibus orci luctus et
-            ultrices posuere cubilia curae; Mauris vitae nulla fringilla, varius
-            metus non, faucibus neque. Curabitur diam lorem, sollicitudin sed
-            nibh in, bibendum egestas ante. Nullam vitae sagittis arcu.
-            Vestibulum iaculis lacinia eros, vel tempus justo. Ut nec purus
-            feugiat, tempor odio eu, tempor ligula. Donec at ante justo. Vivamus
-            dictum libero in risus efficitur accumsan ut ut nisl. Praesent non
-            diam vitae dolor blandit rhoncus ac a eros. In ultricies odio non
-            viverra pretium. Proin auctor volutpat mauris, ac viverra est
-            commodo vel. Vivamus egestas sapien at accumsan ultrices. Duis
-            ultricies lectus orci, non rutrum dui finibus a. Integer vehicula
-            magna eros, eget fermentum ex molestie a. Ut eget sapien purus.
-            Quisque non diam nunc. Curabitur vel porttitor nibh. Morbi rhoncus
-            condimentum elit, quis varius risus tempor in. Integer sit amet
-            lorem ut felis malesuada tempus in vel mauris. Phasellus vehicula,
-            metus in egestas rutrum, turpis lorem vulputate lectus, sed
-            tristique ante nunc nec justo. Aenean gravida lacus id rutrum
-            pellentesque. Nunc dignissim lacus eget bibendum commodo. Nullam
-            orci turpis, interdum sagittis egestas quis, aliquet id nunc.
-            Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-            posuere cubilia curae; Nam dictum arcu sit amet sem tincidunt
-            convallis id sed magna. Donec hendrerit a ipsum nec vestibulum.
-            Donec dictum diam elit. Curabitur bibendum ipsum a ligula efficitur,
-            sed fermentum mi vestibulum. Nullam ac purus pharetra, sodales mi
-            at, egestas lectus. Aenean commodo dolor id diam bibendum mollis.
-            Nam convallis, massa quis pharetra rhoncus, purus odio tempus eros,
-            vel pretium magna nunc at metus. In auctor, nisl at congue luctus,
-            orci tellus imperdiet dui, eu feugiat est nisl in nibh. Fusce porta
-            rutrum sagittis. Nam pretium massa ac lorem dictum, at auctor purus
-            dapibus. Aliquam erat volutpat. Integer vitae bibendum elit, quis
-            rhoncus nibh. Pellentesque sapien ante, sollicitudin vitae ipsum
-            nec, finibus vulputate urna. Nulla non enim vitae magna tristique
-            faucibus. Phasellus vitae varius dui, at
+            est.
           </p>
-          <h2 data-animation="title">Quasi Crystals</h2>
+
+          <h2 data-animation="title">Our Mission</h2>
+
+          <p>
+            Etiam posuere dolor ac sem dapibus consectetur. Vestibulum finibus
+            elit quis laoreet rutrum. Proin tincidunt erat et dictum tempus.
+            Praesent sed nulla interdum, dapibus tellus et, pulvinar enim.
+          </p>
+
           <img
             data-animation="title"
-            data-src="https://frontend-web-app.b-cdn.net/img5.jpg"
-            alt="Random Image"
+            alt="About Image"
+            data-src="https://frontend-web-app.b-cdn.net/planet.webp"
           />
         </article>
       </section>

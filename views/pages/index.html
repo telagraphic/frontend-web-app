@@ -1,0 +1,44 @@
+{% extends "layouts/page.html" %}
+{% block title %}Front End Web App{% endblock %}
+{% block content %}
+<main class="home" data-template="home">
+  <section class="page-content">
+    {% include "partials/navigation.html" %}
+    <article>
+      <section class="page-header">
+        <img data-src="https://frontend-web-app.b-cdn.net/mars.webp" alt="Mars" />
+      </section>
+      <section class="page-body">
+        <h1 data-animation="title">Welcome to the Solar System</h1>
+        <p>
+          Mars is the fourth planet from the Sun and the second-smallest planet
+          in the Solar System, being larger than only Mercury. Mars is often
+          called the 'Red Planet' due to its reddish appearance, which is
+          distinctive among the astronomical bodies visible to the naked eye.
+        </p>
+
+        <p>
+          This is the about page content. Lorem ipsum dolor sit amet, consectetur
+          adipiscing elit. Suspendisse dapibus dolor vitae ultricies condimentum.
+          Etiam ullamcorper tristique urna eget commodo. Quisque eu tellus rutrum,
+          tristique risus vitae, porttitor est.
+        </p>
+  
+        <h2 data-animation="title">Our Mission</h2>
+  
+        <p>
+          Etiam posuere dolor ac sem dapibus consectetur. Vestibulum finibus elit
+          quis laoreet rutrum. Proin tincidunt erat et dictum tempus. Praesent sed
+          nulla interdum, dapibus tellus et, pulvinar enim.
+        </p>
+
+        <img
+        data-animation="title"
+        alt="About Image"
+        data-src="https://frontend-web-app.b-cdn.net/planet.webp"
+      />
+      </section>
+    </article>
+  </section>
+</main>
+{% endblock %}
