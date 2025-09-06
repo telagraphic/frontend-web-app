@@ -24,7 +24,6 @@
     "lint:css": "stylelint \"**/*.{css,scss}\"",
     "lint:css:fix": "stylelint \"**/*.{css,scss}\" --fix",
     "lint:html": "prettier --check pages/*.html",
-    "minify:html": "sh scripts/minify-html.sh",
     "clean": "rm -rf dist",
     "netlify:dev": "netlify dev --dir=dist"
   },
