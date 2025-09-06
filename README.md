@@ -12,6 +12,15 @@ Checkout a branch, review the **README.md** for setup details.
 | front-end SPA with Bun.js API  | SPA with SSG using Bun      | spa-api-bun  |
 | front-end SPA with Hono.js API | SPA with SSR API using Hono | spa-api-hono |
 
+Search for **README.md** to see feature specific documentation.
+
+## Notes
+All branches uses **pnpm** for package management.
+
+**spa-frontend** uses Vite for bundling and development testing. **npm** or **bun** can be used for task running.
+**spa-api-bun** uses Bun for bundling, tasks.
+**spa-api-hono** uses Bun for bundling and tasks.
+
 
 ## 📁 Project Structure
 
