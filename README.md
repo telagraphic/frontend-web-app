@@ -1,9 +1,11 @@
 # About
 
+Use case is for creating front end SPA sites that might need minimal template updates if external data is needed. Mostly an exploration of how to use Bun for serving a high static/low dynamic website.
+
 - A modern SPA built with vanilla JavaScript, SCSS, and GSAP animations.
 - Uses **bun** for tasks, bundling and creating a server.
 - Pages are rendered at build time, so it's ideal for SSG projects.
-- External data requests should be executed in each page's respective `app/pages/` and updating it's respective page template. 
+- External data requests should be executed in each page's respective `app/pages/` and updating it's respective page template.
 
 ## 🚀 Quick Start
 
@@ -50,7 +52,6 @@ This creates a `dist/` folder ready for deployment and optimized bundled assets.
 | `lint:css` | `stylelint "**/*.{css,scss}"` | Lint CSS and Sass files |
 | `lint:css:fix` | `stylelint "**/*.{css,scss}" --fix` | Lint and auto-fix CSS and Sass files |
 | `lint:html` | `prettier --check pages/*.html` | Check HTML file formatting |
-| `minify:html` | `sh scripts/minify-html.sh` | Minify HTML files using shell script |
 | `clean` | `rm -rf dist` | Remove dist directory |
 | `netlify:dev` | `netlify dev --dir=dist` | Local Netlify development server |
 
