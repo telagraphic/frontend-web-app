@@ -1,4 +1,4 @@
-import { gsap } from "gsap/index.js";
+
 
 /**
  * Class to handle the background and colors of the page

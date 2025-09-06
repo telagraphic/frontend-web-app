@@ -1,7 +1,5 @@
-import { gsap } from "gsap";
-import { $, $$, setupHelpers } from "../utils/Helpers.js";
 import { Easings } from "../utils/Easings.js";
-// Fix with web pack or vite
+// TODO: Update for browser compatibility
 // import { normalizeWheel } from "../../node_modules/normalize-wheel-es/index.d.ts";
 
 export class SmoothScroll {
@@ -21,8 +19,6 @@ export class SmoothScroll {
     // Initialize easing system
     this.easings = new Easings(easingType);
     this.easingType = easingType;
-
-    setupHelpers();
   }
 
   /**

@@ -35,7 +35,8 @@ class App {
   /**
    * Register page classes using the data-template field in the main element
    * This data-template field is a key for creating the page instances
-   * @param {string} specificPage - Optional specific page to set (e.g., "gallery", "about")
+   * TODO: Dynamically import the pages
+   * @param {string} specificPage - Optional specific page to set (e.g., "gallery", "about") used for hard-refresh
    */
   setupPages(specificPage = null) {
     this.pages = {
@@ -68,6 +69,17 @@ class App {
 
     // Create navigation after setting the correct currentPage
     this.createNavigation();
+  }
+  /**
+   * Dynamically load the page, update this.pages with loaded page
+   */
+  pageLoader() {
+    /**
+     * Create a map for the this.pages field
+     * Load the new class page
+     * Add to the this.pages map
+     * 
+     */
   }
 
   /**
@@ -119,13 +131,14 @@ class App {
 
   /**
    * Handle page navigation flow and page change registration
+   * TODO: Consider refactoring into the router, pass an object into with all the information?
    * @param {*} href
    *
    */
   async onPageChange(href) {
     const isValidRoute = this.router.validateRoute(
       href,
-      window.location.pathname,
+      window.location.pathname
     );
 
     if (!isValidRoute.isValid) {

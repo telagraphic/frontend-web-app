@@ -1,5 +1,5 @@
 import Component from "../classes/Component.js";
-import { gsap } from "gsap/index.js";
+
 import {
   RED,
   GREEN,

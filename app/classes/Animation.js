@@ -1,5 +1,5 @@
 import Component from "./Component.js";
-import { gsap } from "gsap/index.js";
+
 
 export class Animation extends Component {
   constructor(element, elements) {

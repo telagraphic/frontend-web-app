@@ -1,5 +1,5 @@
 import Page from "../classes/Page.js";
-import { gsap } from "gsap/index.js";
+
 
 export class Uranus extends Page {
   constructor() {
