@@ -1,7 +1,7 @@
 import Page from "../classes/Page.js";
 
 
-export class Mars extends Page {
+export default class Mars extends Page {
   constructor() {
     super({
       id: "mars",

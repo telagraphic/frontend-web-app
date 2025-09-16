@@ -7,7 +7,7 @@ import Page from "../classes/Page.js";
  * The containers are animated with gsap.quickTo
  * The wheel event listener is added to the window
  */
-export class Moons extends Page {
+export default class Moons extends Page {
   constructor() {
     super({
       id: "moons",

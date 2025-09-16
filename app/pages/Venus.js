@@ -1,7 +1,7 @@
 import Page from "../classes/Page.js";
 
 
-export class Venus extends Page {
+export default class Venus extends Page {
   constructor() {
     super({
       id: "venus",

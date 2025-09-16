@@ -1,7 +1,7 @@
 import Page from "../classes/Page.js";
 
 
-export class Jupiter extends Page {
+export default class Jupiter extends Page {
   constructor() {
     super({
       id: "jupiter",

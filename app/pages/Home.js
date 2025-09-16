@@ -1,6 +1,6 @@
 import Page from "../classes/Page.js";
 
-export class Home extends Page {
+export default class Home extends Page {
   constructor() {
     super({
       id: "home",

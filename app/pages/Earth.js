@@ -1,7 +1,7 @@
 import Page from "../classes/Page.js";
 
 
-export class Earth extends Page {
+export default class Earth extends Page {
   constructor() {
     super({
       id: "earth",

@@ -1,7 +1,7 @@
 import Page from "../classes/Page.js";
 
 
-export class Neptune extends Page {
+export default class Neptune extends Page {
   constructor() {
     super({
       id: "neptune",
