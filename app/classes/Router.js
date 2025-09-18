@@ -18,7 +18,7 @@ export class Router {
     this.template = null;
     this.pathname = null;
     this.newPage = null;
-    this.mainElement = mainElement || document.querySelector("main");
+    this.mainElement = mainElement || $("main");
     this.pageHistory = window.history;
     this.initialPage = null;
     setupHelpers();
@@ -28,11 +28,6 @@ export class Router {
   create() {
     this.setupPopState();
     this.setupEventListeners();
-
-    // Sync URL when a hard refresh occurs with content after a short delay to ensure DOM is ready
-    setTimeout(() => {
-      this.syncUrlWithContent();
-    }, 100);
   }
 
   /**
@@ -130,17 +125,16 @@ export class Router {
       return;
     }
 
-    console.log(`📦 Requesting page: ${routePath}`);
     try {
       const response = await fetch(routePath);
       if (response.ok) {
         this.newPage = response;
       } else {
-        throw new Error("Failed to fetch page: ${routePath}");
+        console.error("Failed to fetch page: ${routePath}");
         this.redirectToHome();
       }
     } catch (error) {
-      throw new Error("Network error: ${error.message}");
+      console.error("Network error: ${error.message}");
       this.redirectToHome();
     }
   }
@@ -192,7 +186,7 @@ export class Router {
    */
   async preloadImages() {
     const imageElements = Array.from(
-      document.querySelectorAll("img[data-src]"),
+      $$("img[data-src]"),
     );
     if (imageElements.length === 0) return;
 
@@ -250,7 +244,6 @@ export class Router {
 
       if (this.validRoutes.has(route)) {
         this.pageHistory.replaceState({ route: route }, "", initialPage);
-        // Don't call updatePage here - let syncUrlWithContent on new page load
       } else {
         this.redirectToHome();
       }
@@ -305,38 +298,6 @@ export class Router {
       }
       resolve();
     });
-  }
-
-  /**
-   * Syncs the browser URL with the current page content
-   * This handles cases where the URL doesn't match the displayed content due to client side routing
-   * defaulting to serving the home page
-   * Will cause a slight flicker of the home page when template and path are not the same
-   */
-  syncUrlWithContent() {
-    const currentPath = window.location.pathname;
-    const currentTemplate = this.mainElement.getAttribute("data-template");
-
-    // If we're on a path like /gallery but showing home content, sync them
-    if (
-      currentPath !== "/" &&
-      currentPath !== "" &&
-      currentTemplate === "home"
-    ) {
-      const route = currentPath.replace("/", ""); // Remove leading slash
-
-      if (this.validRoutes.has(route)) {
-        this.updatePage(route, "", true);
-        // Pass the route information with the hard-refresh event
-        window.dispatchEvent(
-          new CustomEvent("hard-refresh", {
-            detail: { route: route },
-          }),
-        );
-      } else {
-        this.redirectToHome();
-      }
-    }
   }
 
   /**

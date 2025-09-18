@@ -7,7 +7,7 @@ import Page from "../classes/Page.js";
  * The containers are animated with gsap.quickTo
  * The wheel event listener is added to the window
  */
-export class Moons extends Page {
+export default class Moons extends Page {
   constructor() {
     super({
       id: "moons",
@@ -46,6 +46,7 @@ export class Moons extends Page {
     this.containers = Object.values(this.elements).filter(
       (element) => element && element.classList.contains("container"),
     );
+     
     this.containers.forEach((container, index) => {
       this.moonAnimations.push(
         this.createAnimation(container, this.columnDurations[index]),
@@ -70,7 +71,10 @@ export class Moons extends Page {
       },
     });
 
-    return (increment) => yTo(increment);
+    
+    return (increment) => {
+      yTo(increment);
+    };
   }
 
   /**
@@ -86,16 +90,14 @@ export class Moons extends Page {
    * Listen for the wheel event and animate the containers
    */
   setupWheelEvents() {
-    this.element.addEventListener(
-      "wheel",
-      (e) => {
-        this.increment += e.deltaY / 2; // Dividing by 2 to slow down the movement
-        this.moonAnimations.forEach((animation) => {
-          animation(this.increment);
-        });
-      },
-      { passive: true },
-    );
+    // Try both the main element and window
+    const wheelHandler = (e) => {
+      this.increment += e.deltaY / 2; // Dividing by 2 to slow down the movement
+      this.moonAnimations.forEach((animation, index) => {
+        animation(this.increment);
+      });
+    };
+    window.addEventListener("wheel", wheelHandler, { passive: true });
   }
 
   // Original code to be refactored above

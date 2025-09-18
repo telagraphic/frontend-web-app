@@ -1,7 +1,7 @@
 import Page from "../classes/Page.js";
 
 
-export class Mercury extends Page {
+export default class Mercury extends Page {
   constructor() {
     super({
       id: "mercury",

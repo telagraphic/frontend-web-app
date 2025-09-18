@@ -3,19 +3,6 @@
  */
 
 import { Router } from "./classes/Router.js";
-import { Home } from "./pages/Home.js";
-import { About } from "./pages/About.js";
-import { Gallery } from "./pages/Gallery.js";
-import { Earth } from "./pages/Earth.js";
-import { Jupiter } from "./pages/Jupiter.js";
-import { Mars } from "./pages/Mars.js";
-import { Mercury } from "./pages/Mercury.js";
-import { Neptune } from "./pages/Neptune.js";
-import { Pluto } from "./pages/Pluto.js";
-import { Saturn } from "./pages/Saturn.js";
-import { Uranus } from "./pages/Uranus.js";
-import { Venus } from "./pages/Venus.js";
-import { Moons } from "./pages/Moons.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
 import { $, $$, setupHelpers } from "./utils/Helpers.js";
@@ -26,10 +13,26 @@ class App {
     this.pageHistory = window.history;
     this.mainElement = document.querySelector("main");
     this.router = new Router();
+    this.setupPageConfig();
     this.setupPages();
     this.setupApp();
     this.setupEventListeners();
     this.createPreloader();
+  }
+
+  setupPageConfig() {
+    // Configuration for different environments
+    const CONFIG = {
+      development: {
+        pagePath: "./pages/",
+      },
+      production: {
+        pagePath: "/dist/pages/",
+      },
+    };
+
+    const isProduction = process.env.NODE_ENV === "production";
+    this.pageConfig = isProduction ? CONFIG.production : CONFIG.development;
   }
 
   /**
@@ -38,48 +41,41 @@ class App {
    * TODO: Dynamically import the pages
    * @param {string} specificPage - Optional specific page to set (e.g., "gallery", "about") used for hard-refresh
    */
-  setupPages(specificPage = null) {
-    this.pages = {
-      home: new Home(),
-      about: new About(),
-      gallery: new Gallery(),
-      earth: new Earth(),
-      jupiter: new Jupiter(),
-      mars: new Mars(),
-      mercury: new Mercury(),
-      neptune: new Neptune(),
-      pluto: new Pluto(),
-      saturn: new Saturn(),
-      uranus: new Uranus(),
-      venus: new Venus(),
-      moons: new Moons(),
-    };
+  async setupPages(specificPage = null) {
+    this.pages = new Map();
 
     this.content = $("main");
 
-    // If a specific page is provided, use it; otherwise read from DOM
+    // If a specific page is provided, use it; otherwise read from data-template field
     if (specificPage) {
       this.template = specificPage;
     } else {
       this.template = this.content.getAttribute("data-template");
     }
-
-    this.currentPage = this.pages[this.template];
-    this.currentPage.create();
+    
+    // Always load the page class, even on direct visits
+    if (!this.pages.has(this.template)) {
+      await this.loadPage(this.template);
+    }
+    
+    const PageClass = this.pages.get(this.template);
+    this.currentPage = new PageClass();
+    await this.currentPage.create();
 
     // Create navigation after setting the correct currentPage
     this.createNavigation();
   }
   /**
    * Dynamically load the page, update this.pages with loaded page
+   * Pages are now bundled separately in dist/pages/ for optimal loading
    */
-  pageLoader() {
-    /**
-     * Create a map for the this.pages field
-     * Load the new class page
-     * Add to the this.pages map
-     * 
-     */
+  async loadPage(page) {
+    const pagePath = page.charAt(0).toUpperCase() + page.slice(1);
+    const pageModule = await import(
+      `${this.pageConfig.pagePath}${pagePath}.js`
+    );
+    
+    this.pages.set(page, pageModule.default);
   }
 
   /**
@@ -151,7 +147,22 @@ class App {
 
     await this.currentPage.hide();
     await this.router.updatePage(href, isValidRoute.normalizedPath);
-    this.currentPage = this.pages[this.router.template];
+    
+    // Wait for DOM to be fully updated
+    await new Promise(resolve => requestAnimationFrame(() => {
+      requestAnimationFrame(resolve);
+    }));
+    
+    // Get the page class and create a new instance
+    const pageTemplate = this.router.template;
+    if (this.pages.has(pageTemplate)) {
+      const PageClass = this.pages.get(pageTemplate);
+      this.currentPage = new PageClass();
+    } else {
+      await this.loadPage(pageTemplate);
+      const PageClass = this.pages.get(pageTemplate);
+      this.currentPage = new PageClass();
+    }
     await this.currentPage.create();
     this.navigation.onChange(this.currentPage);
     await this.currentPage.show();
