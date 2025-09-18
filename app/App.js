@@ -46,23 +46,21 @@ class App {
 
     this.content = $("main");
 
-    // If a specific page is provided, use it; otherwise read from DOM
+    // If a specific page is provided, use it; otherwise read from data-template field
     if (specificPage) {
       this.template = specificPage;
     } else {
       this.template = this.content.getAttribute("data-template");
     }
-
-    if (this.pages.has(this.template)) {
-      const PageClass = this.pages.get(this.template);
-      this.currentPage = new PageClass();
-    } else {
+    
+    // Always load the page class, even on direct visits
+    if (!this.pages.has(this.template)) {
       await this.loadPage(this.template);
-      const PageClass = this.pages.get(this.template);
-      this.currentPage = new PageClass();
     }
-
-    this.currentPage.create();
+    
+    const PageClass = this.pages.get(this.template);
+    this.currentPage = new PageClass();
+    await this.currentPage.create();
 
     // Create navigation after setting the correct currentPage
     this.createNavigation();
@@ -76,7 +74,6 @@ class App {
     const pageModule = await import(
       `${this.pageConfig.pagePath}${pagePath}.js`
     );
-    
     
     this.pages.set(page, pageModule.default);
   }
@@ -151,13 +148,19 @@ class App {
     await this.currentPage.hide();
     await this.router.updatePage(href, isValidRoute.normalizedPath);
     
+    // Wait for DOM to be fully updated
+    await new Promise(resolve => requestAnimationFrame(() => {
+      requestAnimationFrame(resolve);
+    }));
+    
     // Get the page class and create a new instance
-    if (this.pages.has(this.template)) {
-      const PageClass = this.pages.get(this.template);
+    const pageTemplate = this.router.template;
+    if (this.pages.has(pageTemplate)) {
+      const PageClass = this.pages.get(pageTemplate);
       this.currentPage = new PageClass();
     } else {
-      await this.loadPage(this.template);
-      const PageClass = this.pages.get(this.template);
+      await this.loadPage(pageTemplate);
+      const PageClass = this.pages.get(pageTemplate);
       this.currentPage = new PageClass();
     }
     await this.currentPage.create();

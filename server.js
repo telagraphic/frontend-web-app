@@ -168,7 +168,7 @@ const routeDataHandlers = {
       );
 
       if (!response.ok) {
-        throw new Error(`NASA API responded with ${response.status}`);
+        console.error(`NASA API responded with ${response.status}`);
       }
 
       const nasaData = await response.json();
