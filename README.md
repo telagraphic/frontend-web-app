@@ -2,11 +2,11 @@
 
 Use case is for SPA websites that uses SSR to render external in the page template before rendering.
 
-- A modern SPA built with vanilla JavaScript, SCSS, and GSAP animations.
-- Bun for tasks, bundling and creating a server.
-- Hono for serving the API (routes, static assets, etc...)
+- A modern **SPA** built with vanilla JavaScript, SCSS, and GSAP animations.
+- **Bun** for tasks, bundling and creating a server.
+- **Hono** for serving the API (routes, static assets, etc...)
+- Use **dynamic imports** for each page class to reduce initial page load
 - Pages are built at run-time per each route request. External data requests are injected into each template.
-
 
 ## 🚀 Quick Start
 
@@ -18,20 +18,16 @@ pnpm install
 bun run dev
 ```
 
-### Bun Scripts (Primary)
-
-
-
-
 ### Production Build
 ```bash
 bun run build
 ```
 
-
 This creates a `dist/` folder ready for deployment.
 
 ### Commands
+
+Reference for what npm commands do.
 
 | Script | Command | Description |
 |--------|---------|-------------|
@@ -42,8 +38,9 @@ This creates a `dist/` folder ready for deployment.
 | `deploy` | `bun run build && bun run start` | Build project and start production server |
 | `clean` | `rm -rf dist` | Remove dist directory |
 | `build:sass` | `bun run sass:build --outdir=dist` | Build Sass with custom output directory |
-| `build:js` | `bun build app/App.js --outdir=dist` | Bundle JavaScript using Bun |
-| `build:js:esbuild` | `esbuild app/App.js --bundle --minify --outdir=dist` | Bundle and minify JavaScript using esbuild |
+| `build:js` | `bun run build:app && bun run build:pages` | Build both main app and individual page bundles |
+| `build:app` | `NODE_ENV=production bun build app/App.js --outdir=dist --target browser --minify` | Build main App.js with production environment and minification |
+| `build:pages` | `mkdir -p dist/pages && for file in app/pages/*.js; do bun build "$file" --outfile="dist/pages/$(basename "$file")" --target browser --minify; done` | Build individual page files as separate bundles for dynamic loading |
 | `build:html` | `bun run scripts/build-static-pages.js` | Generate static HTML pages from templates |
 | `sass:watch` | `sass --watch styles/styles.scss styles/styles.css --style=expanded --no-source-map` | Watch Sass files and auto-compile without source maps |
 | `sass:dev` | `sass styles/styles.scss styles/styles.css --style=expanded --source-map` | Build development CSS with source maps |
@@ -59,6 +56,7 @@ This creates a `dist/` folder ready for deployment.
 | `lint:html` | `prettier --check views/**/*.html` | Check HTML template formatting |
 | `lint` | `bun run lint:js && bun run lint:css && bun run lint:html` | Run all linting checks |
 | `netlify:dev` | `netlify dev --dir=dist` | Local Netlify development server |
+
 
 
 ## 📁 Project Structure
