@@ -1,20 +1,20 @@
 {
-  "dependencies": {
-    "html-minifier-terser": "^7.2.0",
-    "nunjucks": "^3.2.4"
-  },
+  "name": "web-app-refactor",
+  "private": true,
   "scripts": {
     "dev": "bun --hot server.js",
-    "build": "rm -rf dist && bun run build:js && bun run build:css && bun run build:html",
+    "build": "rm -rf dist && bun run build:js && bun run build:css && bun run build:pages:js && bun run build:html && bun run build:seo",
     "deploy": "bun run build && bun server.js",
     "build:js": "bun build app/App.js --outdir dist --target browser --minify",
+    "build:pages:js": "bun scripts/build-pages.js",
     "build:css": "bun run sass:build && bun build styles/styles.css --outdir dist --target browser --minify",
     "build:html": "BUN_ENV=production bun scripts/generate-static-pages.js",
     "build:html:dev": "bun scripts/generate-static-pages.js && bun run format:html",
-    "sass:watch": "sass --watch styles/styles.scss styles/styles.css --style=expanded --source-map",
-    "sass:build": "sass styles/styles.scss styles/styles.css --style=compressed --no-source-map",
-    "sass:dev": "sass styles/styles.scss styles/styles.css --style=expanded --source-map",
-    "sass:check": "sass styles/styles.scss --style=expanded --no-source-map --quiet",
+    "build:seo": "BUN_ENV=production bun scripts/generate-sitemap.js",
+    "sass:watch": "bun x sass --watch styles/styles.scss styles/styles.css --style=expanded --source-map",
+    "sass:build": "bun x sass styles/styles.scss styles/styles.css --style=compressed --no-source-map",
+    "sass:dev": "bun x sass styles/styles.scss styles/styles.css --style=expanded --source-map",
+    "sass:check": "bun x sass styles/styles.scss --style=expanded --no-source-map --quiet",
     "build:pages": "bun scripts/generate-static-pages.js && bun run format:html",
     "format:html": "prettier --write pages/*.html",
     "format:js": "prettier --write app/**/*.js",
@@ -23,9 +23,17 @@
     "lint:js:fix": "eslint app/**/*.js --fix",
     "lint:css": "stylelint \"**/*.{css,scss}\"",
     "lint:css:fix": "stylelint \"**/*.{css,scss}\" --fix",
-    "lint:html": "prettier --check pages/*.html",
+    "lint:html": "prettier --check views/**/*.html",
+    "lint:html:fix": "prettier --write views/**/*.html --write",
     "clean": "rm -rf dist",
-    "netlify:dev": "netlify dev --dir=dist"
+    "netlify:dev": "netlify dev --dir=dist",
+    "process:image": "bun scripts/process-image.js"
+  },
+  "dependencies": {
+    "avif": "^0.5.3",
+    "html-minifier-terser": "^7.2.0",
+    "nunjucks": "^3.2.4",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
@@ -46,8 +54,6 @@
     "not ie <= 11",
     "maintained node versions"
   ],
-  "name": "frontend-web-app",
-  "private": true,
   "peerDependencies": {
     "typescript": "^5"
   }

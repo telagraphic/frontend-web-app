@@ -1,0 +1,105 @@
+@use "../components/hero";
+@use "../utilities/mixins";
+
+@layer pages {
+  /* =======================================================================
+     Manifest Page - Table Styles
+     ======================================================================= */
+
+  .manifest__table-wrapper {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    box-sizing: border-box;
+    isolation: isolate;
+
+    // Force the wrapper to contain its children
+    & > * {
+      max-width: none;
+    }
+
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+
+  .manifest__header {
+    max-width: 70%;
+    margin: 0 auto;
+    padding: var(--space-6) 0;
+    @include mixins.table-responsive;
+  }
+
+  .manifest__table {
+    display: table;
+    width: 100%;
+    max-width: 80%;
+    min-width: 600px;
+    border-collapse: collapse;
+    color: var(--color-white);
+    text-align: left;
+    font-size: var(--font-size-0);
+    table-layout: auto;
+    box-sizing: border-box;
+    margin: 0 auto;
+
+    @include mixins.table-responsive;
+  }
+
+  .manifest__table-header {
+    background-color: none;
+    padding: var(--space-2);
+  }
+
+  .manifest__table-header-cell {
+    padding: var(--space-4);
+    border-top: var(--border-width-thin) solid var(--color-white);
+    background-color: none;
+  }
+
+  .manifest__table-row {
+    vertical-align: baseline;
+    font-family: var(--font-family-serif);
+
+    &--header {
+      background-color: none;
+    }
+    &:last-child {
+      border-bottom: var(--border-width-thin) solid var(--color-white);
+    }
+  }
+
+  tbody .manifest__table-row {
+    transition:
+      background-color 0.7s ease,
+      color 0.6s ease;
+    &:hover {
+      background-color: var(--color-white);
+      opacity: 0.75;
+      color: var(--theme-color-main);
+    }
+  }
+
+  .manifest__table-cell {
+    padding: var(--space-4);
+    border-top: var(--border-width-thin) solid var(--color-white);
+  }
+}

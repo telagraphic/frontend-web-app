@@ -1,0 +1,162 @@
+@layer tokens {
+  /* =======================================================================
+     Design Tokens – Primitives and Semantics
+     ======================================================================= */
+
+  /* 
+    PRIMITIVE TOKENS
+    - Raw scales
+    - Do NOT refer to specific component usage
+    - Example: --color-blue-500, --space-4, --font-size-2
+  */
+
+  :root {
+    /* ---------------------------------------------------
+       Color primitives (neutral, brand, utility)
+       --------------------------------------------------- */
+
+    --color-white: #ffffff; // color-white-0
+    --color-white-1: #d8d8d8; // color-white-1
+    --color-white-2: #f4f4f4; // color-white-2
+
+    --color-black: #000000; // color-black-0
+    --color-black-1: #191919; // color-black-1
+    --color-black-2: #2a2727; // color-black-2
+    --color-gray-1: rgb(137 137 137 / 48%); // color-gray-0
+    --color-gray-2: hsl(0deg 0% 80.78%);
+
+    --theme-color-main: #005eb8;
+
+    /* ---------------------------------------------------
+      Typography primitives
+    --------------------------------------------------- */
+
+    /* Font families */
+    --font-family-sans:
+      "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-family-serif:
+      "Hedvig", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-family-script:
+      "Mancon", "Times New Roman", -apple-system, BlinkMacSystemFont,
+      "Segoe UI", sans-serif;
+
+    /* Font sizes (step scale: major second) */
+    --font-size--2: clamp(0.7813rem, 0.6406rem + 0.6249vw, 1.3827rem);
+    --font-size--1: clamp(0.9375rem, 0.793rem + 0.6421vw, 1.5556rem);
+    --font-size-0: clamp(1.125rem, 0.9789rem + 0.6494vw, 1.75rem);
+    --font-size-1: clamp(1.35rem, 1.2054rem + 0.6429vw, 1.9688rem);
+    --font-size-2: clamp(1.62rem, 1.4809rem + 0.618vw, 2.2148rem);
+    --font-size-3: clamp(1.944rem, 1.816rem + 0.569vw, 2.4917rem);
+    --font-size-4: clamp(2.3328rem, 2.2228rem + 0.4887vw, 2.8032rem);
+    --font-size-5: clamp(2.7994rem, 2.7166rem + 0.368vw, 3.1536rem);
+
+    /* Font weights */
+    --font-weight-light: 200;
+    --font-weight-light-medium: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+
+    /* Line heights */
+    --line-height-tightest: 0.7;
+    --line-height-default: 1;
+    --line-height-tight: 1.2;
+    --line-height-1-25: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-1-8: 1.8;
+    --line-height-relaxed: 1.7;
+
+    /* Letter spacing */
+    --letter-spacing-tighter: -0.04em;
+    --letter-spacing-tight: -0.01em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.02em;
+
+    /* ---------------------------------------------------
+       Spacing primitives (4px base)
+       --------------------------------------------------- */
+
+    --space-0: 0;
+    --space-1: 0.25rem; /* 4px */
+    --space-2: 0.5rem; /* 8px */
+    --space-3: 0.75rem; /* 12px */
+    --space-4: 1rem; /* 16px */
+    --space-5: 1.25rem; /* 20px */
+    --space-6: 1.5rem; /* 24px */
+    --space-7: 1.75rem; /* 28px */
+    --space-8: 2rem; /* 32px */
+    --space-9: 2.25rem; /* 36px */
+    --space-10: 2.5rem; /* 40px */
+    --space-12: 3rem; /* 48px */
+    --space-20: 5rem; /* 80px */
+
+    /* Viewport-based spacing */
+    --space-vh-1-5: 1.5vh;
+    --space-vh-2: 2vh;
+    --space-vh-3: 3vh;
+    --space-vh-5: 5vh;
+    --space-vh-10: 10vh;
+
+    /* Widths */
+    --width-90ch: 90ch;
+
+    /* ---------------------------------------------------
+       Border primitives
+       --------------------------------------------------- */
+
+    /* Border widths */
+    --border-width-thin: 1px;
+    --border-width-medium: 1.25px;
+
+    /* Border radius */
+    --border-radius-small: 0.25em;
+    --border-radius-medium: 0.75em;
+    --border-radius-large: 10px;
+
+    /* ---------------------------------------------------
+       Layout primitives
+       --------------------------------------------------- */
+
+    /* Breakpoints (used in media queries, not directly as var()) */
+    /* These are here mostly as documentation / shared constants */
+    --bp-xs: 600px;
+    --bp-sm: 800px;
+    --bp-md: 900px;
+    --bp-lg: 1200px;
+    --bp-xl: 1500px;
+
+    /* Z-index scale */
+
+    --z-index-zero: 0;
+
+    --z-index-home: 10;
+    --z-index-home-background: 20;
+    --z-index-home-content: 30;
+
+    --z-index-footer: 100;
+
+    --z-index-navigation: 200;
+    --z-index-navigation-header: 210;
+    --z-index-navigation-overlay: 220;
+    --z-index-navigation-menu: 230;
+
+    --z-index-preloader: 300;
+    --z-index-preloader-transition: 310;
+
+    --z-index-page-transition: 400;
+    --z-index-page-transition-overlay: 410;
+
+    /* ---------------------------------------------------
+       Aspect ratio primitives
+       --------------------------------------------------- */
+
+    --aspect-ratio-16-9: 16 / 9;
+    --aspect-ratio-1-25: 1 / 1.25;
+    --aspect-ratio-1-1: 1 / 1;
+    --aspect-ratio-4-3: 4 / 3;
+    --aspect-ratio-1: 1;
+    --aspect-ratio-auto: auto;
+  }
+}

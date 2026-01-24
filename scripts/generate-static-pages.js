@@ -2,6 +2,8 @@ import { mkdir } from "node:fs/promises";
 import nunjucks from "nunjucks";
 import { Glob } from "bun";
 import { minify } from "html-minifier-terser";
+import { SiteConfig } from "../app/config/SiteConfig.js";
+import { getBaseUrl } from "../app/config/Environment.js";
 
 /**
  * Generates static pages for the project to ./pages for development and to ./dist/pages for production
@@ -43,6 +45,47 @@ async function generateStaticPages() {
     noCache: true,
   });
 
+  // Initialize SiteConfig for title metadata
+  const siteConfig = new SiteConfig();
+  
+  // Get base URL for canonical URLs and Open Graph
+  const baseUrl = getBaseUrl();
+
+  /**
+   * Maps HTML file name to SiteConfig route key
+   * @param {string} filename - HTML file name (e.g., "index.html", "section-1.html")
+   * @returns {string|null} - Route key or null if not found
+   */
+  function getRouteKeyFromFilename(filename) {
+    if (filename === "index.html") return "home";
+    const nameWithoutExt = filename.replace(".html", "");
+    return siteConfig.has(nameWithoutExt) ? nameWithoutExt : null;
+  }
+
+  /**
+   * Formats page title according to SEO checklist requirements
+   * @param {string} routeKey - SiteConfig route key
+   * @param {string} baseTitle - Base title from SiteConfig
+   * @returns {string} - Formatted title
+   */
+  function formatPageTitle(routeKey, baseTitle) {
+    if (routeKey === "home") {
+      return "The Shea Memorandum | Israeli Surveillance of 9/11 Hijackers";
+    }
+    if (routeKey === "introduction") {
+      return "Introduction | The Shea Memorandum";
+    }
+    if (routeKey === "references") {
+      return "References | The Shea Memorandum";
+    }
+    // Section pages: "[Section Title] | The Shea Memorandum"
+    if (routeKey && routeKey.startsWith("section-")) {
+      return `${baseTitle} | The Shea Memorandum`;
+    }
+    // Fallback for other pages
+    return `${baseTitle} | The Shea Memorandum`;
+  }
+
   // Ensure dist directory exists
   await mkdir(outputDir.pathname, { recursive: true });
 
@@ -66,8 +109,33 @@ async function generateStaticPages() {
       );
       await mkdir(outputDirPath, { recursive: true });
 
-      // Render the template with environment-specific asset paths
-      let rendered = nunjucks.render(`pages/${file}`, currentPaths);
+      // Get route key and formatted title from SiteConfig
+      const routeKey = getRouteKeyFromFilename(file);
+      let templateData = { ...currentPaths };
+      
+      // Add base URL for all templates
+      templateData.baseUrl = baseUrl;
+      
+      if (routeKey) {
+        const routeConfig = siteConfig.get(routeKey);
+        if (routeConfig) {
+          if (routeConfig.title) {
+            templateData.pageTitle = formatPageTitle(routeKey, routeConfig.title);
+          }
+          if (routeConfig.metaDescription) {
+            templateData.metaDescription = routeConfig.metaDescription;
+          }
+          // Use 'link' property for canonical URL (clean route, not file path)
+          // 'link' is the canonical path like "/" or "/section-1"
+          // 'url' is the file path like "/pages/index.html"
+          if (routeConfig.link) {
+            templateData.canonicalPath = routeConfig.link;
+          }
+        }
+      }
+
+      // Render the template with environment-specific asset paths and page title
+      let rendered = nunjucks.render(`pages/${file}`, templateData);
 
       if (isProduction) {
         rendered = await minify(rendered, {

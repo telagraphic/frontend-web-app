@@ -1,0 +1,124 @@
+@use "../utilities/mixins";
+
+@layer components {
+  .footer {
+    &__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: 0 auto;
+      max-inline-size: 100%;
+    }
+
+    &__text {
+      margin: var(--space-0);
+      padding: var(--space-0);
+      font-weight: var(--font-weight-semibold);
+      line-height: var(--line-height-default);
+      line-height: var(--line-height-normal);
+      font-family: var(--font-family-script);
+    }
+
+    &__text--highlight {
+      font-size: var(--step-1);
+      font-weight: var(--font-weight-semibold);
+
+      a {
+        transition: color 0.3s ease;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: none;
+      }
+    }
+
+    &__text--tagline {
+      font-size: var(--step--2);
+      font-family: var(--font-family-serif);
+    }
+
+    &__text--email {
+      font-size: var(--step--2);
+      font-family: var(--font-family-serif);
+    }
+  }
+
+  [data-page^="section-"] .footer,
+  [data-page^="introduction"] .footer {
+    background-color: var(--color-black);
+    color: var(--color-white);
+
+    &__content {
+      padding: var(--space-4);
+
+      @include mixins.min-width("sm") {
+        max-inline-size: 65%;
+        padding: var(--space-8) 0;
+      }
+    }
+
+    &__text {
+      color: var(--color-white);
+    }
+
+    &__text--highlight {
+      a {
+        color: var(--color-white);
+      }
+
+      a:hover {
+        color: var(--theme-color-main);
+      }
+    }
+
+    &__text--tagline {
+      color: var(--color-white);
+    }
+
+    &__text--email {
+      padding-block-start: var(--space-vh-1-5);
+    }
+  }
+
+  [data-page^="home"] .footer,
+  [data-page^="media"] .footer,
+  [data-page^="manifest"] .footer {
+    border-top: var(--border-width-thin) solid var(--color-white);
+    background-color: var(--color-white);
+    color: var(--color-white);
+    z-index: var(--z-index-footer);
+    position: relative;
+
+    &__content {
+      padding: 0 var(--space-4);
+
+      @include mixins.min-width("sm") {
+        max-inline-size: 100%;
+      }
+
+      @include mixins.min-width("md") {
+        padding: var(--space-8) 0;
+        max-inline-size: 65%;
+      }
+    }
+
+    &__text {
+      color: var(--theme-color-main);
+      font-size: var(--step--2);
+    }
+
+    &__text--highlight {
+      font-size: var(--step-1);
+      font-weight: var(--font-weight-extrabold);
+
+      a {
+        color: var(--theme-color-main);
+      }
+
+      a:hover {
+        color: var(--color-black);
+      }
+    }
+  }
+}

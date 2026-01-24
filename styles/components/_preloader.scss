@@ -1,0 +1,71 @@
+@use "../utilities/mixins";
+
+@layer components {
+  .preloader {
+    opacity: 1;
+    z-index: var(--z-index-preloader);
+    background-color: var(--theme-color-main);
+    color: var(--color-white);
+    position: fixed;
+    top: 0;
+    left: 0;
+    @include mixins.max-width-height-viewport-units;
+    display: flex;
+
+    &-transition {
+      text-align: center;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      @include mixins.max-width-height-viewport-units;
+    }
+
+    &-transition-copy {
+      z-index: var(--z-index-preloader-transition);
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      height: 100dvh;
+      opacity: 1;
+    }
+
+    &-transition-copy-outer {
+      overflow: hidden;
+    }
+
+    &-transition-title {
+      font-weight: 600;
+      color: var(--color-white);
+      margin: 0;
+      font-size: var(--step-5);
+      font-size: 30vw;
+      text-transform: uppercase;
+      line-height: var(--line-height-tightest);
+      line-height: 0.8;
+      opacity: 0;
+
+      @include mixins.min-width("sm") {
+        font-size: 25vw;
+      }
+
+      @include mixins.min-width("md") {
+        font-size: 20vw;
+      }
+
+      @include mixins.min-width("lg") {
+        font-size: 15vw;
+      }
+    }
+
+    &-transition-text {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--color-white);
+      margin: 0;
+    }
+  }
+}

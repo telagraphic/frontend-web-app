@@ -1,0 +1,34 @@
+[build]
+  command = "bun run build"
+  publish = "dist"
+
+# Headers for proper MIME types
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/*.mjs"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Content-Type = "text/css; charset=utf-8"
+
+# Content Security Policy (CSP)
+# Currently in report-only mode for testing. Switch to enforce mode after validation.
+# To enforce: Change Content-Security-Policy-Report-Only to Content-Security-Policy
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cloud.umami.is; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://shea-memorandum-site.b-cdn.net data:; font-src 'self' data:; manifest-src 'self' https://shea-memorandum-site.b-cdn.net; connect-src 'self' https://cloud.umami.is; base-uri 'self'; form-action 'self'; frame-src 'none'; object-src 'none'; upgrade-insecure-requests;"
+
+# SPA fallback - redirect all routes to index.html
+# Netlify automatically serves existing files before applying redirects
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

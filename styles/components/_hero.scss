@@ -1,0 +1,204 @@
+@use "../utilities/mixins";
+
+@layer components {
+  /* =======================================================================
+     Hero Component - Shared Layout Styles
+     Used by: home, manifest, media pages
+     ======================================================================= */
+
+  .hero-section {
+    background-color: var(--theme-color-main);
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100vw;
+    width: 100dvw;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+  }
+
+  .hero-background {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    position: sticky;
+    top: 0;
+    width: 100vw;
+    height: 100vh; // increase to make background image taller
+    z-index: var(--z-index-home);
+
+    &__overlay {
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      width: 100%;
+      height: 100%;
+
+      @include mixins.min-width("md") {
+        justify-content: none;
+        width: 100%;
+        height: 120%;
+      }
+    }
+
+    &__image {
+      max-width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+  }
+
+  .hero-content {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    position: relative;
+    top: 0;
+    z-index: var(--z-index-home-content);
+    margin: 0 auto;
+    min-height: 100%;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+
+    @include mixins.min-width("sm") {
+      padding: var(--space-0);
+    }
+  }
+
+  .hero-header {
+    font-family: var(--font-family-sans);
+    text-align: center;
+    color: var(--color-white);
+    height: 45vh;
+    height: 45dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+
+    @include mixins.min-width("md") {
+      height: 50dvh;
+    }
+
+    &__byline {
+      padding: var(--space-4);
+    }
+
+    &__byline-copy {
+      font-family: var(--font-family-sans);
+      font-size: 4vw;
+      margin: 0;
+      line-height: var(--line-height-normal);
+
+      @include mixins.min-width("sm") {
+        font-size: 3.5vw;
+      }
+
+      @include mixins.min-width("md") {
+        font-size: 3vw;
+      }
+
+      @include mixins.min-width("lg") {
+        font-size: 2vw;
+      }
+    }
+  }
+
+  .hero-content__page {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .hero-nav {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .hero-nav__section {
+    color: var(--color-white);
+    margin-block-start: var(--space-vh-2);
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    @include mixins.min-width("sm") {
+      margin-block-start: var(--space-vh-5);
+    }
+  }
+
+  .hero-nav__section-header {
+    margin: 0 auto;
+    padding-block-end: var(--space-4);
+
+    @include mixins.min-width("md") {
+      width: 65%;
+    }
+  }
+
+  .hero-nav__section-title {
+    padding-left: var(--space-4);
+    font-size: var(--font-size-1);
+
+    @include mixins.min-width("sm") {
+      font-size: var(--font-size-3);
+    }
+
+    @include mixins.min-width("md") {
+      padding: var(--space-0);
+    }
+  }
+
+  .hero-nav__section-list {
+    list-style: none;
+    margin: var(--space-0);
+    padding: var(--space-0);
+    color: var(--color-white);
+    font-family: var(--font-family-serif);
+  }
+
+  .hero-nav__section-list-item {
+    font-size: var(--font-size-0);
+    padding: var(--space-2) 0;
+    border-top: var(--border-width-medium) solid var(--color-white);
+    transition:
+      color 0.75s cubic-bezier(0.165, 0.84, 0.44, 1),
+      background-color 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+
+    &:hover {
+      background-color: var(--color-white);
+
+      .hero-nav__section-list-link {
+        color: var(--theme-color-main);
+      }
+    }
+
+    @include mixins.min-width("sm") {
+      padding: var(--space-4) 0;
+      font-size: var(--step-2);
+    }
+  }
+
+  .hero-nav__section-list-link {
+    display: block;
+    color: var(--color-white);
+    text-decoration: none;
+    font-weight: var(--font-weight-light-medium);
+    margin: 0 auto;
+    padding-left: var(--space-4);
+
+    @include mixins.min-width("sm") {
+      width: 100%;
+    }
+
+    @include mixins.min-width("md") {
+      padding: var(--space-0);
+      width: 65%;
+    }
+  }
+}

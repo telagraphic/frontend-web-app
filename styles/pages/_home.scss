@@ -1,0 +1,105 @@
+@use "../components/hero";
+@use "../utilities/mixins";
+
+@layer pages {
+  /* =======================================================================
+     Home Page - Preview Follower Styles
+     ======================================================================= */
+
+  .home__nav-section-list-preview-item {
+    aspect-ratio: var(--aspect-ratio-1-25);
+    width: 20em;
+    display: none;
+    position: absolute;
+    overflow: hidden;
+  }
+
+  .home__nav-section-list-preview-item-image {
+    object-fit: cover;
+    @include mixins.max-width-height-percentage;
+  }
+
+  .home__nav-section-list-preview-follower [data-follower-visual] {
+    display: block;
+
+    @include mixins.max-width-height-percentage;
+    z-index: var(--z-index-zero);
+  }
+
+  .home__nav-section-list-preview-follower-inner {
+    border-top: var(--border-width-thin) solid var(--color-black);
+    width: 100%;
+    padding-block-start: 2.5em;
+    padding-block-end: 2.5em;
+  }
+
+  .home__nav-section-list-preview-follower {
+    z-index: var(--z-index-home-content);
+    aspect-ratio: var(--aspect-ratio-1-25);
+    pointer-events: none;
+    border-radius: 0.75em;
+    justify-content: center;
+    align-items: center;
+    width: 20em;
+    display: flex;
+    position: fixed;
+    inset: 0% auto auto 0%;
+    overflow: hidden;
+  }
+
+  .home__nav-section-list-preview-follower-label {
+    z-index: var(--z-index-home-content);
+    position: absolute;
+    opacity: 0;
+    transform: translate(0px, 100%);
+    transition:
+      opacity 0.1s ease,
+      transform 0.6s cubic-bezier(0.65, 0.1, 0, 1);
+  }
+
+  .home__nav-section-list-preview-follower-label-span {
+    background-color: var(--color-white);
+    opacity: 1;
+    border-radius: 0.25em;
+    padding: 0.75em 1.25em;
+    font-size: 1em;
+    font-family: var(--font-family-sans);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .home__nav-section-list-preview-follower-inner {
+    z-index: var(--z-index-home-content); // 2
+    justify-content: center;
+    align-items: center;
+    @include mixins.max-width-height-percentage;
+    display: flex;
+    position: relative;
+    opacity: 0;
+    transform: scale(0);
+    transition:
+      opacity 0.1s ease,
+      transform 0.6s cubic-bezier(0.65, 0.1, 0, 1);
+  }
+
+  @media (hover: hover) and (min-width: 992px) {
+    body:has([data-follower-collection]:hover)
+      .home__nav-section-list-preview-follower-inner {
+      opacity: 1;
+      transform: scale(1);
+    }
+    body:has([data-follower-collection]:hover)
+      .home__nav-section-list-preview-follower-label {
+      opacity: 1;
+      transform: translate(0px, 0%);
+    }
+    body:has(.preview-item:hover) .preview-item:not(:hover) {
+      opacity: 0.5;
+    }
+  }
+
+  @media screen and (max-width: 991px) {
+    .home__nav-section-list-preview-follower {
+      display: none;
+    }
+  }
+}

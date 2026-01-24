@@ -1,0 +1,114 @@
+@use "sass:map";
+
+/* =======================================================================
+   Component Mixins
+   ======================================================================= */
+
+@mixin table-responsive {
+  @media (max-width: 599px) {
+    max-width: 95%;
+    width: max-content;
+  }
+
+  @media (min-width: 600px) and (max-width: 899px) {
+    max-width: 85%;
+  }
+
+  @media (min-width: 900px) {
+    max-width: 75%;
+    min-width: 800px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 70%;
+  }
+}
+
+/* =======================================================================
+   Spacing/Dimensions Mixins
+   ======================================================================= */
+
+@mixin max-width-height-percentage {
+  width: 100%;
+  height: 100%;
+}
+
+@mixin max-width-height-viewport-units {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  width: 100dvw;
+}
+
+/* =======================================================================
+   Breakpoint Mixins
+   Mobile-first responsive design helpers
+   ======================================================================= */
+
+// Breakpoint map (matches tokens/_tokens.scss)
+$breakpoints: (
+  "xs": 600px,
+  "sm": 800px,
+  "md": 900px,
+  "lg": 1200px,
+  "xl": 1500px,
+) !default;
+
+// Mobile-first (min-width)
+// Usage: @include min-width('md') { ... }
+@mixin min-width($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    $value: map.get($breakpoints, $breakpoint);
+    @media (min-width: $value) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: #{$breakpoint}";
+  }
+}
+
+// Desktop-first (max-width)
+// Usage: @include respond-below('md') { ... }
+@mixin max-width($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    $value: map.get($breakpoints, $breakpoint);
+    $max-value: $value - 1px;
+    @media (max-width: $max-value) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: #{$breakpoint}";
+  }
+}
+
+// Range (between two breakpoints)
+// Usage: @include respond-between('sm', 'lg') { ... }
+@mixin respond-between($min, $max) {
+  $min-value: map.get($breakpoints, $min);
+  $max-value: map.get($breakpoints, $max);
+
+  @if $min-value and $max-value {
+    $max-width: $max-value - 1px;
+    @media (min-width: $min-value) and (max-width: $max-width) {
+      @content;
+    }
+  } @else {
+    @warn "Invalid breakpoint range";
+  }
+}
+
+// Hover support (for touch devices)
+// Usage: @include hover-supported { &:hover { ... } }
+@mixin hover-supported {
+  @media (hover: hover) {
+    @content;
+  }
+}
+
+// Touch devices (no hover)
+// Usage: @include touch-only { ... }
+@mixin touch-only {
+  @media (hover: none) {
+    @content;
+  }
+}

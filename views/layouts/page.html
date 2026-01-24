@@ -1,15 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="google-site-verification" content="sh7vDYB3NEqOmA_iI0DoYUQm9kpO77zjQAbyzMj8kso" />
+    {# Content Security Policy is set via HTTP headers in server.js (dev) and netlify.toml (production) #}
+    {# CSP meta tags don't work in report-only mode, so we use HTTP headers instead #}
+    <title>{% if pageTitle %}{{ pageTitle }}{% else %}{% block title %}{% endblock %}{% endif %}</title>
+    {% if metaDescription %}<meta name="description" content="{{ metaDescription }}" />{% endif %}
+    {% include "partials/seo.html" %}
+    {% include "partials/favicon.html" %}
+    <!-- Tracking code will be added here -->
     <link rel="stylesheet" href="{{ cssPath }}" />
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    {% include "partials/scripts.html" %}
     <script src="{{ jsPath }}" type="module"></script>
   </head>
   <body>
-    {% include "partials/preloader-transition.html" %}
-    {% block content %}{% endblock %}
+    {% include "partials/page-transition.html" %} {% include
+    "partials/preloader.html" %} {% include "partials/navigation.html" %} {%
+    block content %} {% endblock %} {% include "partials/footer.html" %}
   </body>
 </html>

@@ -1,0 +1,23 @@
+{# SEO Meta Tags - Canonical, Open Graph and Twitter Cards #}
+{% set siteName = "The Shea Memorandum" %}
+{% set socialImage = "https://shea-memorandum-site.b-cdn.net/images/social-media-mobile.webp" %}
+
+{# Canonical URL - Use canonicalPath (clean route) from template data #}
+{% if baseUrl and canonicalPath %}
+<link rel="canonical" href="{{ baseUrl }}{{ canonicalPath }}" />
+{% endif %}
+
+{# Open Graph Tags #}
+{% if pageTitle %}<meta property="og:title" content="{{ pageTitle }}" />{% endif %}
+{% if metaDescription %}<meta property="og:description" content="{{ metaDescription }}" />{% endif %}
+<meta property="og:image" content="{{ socialImage }}" />
+{% if baseUrl and canonicalPath %}<meta property="og:url" content="{{ baseUrl }}{{ canonicalPath }}" />{% endif %}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="{{ siteName }}" />
+<meta property="og:locale" content="en_US" />
+
+{# Twitter Card Tags #}
+<meta name="twitter:card" content="summary_large_image" />
+{% if pageTitle %}<meta name="twitter:title" content="{{ pageTitle }}" />{% endif %}
+{% if metaDescription %}<meta name="twitter:description" content="{{ metaDescription }}" />{% endif %}
+<meta name="twitter:image" content="{{ socialImage }}" />

@@ -1,19 +1,33 @@
-@forward "./normalize.scss";
-@forward "./base.scss";
-@forward "./page-transitions.scss";
-@forward "./preloader.scss";
-@forward "./smooth-scroll.scss";
-@forward "./home.scss";
-@forward "./page.scss";
-@forward "./moons.scss";
-@forward "./navigation.scss";
+/* =======================================================================
+   CSS @layers - Cascade Control
+   Layer order defines cascade priority (later layers override earlier)
+   ======================================================================= */
 
-*, 
-*::before,
-*::after {
-    box-sizing: border-box;
-}
+/* =======================================================================
+   Mixins (forwarded before layers - used by other files)
+   ======================================================================= */
 
-body {
-    margin: 0;
-}
+@forward "./utilities/mixins";
+
+/* =======================================================================
+   All @use statements must come before @layer declarations
+   ======================================================================= */
+
+@use "./reset/normalize";
+@use "./tokens/tokens";
+@use "./base/base";
+@use "./base/typography";
+@use "./components/hero";
+@use "./components/navigation";
+@use "./components/page";
+@use "./components/footer";
+@use "./components/footnotes";
+@use "./components/preloader";
+@use "./components/page-transitions";
+@use "./components/smooth-scroll";
+@use "./utilities/utilities";
+@use "./pages/home";
+@use "./pages/manifest";
+@use "./pages/media";
+
+@layer reset, tokens, base, components, utilities, pages, overrides;

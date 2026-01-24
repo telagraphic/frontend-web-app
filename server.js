@@ -10,6 +10,23 @@ const isDevelopment = !isProduction;
 console.log(`Running in ${isProduction ? "production" : "development"} mode`);
 
 /**
+ * Content Security Policy (CSP)
+ * Currently in report-only mode for testing. Switch to enforce mode after validation.
+ * To enforce: Change Content-Security-Policy-Report-Only to Content-Security-Policy
+ */
+const CSP_POLICY = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cloud.umami.is; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://shea-memorandum-site.b-cdn.net data:; font-src 'self' data:; manifest-src 'self' https://shea-memorandum-site.b-cdn.net; connect-src 'self' https://cloud.umami.is; base-uri 'self'; form-action 'self'; frame-src 'none'; object-src 'none'; upgrade-insecure-requests;";
+
+/**
+ * Gets CSP headers for HTML responses
+ * @returns {Object} Headers object with CSP header
+ */
+function getCSPHeaders() {
+  return {
+    "Content-Security-Policy": CSP_POLICY,
+  };
+}
+
+/**
  * Returns a page HTMLBundle from /pages for each route (development only)
  * @returns bundled html file
  */
@@ -55,7 +72,10 @@ async function serveFile(pathname) {
   const fileContent = await file.text();
 
   return new Response(fileContent, {
-    headers: { "Content-Type": file.type },
+    headers: {
+      "Content-Type": file.type,
+      ...getCSPHeaders(),
+    },
   });
 }
 
@@ -77,7 +97,10 @@ async function serveProductionPage(pathname) {
   const fileContent = await file.text();
   
   return new Response(fileContent, {
-    headers: { "Content-Type": "text/html" },
+    headers: {
+      "Content-Type": "text/html",
+      ...getCSPHeaders(),
+    },
   });
 }
 
@@ -90,9 +113,11 @@ async function serveProductionPage(pathname) {
  */
 async function serveStaticFile(pathname, basePath = "") {
   const filePath = basePath ? `${basePath}${pathname}` : pathname.slice(1);
+  console.log(`Serving static file: ${pathname} -> ${filePath}`);
   const file = Bun.file(filePath);
 
   if (!file.size || file.size === 0) {
+    console.log(`File not found: ${filePath}`);
     return new Response("File not found", { status: 404 });
   }
 
@@ -149,7 +174,7 @@ Bun.serve({
       if (isProduction) {
         return serveProductionPage("/");
       } else {
-        return routes["/"];
+        return serveFile("/");
       }
     }
 
@@ -203,6 +228,13 @@ function startDevelopmentWatcher() {
     
     watcher.on('change', async (eventType, filename) => {
       if (filename) {
+        // For styles watcher, only watch .scss files and skip .css files
+        if (config.name === "Styles") {
+          if (!filename.endsWith('.scss') || filename.endsWith('.css')) {
+            return;
+          }
+        }
+        
         console.log(`${config.icon} ${config.name} changed: ${filename}`);
         console.log(`🚀 Running: ${config.command}`);
         try {

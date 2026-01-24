@@ -1,0 +1,400 @@
+@use "../utilities/mixins";
+
+@layer components {
+  .navigation {
+    z-index: var(--z-index-navigation);
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    font-family: var(--font-family-sans);
+    max-width: 100vw;
+
+    &__header {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      justify-content: flex-end;
+      position: absolute;
+      width: 100%;
+      padding: var(--space-6);
+      align-items: center;
+      z-index: var(--z-index-navigation-header);
+
+      @include mixins.min-width("sm") {
+        padding: var(--space-6);
+        align-items: flex-start;
+      }
+    }
+
+    &__title {
+      pointer-events: auto;
+      color: var(--color-white-2);
+      justify-self: center;
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+      transition: color 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+      font-size: var(--font-size-1);
+
+      @include mixins.min-width("sm") {
+        font-size: var(--font-size-3);
+      }
+    }
+
+    /* --------------------------------- Toggle --------------------------------- */
+
+    &__toggle {
+      pointer-events: auto;
+      color: var(--color-black);
+      border: none;
+      cursor: pointer;
+      background-color: transparent;
+      justify-content: center;
+      align-items: center;
+      width: 3em;
+      height: 3em;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+      justify-self: end;
+
+      &-bar {
+        // Use CSS custom property - JS can override this when intersecting
+        background-color: var(--toggle-bar-color, var(--color-white-2));
+        width: 2em;
+        height: 0.125em;
+        position: absolute;
+        transform: translate(0, 0) rotate(0.001deg);
+        transition:
+          transform 0.5s cubic-bezier(0.7, 0, 0.3, 1),
+          background-color 0.3s ease; // Add transition for color changes
+
+        &:nth-child(1) {
+          transform: translate(0, -0.45em) scale(1, 1) rotate(0.001deg);
+        }
+
+        &:nth-child(3) {
+          transform: translate(0, 0.45em) scale(1, 1) rotate(0.001deg);
+        }
+      }
+
+      /* Toggle - Hover */
+      &:hover &-bar:nth-child(1) {
+        transform: translate(0, -0.45em) scale(0.5, 1) rotate(0.001deg);
+      }
+
+      &:hover &-bar:nth-child(3) {
+        transform: translate(0, 0.45em) scale(0.5, 1) rotate(0.001deg);
+      }
+    }
+
+    /* Toggle (Navigation Open) */
+    [data-navigation-status="active"] &__toggle-bar:nth-child(1) {
+      transform: translate(0, 0) rotate(45deg) scale(1, 1);
+    }
+
+    [data-navigation-status="active"] &__toggle-bar:nth-child(2) {
+      transform: translate(-150%, 0) rotate(0.001deg) scale(1, 1);
+    }
+
+    [data-navigation-status="active"] &__toggle-bar:nth-child(3) {
+      transform: translate(0, 0) rotate(-45deg) scale(1, 1);
+    }
+
+    /*  Toggle - Hover (Navigation Open)  */
+    [data-navigation-status="active"]
+      &__toggle:hover
+      &__toggle-bar:nth-child(1) {
+      transform: translate(0, 0) rotate(45deg) scale(0.7, 1);
+    }
+
+    [data-navigation-status="active"]
+      &__toggle:hover
+      &__toggle-bar:nth-child(3) {
+      transform: translate(0, 0) rotate(-45deg) scale(0.7, 1);
+    }
+
+    /* --------------------------------- Overlay --------------------------------- */
+
+    &__overlay {
+      pointer-events: auto;
+      background-color: var(--theme-color-main);
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      transition: clip-path 1s cubic-bezier(0.9, 0, 0.1, 1);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    &__background {
+      width: 100%;
+      height: 100%;
+      z-index: var(--z-index-navigation-background);
+      opacity: 0.15;
+      grid-row: 1 / 2;
+      grid-column: 1 / 2;
+      object-fit: cover;
+    }
+
+    /* Overlay (Navigation Open) */
+    [data-navigation-status="active"] &__overlay {
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    }
+
+    &__menu {
+      flex-flow: column;
+      align-items: baseline;
+      overflow-y: auto;
+      display: flex;
+      grid-row: 1 / 2;
+      grid-column: 1 / 2;
+      z-index: var(--z-index-navigation-menu);
+      margin-block-start: var(--space-vh-10);
+      padding: var(--space-0);
+      font-family: var(--font-family-serif);
+    }
+
+    &__item {
+      align-items: center;
+      margin: var(--space-0);
+      padding: var(--space-2) 0;
+      text-decoration: none;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+      border-bottom: var(--border-width-thin) solid var(--color-white-2);
+      width: 100%;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      @include mixins.min-width("sm") {
+        margin-block-start: var(--space-0);
+        padding: 0 var(--space-8);
+        border-bottom: none;
+      }
+
+      &:nth-child(1) .navigation__link {
+        transition-delay: 0.2s;
+      }
+
+      &:nth-child(2) .navigation__link {
+        transition-delay: 0.15s;
+      }
+
+      &:nth-child(3) .navigation__link {
+        transition-delay: 0.1s;
+      }
+
+      &:nth-child(4) .navigation__link {
+        transition-delay: 0.05s;
+      }
+
+      &:nth-child(5) .navigation__link {
+        transition-delay: 0s;
+      }
+    }
+
+    &__link {
+      color: var(--color-white-2);
+      letter-spacing: var(--letter-spacing-tighter);
+      padding: 0 var(--space-2);
+      font-size: calc(2vw + 1.5vh);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--line-height-tight);
+      text-decoration: none;
+      transform: translateY(100%) rotate(5deg);
+      transition: transform 0.75s cubic-bezier(0.7, 0, 0.3, 1);
+
+      @include mixins.min-width("sm") {
+        font-size: calc(1.5vw + 2vh);
+      }
+
+      .navigation__text {
+        text-shadow: none;
+        display: inline-block;
+        position: relative;
+        transition: transform 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+        transform: translateY(0%) rotate(0.001deg);
+
+        @include mixins.min-width("sm") {
+          text-shadow: 0 1.1em 0;
+        }
+      }
+
+      &:hover .navigation__text {
+        transform: none;
+
+        @include mixins.min-width("sm") {
+          transform: translateY(-100%) rotate(0.001deg);
+        }
+      }
+    }
+    /* Overlay - Links (Navigation Open) */
+    [data-navigation-status="active"] &__link {
+      transform: translateY(0%) rotate(0.001deg);
+      transition-delay: 0.3s;
+    }
+
+    [data-navigation-status="active"] &__item:nth-child(1) .navigation__link {
+      transition-delay: 0.3s;
+    }
+
+    [data-navigation-status="active"] &__item:nth-child(2) .navigation__link {
+      transition-delay: 0.35s;
+    }
+
+    [data-navigation-status="active"] &__item:nth-child(3) .navigation__link {
+      transition-delay: 0.4s;
+    }
+
+    [data-navigation-status="active"] &__item:nth-child(4) .navigation__link {
+      transition-delay: 0.45s;
+    }
+
+    [data-navigation-status="active"] &__item:nth-child(5) .navigation__link {
+      transition-delay: 0.5s;
+    }
+
+    /* Overlay - Links (Hover) */
+    &__menu:has(.navigation__item:hover) .navigation__item {
+      opacity: 1;
+
+      @include mixins.min-width("sm") {
+        opacity: 0.55;
+      }
+    }
+
+    &__menu:has(.navigation__item:hover) .navigation__item:hover {
+      opacity: 1;
+    }
+
+    /* Footer */
+    &__footer {
+      justify-content: space-between;
+      width: 100%;
+      padding: var(--space-9) var(--space-2);
+      display: flex;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      color: var(--color-white-2);
+      text-decoration: none;
+      font-family: var(--font-family-serif);
+      font-style: italic;
+      flex-direction: column;
+      display: none;
+      z-index: var(--z-index-navigation-menu);
+
+      @include mixins.min-width("sm") {
+        display: flex;
+        padding: var(--space-4) var(--space-10);
+        flex-direction: row;
+      }
+    }
+
+    &__footer-text {
+      opacity: 0.9;
+      margin-block-end: var(--space-0);
+      position: relative;
+      text-decoration: none;
+      margin: var(--space-0);
+    }
+
+    &__footer-text-highlight {
+      font-family: var(--font-family-script);
+      font-size: var(--step-1);
+
+      a {
+        color: var(--color-white-2);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      a:hover {
+        color: var(--color-black);
+        text-decoration: none;
+      }
+    }
+
+    &__footer-text-tagline {
+      font-family: var(--font-family-sans);
+      font-size: var(--step--2);
+    }
+  }
+
+  body[data-page="home"] {
+    .navigation__overlay {
+      background-color: var(--color-white-2);
+    }
+
+    .navigation__link {
+      color: var(--theme-color-main);
+    }
+
+    // Set default toggle-bar color for home page via CSS variable
+    .navigation__toggle {
+      --toggle-bar-color: var(--color-white-2);
+    }
+
+    [data-navigation-status="active"] .navigation__toggle-bar {
+      background-color: var(--theme-color-main);
+    }
+
+    [data-navigation-status="active"] .navigation__title {
+      color: var(--theme-color-main);
+    }
+
+    .navigation__footer {
+      color: var(--theme-color-main);
+    }
+
+    .navigation__item {
+      border-bottom: var(--border-width-thin) solid var(--theme-color-main);
+
+      @include mixins.min-width("sm") {
+        border-bottom: none;
+      }
+    }
+
+    .navigation__footer-text-highlight a {
+      transition: color 0.3s ease;
+      color: var(--theme-color-main);
+
+      &:hover {
+        color: var(--color-black-1);
+      }
+    }
+  }
+
+  body:not([data-page="home"]):not([data-page="media"]):not(
+      [data-page="manifest"]
+    ) {
+    // Set default toggle-bar color for other pages via CSS variable
+    // This allows JS to override when intersecting
+    .navigation__toggle {
+      --toggle-bar-color: var(--color-black);
+    }
+
+    [data-navigation-status="active"] .navigation__toggle-bar {
+      background-color: var(--color-white-2);
+    }
+
+    [data-navigation-status="not-active"] .navigation__title {
+      display: none;
+    }
+
+    [data-navigation-status="active"] .navigation__title {
+      display: block;
+
+      @include mixins.min-width("sm") {
+        display: none;
+      }
+    }
+  }
+}

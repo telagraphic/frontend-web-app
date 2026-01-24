@@ -3,64 +3,762 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About - Solar System Explorer</title>
+    <title>The Shea Memorandum</title>
     <link rel="stylesheet" href="../styles/styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
     <script src="../app/App.js" type="module"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.min.js"></script>
   </head>
   <body>
-    <section class="transition-overlay"></section>
-    <section class="preloader">
-      <h1>Preloading...</h1>
-      <p>%%</p>
+    <section class="page-transition-overlay">
+      <p class="page-transition-overlay__copy">The Shea Memorandum</p>
+      <img
+        class="page-transition-overlay__image"
+        src="https://shea-memorandum-site.b-cdn.net/images/twin-tower-office-lights.jpg"
+        alt="The Shea Memorandum"
+      />
     </section>
 
-    <main class="about" data-template="about">
-      <section class="page-content">
-        <nav class="navigation">
-          <ul class="nav-menu">
-            <li><a href="/">Home</a></li>
-            <li><a href="about">About</a></li>
-            <li><a href="gallery">Gallery</a></li>
-            <li><a href="mercury">Mercury</a></li>
-            <li><a href="venus">Venus</a></li>
-            <li><a href="earth">Earth</a></li>
-            <li><a href="mars">Mars</a></li>
-            <li><a href="jupiter">Jupiter</a></li>
-            <li><a href="saturn">Saturn</a></li>
-            <li><a href="uranus">Uranus</a></li>
-            <li><a href="neptune">Neptune</a></li>
-            <li><a href="pluto">Pluto</a></li>
-            <li><a href="moons">Moons</a></li>
-          </ul>
-        </nav>
-
-        <article>
-          <h1 data-animation="title">About</h1>
-
-          <p>
-            This is the about page content. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Suspendisse dapibus dolor vitae
-            ultricies condimentum. Etiam ullamcorper tristique urna eget
-            commodo. Quisque eu tellus rutrum, tristique risus vitae, porttitor
-            est.
+    <section id="page-transition-overlay-templates"></section>
+    <section class="preloader">
+      <section class="preloader-transition">
+        <div class="preloader-transition-copy">
+          <h1 class="preloader-transition-title">The Shea Memorandum</h1>
+          <p class="preloader-transition-text">
+            Israeli Surveillance of the Future Hijackers
           </p>
-
-          <h2 data-animation="title">Our Mission</h2>
-
-          <p>
-            Etiam posuere dolor ac sem dapibus consectetur. Vestibulum finibus
-            elit quis laoreet rutrum. Proin tincidunt erat et dictum tempus.
-            Praesent sed nulla interdum, dapibus tellus et, pulvinar enim.
+          <p class="preloader-transition-text">
+            and FBI Suspects in the September 11 Attacks
           </p>
+          <p class="preloader-transition-text">
+            and Their Failure to Give Us Adequate Warning
+          </p>
+        </div>
+        <img
+          class="preloader-transition-image"
+          data-src="https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp"
+          alt="The Shea Memorandum"
+        />
+      </section>
+    </section>
+    <nav data-navigation-status="not-active" class="navigation">
+      <div class="navigation__header">
+        <button data-navigation-toggle="toggle" class="navigation__toggle">
+          <div class="navigation__toggle-bar"></div>
+          <div class="navigation__toggle-bar"></div>
+          <div class="navigation__toggle-bar"></div>
+        </button>
+      </div>
+      <div class="navigation__overlay">
+        <ul class="navigation__menu">
+          <li class="navigation__item">
+            <a href="/" class="navigation__link internal-link">
+              <span class="navigation__text">Home</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="introduction" class="navigation__link internal-link"
+              ><span class="navigation__text">Introduction</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-1" class="navigation__link internal-link"
+              ><span class="navigation__text"
+                >General Preliminary Conclusions</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-2" class="navigation__link internal-link"
+              ><span class="navigation__text"
+                >Imperatives and Priorities</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-3" class="navigation__link internal-link"
+              ><span class="navigation__text">The DEA Report</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-4" class="navigation__link internal-link"
+              ><span class="navigation__text">The Israeli DEA Groups</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-5" class="navigation__link internal-link"
+              ><span class="navigation__text"
+                >The Future Hijackers and FBI Suspects</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-6" class="navigation__link internal-link"
+              ><span class="navigation__text"
+                >Reports Concerning the Surveillance Activities</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-7" class="navigation__link internal-link"
+              ><span class="navigation__text">Northeastern New Jersey</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-8" class="navigation__link internal-link"
+              ><span class="navigation__text"
+                >Inadequate Israeli Warnings in August 2001</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-9" class="navigation__link internal-link"
+              ><span class="navigation__text"
+                >The Watchlisting in August 2001</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-10" class="navigation__link internal-link"
+              ><span class="navigation__text">Why the Israeli Groups?</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-11" class="navigation__link internal-link"
+              ><span class="navigation__text"
+                >The CIA's Role and Responsibilities</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-12" class="navigation__link internal-link">
+              <span class="navigation__text">Detailed Summary</span></a
+            >
+          </li>
+          <li class="navigation__item"></li>
+        </ul>
+        <div class="navigation__footer">
+          <p class="navigation__footer-text">Made by Conspirasee</p>
+          <p class="navigation__footer-text">hello@conspirasee.com</p>
+        </div>
+      </div>
+    </nav>
 
+    <main class="home" data-template="home">
+      <section class="home-background">
+        <div class="home-background__overlay">
           <img
-            data-animation="title"
-            alt="About Image"
-            data-src="https://frontend-web-app.b-cdn.net/planet.webp"
+            class="home-background__image"
+            data-src="https://shea-memorandum-site.b-cdn.net/images/banner-theme-4.3.png"
+            alt="The Shea Memorandum Logo"
           />
+        </div>
+      </section>
+      <section class="home-content">
+        <header class="home-content__header">
+          <h2 class="home-content__header-title">The Shea Memorandum</h2>
+          <div class="home-content__header-byline">
+            <p class="home-content__header-byline-copy">
+              Israeli Surveillance of the Future Hijackers
+            </p>
+            <p class="home-content__header-byline-copy">
+              and FBI Suspects in the September 11 Attacks
+            </p>
+            <p class="home-content__header-byline-copy">
+              and Their Failure to Give Us Adequate Warning
+            </p>
+          </div>
+        </header>
+        <article class="home-content__page">
+          <nav class="home__nav" data-follower-wrap="">
+            <section class="home__nav-section">
+              <header class="home__nav-section-header">
+                <h2 class="home__nav-section-title">Table of Contents</h2>
+              </header>
+              <ul class="home__nav-section-list" data-follower-collection="">
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="introduction"
+                    class="home__nav-section-list-link internal-link"
+                    >Introduction</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-1"
+                    class="home__nav-section-list-link internal-link"
+                    >General Preliminary Conclusions</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-2"
+                    class="home__nav-section-list-link internal-link"
+                    >Imperatives and Priorities</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-3"
+                    class="home__nav-section-list-link internal-link"
+                    >The DEA Report</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-4"
+                    class="home__nav-section-list-link internal-link"
+                    >The Israeli DEA Groups</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-5"
+                    class="home__nav-section-list-link internal-link"
+                    >The Future Hijackers and FBI Suspects</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-6"
+                    class="home__nav-section-list-link internal-link"
+                  >
+                    Reports Concerning the Surveillance Activities of The
+                    Israeli DEA Groups
+                  </a>
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-7"
+                    class="home__nav-section-list-link internal-link"
+                    >Northeastern New Jersey—Another Vital Center of Operations
+                    for Both Sides</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-8"
+                    class="home__nav-section-list-link internal-link"
+                  >
+                    Inadequate Israeli Warnings in August 2001
+                  </a>
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-9"
+                    class="home__nav-section-list-link internal-link"
+                  >
+                    The Watchlisting of Khaled al Mihdhar and Nawaf al Hazmi in
+                    August 2001</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-10"
+                    class="home__nav-section-list-link internal-link"
+                    >Why the Israeli Groups?</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-11"
+                    class="home__nav-section-list-link internal-link"
+                    >The CIA’s Role and Responsibilities</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="section-12"
+                    class="home__nav-section-list-link internal-link"
+                    >Detailed Summary</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+              </ul>
+            </section>
+            <section class="home__nav-section">
+              <header class="home__nav-section-header">
+                <h2 class="home__nav-section-title">Exhibits and Maps</h2>
+              </header>
+              <ul class="home__nav-section-list" data-follower-collection="">
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-a.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Exhibit A—The DEA Report</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-b.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Exhibit B—Members of Israeli Groups and Future Hijackers
+                    and FBI Suspects in Key Towns and Areas</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-c.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Exhibit C — The October 2001 FBI Suspect List</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-d.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Exhibit D — The May 2002 FBI Suspect List</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-e.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Exhibit E — Mossad Warnings: A Tabular Comparison</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-map-1.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Map 1 — Hollywood, Florida Area: Central Area of Operations
+                    of Future Hijackers of the World Trade Center Planes and
+                    Pennsylvania Plane, and the Israeli DEA Groups, December
+                    2000 to September 2001</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-map-2.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Map 2 — Hollywood, Florida: Core of Operations of the
+                    Future Hijackers of the World Trade Center Planes and the
+                    Pennsylvania Plane and the Israeli DEA Groups, December 2000
+                    to September 2001</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-map-3.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Map 3 — Hudson and Bergen Counties, NJ, New York City
+                    Metropolitan Area: Center of Operations of the Future
+                    Hijackers of the Pentagon Plane and the Israeli New Jersey
+                    Group, March to September 2001</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-map-4.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >Map 4 — United States, Mid-2000 through August, 2001</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+              </ul>
+            </section>
+
+            <section class="home__nav-section">
+              <header class="home__nav-section-header">
+                <h2 class="home__nav-section-title">Original Report</h2>
+              </header>
+              <ul class="home__nav-section-list" data-follower-collection="">
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-original.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >The Shea Memorandum (Original Report)</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+              </ul>
+            </section>
+
+            <section class="home__nav-section">
+              <header class="home__nav-section-header">
+                <h2 class="home__nav-section-title">Other</h2>
+              </header>
+              <ul class="home__nav-section-list" data-follower-collection="">
+                <li class="home__nav-section-list-item" data-follower-item="">
+                  <a
+                    href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-original.pdf"
+                    class="home__nav-section-list-link"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >FBI Report on the Dancing Israelis</a
+                  >
+                  <div
+                    data-follower-visual=""
+                    class="home__nav-section-list-preview-item"
+                  >
+                    <img
+                      src="https://shea-memorandum-site.b-cdn.net/images/hollwood-florida-2.avif"
+                      class="home__nav-section-list-preview-item-image"
+                    />
+                  </div>
+                </li>
+              </ul>
+            </section>
+            <div
+              data-follower-cursor=""
+              class="home__nav-section-list-preview-follower"
+            >
+              <div
+                data-follower-cursor-inner=""
+                class="home__nav-section-list-preview-follower-inner"
+              >
+                <div class="home__nav-section-list-preview-follower-label">
+                  <div
+                    class="home__nav-section-list-preview-follower-label-span"
+                  >
+                    Read
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nav>
         </article>
       </section>
     </main>
+
+    <script>
+      function initPreviewFollower() {
+        // Find every follower wrap
+        const wrappers = document.querySelectorAll("[data-follower-wrap]");
+
+        wrappers.forEach((wrap) => {
+          const collection = wrap.querySelector("[data-follower-collection]");
+          const items = wrap.querySelectorAll("[data-follower-item]");
+          const follower = wrap.querySelector("[data-follower-cursor]");
+          const followerInner = wrap.querySelector(
+            "[data-follower-cursor-inner]",
+          );
+
+          let prevIndex = null;
+          let firstEntry = true;
+
+          const offset = 100; // The animation distance in %
+          const duration = 0.5; // The animation duration of all visual transforms
+          const ease = "power2.inOut";
+
+          // Initialize follower position
+          gsap.set(follower, { xPercent: -50, yPercent: -50 });
+
+          // Quick setters for x/y
+          const xTo = gsap.quickTo(follower, "x", {
+            duration: 0.6,
+            ease: "power3",
+          });
+          const yTo = gsap.quickTo(follower, "y", {
+            duration: 0.6,
+            ease: "power3",
+          });
+
+          // Move all followers on mousemove
+          window.addEventListener("mousemove", (e) => {
+            xTo(e.clientX);
+            yTo(e.clientY);
+          });
+
+          // Enter/leave per item within this wrap
+          items.forEach((item, index) => {
+            item.addEventListener("mouseenter", () => {
+              const forward = prevIndex === null || index > prevIndex;
+              prevIndex = index;
+
+              // animate out existing visuals
+              follower
+                .querySelectorAll("[data-follower-visual]")
+                .forEach((el) => {
+                  gsap.killTweensOf(el);
+                  gsap.to(el, {
+                    yPercent: forward ? -offset : offset,
+                    duration,
+                    ease,
+                    overwrite: "auto",
+                    onComplete: () => el.remove(),
+                  });
+                });
+
+              // clone & insert new visual
+              const visual = item.querySelector("[data-follower-visual]");
+              if (!visual) return;
+              const clone = visual.cloneNode(true);
+              followerInner.appendChild(clone);
+
+              // animate it in (unless it's the very first entry)
+              if (!firstEntry) {
+                gsap.fromTo(
+                  clone,
+                  { yPercent: forward ? offset : -offset },
+                  { yPercent: 0, duration, ease, overwrite: "auto" },
+                );
+              } else {
+                firstEntry = false;
+              }
+            });
+
+            item.addEventListener("mouseleave", () => {
+              const el = follower.querySelector("[data-follower-visual]");
+              if (!el) return;
+              gsap.killTweensOf(el);
+              gsap.to(el, {
+                yPercent: -offset,
+                duration,
+                ease,
+                overwrite: "auto",
+                onComplete: () => el.remove(),
+              });
+            });
+          });
+
+          // If pointer leaves the collection, clear any visuals
+          collection.addEventListener("mouseleave", () => {
+            follower
+              .querySelectorAll("[data-follower-visual]")
+              .forEach((el) => {
+                gsap.killTweensOf(el);
+                gsap.delayedCall(duration, () => el.remove());
+              });
+            firstEntry = true;
+            prevIndex = null;
+          });
+        });
+      }
+
+      // Initialize Image Preview Cursor Follower
+      document.addEventListener("DOMContentLoaded", () => {
+        initPreviewFollower();
+      });
+    </script>
   </body>
 </html>

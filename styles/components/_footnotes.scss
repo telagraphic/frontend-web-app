@@ -1,0 +1,140 @@
+@use "../utilities/mixins";
+
+@layer components {
+  .page-footnotes {
+    display: grid;
+    justify-content: center;
+    background-color: var(--color-black);
+    color: var(--color-white);
+
+    &__header-wrapper {
+      text-align: center;
+      padding-block-start: var(--space-vh-2);
+      width: 100dvw;
+
+      @include mixins.min-width("sm") {
+        padding-block-start: var(--space-0);
+      }
+    }
+
+    &__header-span {
+      display: block;
+      margin-block-end: var(--space-4);
+      font-weight: var(--font-weight-light);
+      font-style: italic;
+      font-size: var(--step--2);
+    }
+
+    // Footnotes list styles
+    &__list {
+      color: var(--color-white);
+      flex-flow: column;
+      width: 100%;
+      display: flex;
+      position: relative;
+      margin-block-start: var(--space-8);
+    }
+
+    &__item {
+      grid-column-gap: 1em;
+      grid-row-gap: 1em;
+      color: var(--color-white);
+      justify-content: space-between;
+      align-items: center;
+      margin-block-start: -1px;
+      padding: var(--space-9) var(--space-6);
+      text-decoration: none;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      list-style: none;
+      padding: var(--space-vh-1-5) 0;
+
+      @media (min-width: 600px) {
+        padding: var(--space-vh-3) 0;
+      }
+    }
+
+    &__footnote {
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 9fr;
+      line-height: var(--line-height-default);
+      font-size: var(--step--1);
+      padding: 0 var(--space-4);
+
+      @include mixins.min-width("sm") {
+        padding: var(--space-0);
+        width: 80%;
+      }
+
+      @include mixins.min-width("xl") {
+        width: 65%;
+      }
+
+      &-number {
+        font-size: var(--step--1);
+        font-weight: var(--font-weight-bold);
+      }
+
+      &-detail {
+        margin: var(--space-0);
+        line-height: var(--line-height-tight);
+        font-family: var(--font-family-sans);
+      }
+    }
+
+    &__border {
+      opacity: 0.3;
+      background-color: currentColor;
+      width: 100%;
+      height: var(--border-width-thin);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+  }
+
+  sup {
+    position: relative;
+    top: 0;
+    left: 0;
+    font-size: 100%;
+    background-color: var(--color-gray-1);
+    clip-path: inset(0 round 50em);
+    padding: var(--space-0) var(--space-3);
+    line-height: var(--line-height-default);
+    border: 0.075em solid transparent;
+    margin: var(--space-0);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+
+    &:hover {
+      background-color: var(--color-black-2);
+
+      a {
+        color: var(--color-white-1);
+      }
+    }
+  }
+
+  .footnote-superscript-link {
+    color: var(--color-black-2);
+    text-decoration: none;
+    font-weight: var(--font-weight-regular);
+    font-size: 100%;
+    line-height: var(--line-height-default);
+    margin: var(--space-0);
+    padding: var(--space-0);
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+    font-family: "Outfit";
+
+    &:hover {
+      color: var(--color-white-1);
+    }
+  }
+}

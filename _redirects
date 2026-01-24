@@ -1,1 +1,3 @@
+# SPA fallback - redirect all routes to index.html
+# Netlify will serve existing files (js, css, etc.) before applying this redirect
 /*    /index.html   200

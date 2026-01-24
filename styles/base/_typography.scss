@@ -1,0 +1,63 @@
+@layer base {
+  /* @link https://utopia.fyi/type/calculator?c=360,18,1.2,1900,28,1.125,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+  :root {
+    --step--2: clamp(0.7813rem, 0.6406rem + 0.6249vw, 1.3827rem);
+    --step--1: clamp(0.9375rem, 0.793rem + 0.6421vw, 1.5556rem);
+    --step-0: clamp(1.125rem, 0.9789rem + 0.6494vw, 1.75rem);
+    --step-1: clamp(1.35rem, 1.2054rem + 0.6429vw, 1.9688rem);
+    --step-2: clamp(1.62rem, 1.4809rem + 0.618vw, 2.2148rem);
+    --step-3: clamp(1.944rem, 1.816rem + 0.569vw, 2.4917rem);
+    --step-4: clamp(2.3328rem, 2.2228rem + 0.4887vw, 2.8032rem);
+    --step-5: clamp(2.7994rem, 2.7166rem + 0.368vw, 3.1536rem);
+  }
+
+  // copy text
+  @font-face {
+    font-family: "Hedvig";
+    src: url("../fonts/hedvig/HedvigLettersSerif_opsz.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  // headlines
+  @font-face {
+    font-family: "Outfit";
+    src: url("../fonts/outfit/Outfit-VariableFont_wght.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  // footer
+  @font-face {
+    font-family: "Mancon";
+    src: url("../fonts/mancon/ManufacturingConsent-Regular.ttf")
+      format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  body {
+    font-family: "Outfit", sans-serif;
+    font-weight: 400;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    padding: 0;
+    font-family: "Outfit", sans-serif;
+    font-weight: 600;
+  }
+
+  h4 + p {
+    margin-block-start: 0;
+  }
+}

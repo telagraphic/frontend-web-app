@@ -2,80 +2,845 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Front End Web App</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="google-site-verification"
+      content="sh7vDYB3NEqOmA_iI0DoYUQm9kpO77zjQAbyzMj8kso"
+    />
+
+    <title>The Shea Memorandum | Israeli Surveillance of 9/11 Hijackers</title>
+    <meta
+      name="description"
+      content="The Shea Memorandum examines Israeli surveillance of 9/11 hijackers and FBI suspects, revealing critical intelligence failures before September 11, 2001."
+    />
+
+    <link rel="canonical" href="https://sheamemo.com/" />
+
+    <meta
+      property="og:title"
+      content="The Shea Memorandum | Israeli Surveillance of 9/11 Hijackers"
+    />
+    <meta
+      property="og:description"
+      content="The Shea Memorandum examines Israeli surveillance of 9/11 hijackers and FBI suspects, revealing critical intelligence failures before September 11, 2001."
+    />
+    <meta
+      property="og:image"
+      content="https://shea-memorandum-site.b-cdn.net/images/social-media-mobile.webp"
+    />
+    <meta property="og:url" content="https://sheamemo.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Shea Memorandum" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="The Shea Memorandum | Israeli Surveillance of 9/11 Hijackers"
+    />
+    <meta
+      name="twitter:description"
+      content="The Shea Memorandum examines Israeli surveillance of 9/11 hijackers and FBI suspects, revealing critical intelligence failures before September 11, 2001."
+    />
+    <meta
+      name="twitter:image"
+      content="https://shea-memorandum-site.b-cdn.net/images/social-media-mobile.webp"
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://shea-memorandum-site.b-cdn.net/images/favicon/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="https://shea-memorandum-site.b-cdn.net/images/favicon/favicon.svg"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://shea-memorandum-site.b-cdn.net/images/favicon/favicon.ico"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://shea-memorandum-site.b-cdn.net/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="manifest"
+      href="https://shea-memorandum-site.b-cdn.net/site.webmanifest"
+    />
+
+    <!-- Tracking code will be added here -->
     <link rel="stylesheet" href="../styles/styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.min.js"></script>
+
     <script src="../app/App.js" type="module"></script>
   </head>
   <body>
-    <section class="transition-overlay"></section>
-    <section class="preloader">
-      <h1>Preloading...</h1>
-      <p>%%</p>
+    <section class="page-transition-overlay">
+      <p class="page-transition-overlay__copy">The Shea Memorandum</p>
+      <img
+        class="page-transition-overlay__image"
+        src="https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp"
+        alt="The Shea Memorandum Logo"
+      />
     </section>
 
+    <section id="page-transition-overlay-templates"></section>
+    <section class="preloader">
+      <section class="preloader-transition">
+        <div class="preloader-transition-copy">
+          <div class="preloader-transition-copy-outer">
+            <h1 class="preloader-transition-title">The</h1>
+          </div>
+          <div class="preloader-transition-copy-outer">
+            <h1 class="preloader-transition-title">Shea</h1>
+          </div>
+          <div class="preloader-transition-copy-outer">
+            <h1 class="preloader-transition-title">Memo</h1>
+          </div>
+        </div>
+      </section>
+    </section>
+    <nav data-navigation-status="not-active" class="navigation">
+      <div class="navigation__header">
+        <h2 class="navigation__title">The Shea Memorandum</h2>
+        <button
+          data-navigation-toggle="toggle"
+          class="navigation__toggle"
+          data-umami-event="navigation-toggle"
+        >
+          <div class="navigation__toggle-bar"></div>
+          <div class="navigation__toggle-bar"></div>
+          <div class="navigation__toggle-bar"></div>
+        </button>
+      </div>
+      <div class="navigation__overlay">
+        <img
+          data-src="https://shea-memorandum-site.b-cdn.net/images/navigation-theme-desktop.webp"
+          alt="The Shea Memorandum"
+          class="navigation__background"
+        />
+        <ul class="navigation__menu">
+          <li class="navigation__item">
+            <a
+              href="/"
+              class="navigation__link internal-link"
+              data-umami-event="home-link"
+            >
+              <span class="navigation__text">Home</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a
+              href="introduction"
+              class="navigation__link internal-link"
+              data-umami-event="introduction-link"
+              ><span class="navigation__text">Introduction</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a
+              href="section-1"
+              class="navigation__link internal-link"
+              data-umami-event="section-1-link"
+              ><span class="navigation__text"
+                >General Preliminary Conclusions</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a
+              href="section-2"
+              class="navigation__link internal-link"
+              data-umami-event="section-2-link"
+              ><span class="navigation__text"
+                >Imperatives and Priorities</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a
+              href="section-3"
+              class="navigation__link internal-link"
+              data-umami-event="section-3-link"
+              ><span class="navigation__text">The DEA Report</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a
+              href="section-4"
+              class="navigation__link internal-link"
+              data-umami-event="section-4-link"
+              ><span class="navigation__text">The Israeli DEA Groups</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-5" class="navigation__link internal-link"
+              ><span class="navigation__text" data-umami-event="section-5-link"
+                >The Future Hijackers and FBI Suspects</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-6" class="navigation__link internal-link"
+              ><span class="navigation__text" data-umami-event="section-6-link"
+                >Reports Concerning the Surveillance Activities</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a
+              href="section-7"
+              class="navigation__link internal-link"
+              data-umami-event="section-7-link"
+              ><span class="navigation__text">Northeastern New Jersey</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-8" class="navigation__link internal-link"
+              ><span class="navigation__text" data-umami-event="section-8-link"
+                >Inadequate Israeli Warnings in August 2001</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-9" class="navigation__link internal-link"
+              ><span class="navigation__text" data-umami-event="section-9-link"
+                >The Watchlisting in August 2001</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a
+              href="section-10"
+              class="navigation__link internal-link"
+              data-umami-event="section-10-link"
+              ><span class="navigation__text">Why the Israeli Groups?</span></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a href="section-11" class="navigation__link internal-link"
+              ><span class="navigation__text" data-umami-event="section-11-link"
+                >The CIA's Role and Responsibilities</span
+              ></a
+            >
+          </li>
+          <li class="navigation__item">
+            <a
+              href="section-12"
+              class="navigation__link internal-link"
+              data-umami-event="section-12-link"
+            >
+              <span class="navigation__text">Detailed Summary</span></a
+            >
+          </li>
+          <!-- <li class="navigation__item"></li> -->
+        </ul>
+        <div class="navigation__footer">
+          <p class="navigation__footer-text navigation__footer-text-highlight">
+            Made by <a href="https://conspirasee.com">Conspirasee</a>
+          </p>
+          <p class="navigation__footer-text navigation__footer-text-tagline">
+            Compiled. Collated. Composed.
+          </p>
+        </div>
+      </div>
+    </nav>
+
     <main class="home" data-template="home">
-      <section class="page-content">
-        <nav class="navigation">
-          <ul class="nav-menu">
-            <li><a href="/">Home</a></li>
-            <li><a href="about">About</a></li>
-            <li><a href="gallery">Gallery</a></li>
-            <li><a href="mercury">Mercury</a></li>
-            <li><a href="venus">Venus</a></li>
-            <li><a href="earth">Earth</a></li>
-            <li><a href="mars">Mars</a></li>
-            <li><a href="jupiter">Jupiter</a></li>
-            <li><a href="saturn">Saturn</a></li>
-            <li><a href="uranus">Uranus</a></li>
-            <li><a href="neptune">Neptune</a></li>
-            <li><a href="pluto">Pluto</a></li>
-            <li><a href="moons">Moons</a></li>
-          </ul>
-        </nav>
-
-        <article>
-          <section class="page-header">
+      <section class="hero-section page-template">
+        <section class="hero-background">
+          <div class="hero-background__overlay">
             <img
-              data-src="https://frontend-web-app.b-cdn.net/mars.webp"
-              alt="Mars"
+              class="hero-background__image"
+              data-src="https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp"
+              alt="The Shea Memorandum"
             />
-          </section>
-          <section class="page-body">
-            <h1 data-animation="title">Welcome to the Solar System</h1>
-            <p>
-              Mars is the fourth planet from the Sun and the second-smallest
-              planet in the Solar System, being larger than only Mercury. Mars
-              is often called the 'Red Planet' due to its reddish appearance,
-              which is distinctive among the astronomical bodies visible to the
-              naked eye.
-            </p>
+          </div>
+        </section>
+        <section class="hero-content">
+          <header class="hero-header">
+            <div class="hero-header__byline">
+              <p class="hero-header__byline-copy">
+                Israeli Surveillance of the Future Hijackers
+              </p>
+              <p class="hero-header__byline-copy">
+                and FBI Suspects in the September 11 Attacks
+              </p>
+              <p class="hero-header__byline-copy">
+                and Their Failure to Give Us Adequate Warning
+              </p>
+            </div>
+          </header>
+          <article class="hero-content__page">
+            <nav class="hero-nav" data-follower-wrap="">
+              <section class="hero-nav__section">
+                <header class="hero-nav__section-header">
+                  <h2 class="hero-nav__section-title">Table of Contents</h2>
+                </header>
+                <ul class="hero-nav__section-list" data-follower-collection="">
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="introduction"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="introduction-link"
+                      >Introduction</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-1-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Introduction"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-1"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-1-link"
+                      >General Preliminary Conclusions</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-1-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="General Preliminary Conclusions"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-2"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-2-link"
+                      >Imperatives and Priorities</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-2-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Imperatives and Priorities"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-3"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-3-link"
+                      >The DEA Report</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-3-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="The DEA Report"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-4"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-4-link"
+                      >The Israeli DEA Groups</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-4-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="The Israeli DEA Groups"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-5"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-5-link"
+                      >The Future Hijackers and FBI Suspects</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-5-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="The Future Hijackers and FBI Suspects"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-6"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-6-link"
+                    >
+                      Reports Concerning the Surveillance Activities of The
+                      Israeli DEA Groups
+                    </a>
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-6-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Reports Concerning the Surveillance Activities of The Israeli DEA Groups"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-7"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-7-link"
+                      >Northeastern New Jersey—Another Vital Center of
+                      Operations for Both Sides</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-7-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Northeastern New Jersey—Another Vital Center of Operations for Both Sides"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-8"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-8-link"
+                    >
+                      Inadequate Israeli Warnings in August 2001
+                    </a>
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-8-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Inadequate Israeli Warnings in August 2001"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-9"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-9-link"
+                    >
+                      The Watchlisting of Khaled al Mihdhar and Nawaf al Hazmi
+                      in August 2001</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-9-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="The Watchlisting of Khaled al Mihdhar and Nawaf al Hazmi in August 2001"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-10"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-10-link"
+                      >Why the Israeli Groups?</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-10-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Why the Israeli Groups?"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-11"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-11-link"
+                      >The CIA’s Role and Responsibilities</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-11-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="The CIA’s Role and Responsibilities"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="section-12"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="section-12-link"
+                      >Detailed Summary</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-12-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Detailed Summary"
+                      />
+                    </div>
+                  </li>
+                </ul>
+              </section>
+              <section class="hero-nav__section">
+                <header class="hero-nav__section-header">
+                  <h2 class="hero-nav__section-title">Exhibits and Maps</h2>
+                </header>
+                <ul class="hero-nav__section-list" data-follower-collection="">
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-a.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="exhibit-a-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Exhibit A—The DEA Report</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/exhibit-a-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Exhibit A"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-b.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="exhibit-b-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Exhibit B—Members of Israeli Groups and Future Hijackers
+                      and FBI Suspects in Key Towns and Areas</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/exhibit-b-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Exhibit B"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-c.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="exhibit-c-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Exhibit C — The October 2001 FBI Suspect List</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/exhibit-c-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Exhibit C"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-d.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="exhibit-d-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Exhibit D — The May 2002 FBI Suspect List</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/exhibit-d-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Exhibit D"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-exhibit-e.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="exhibit-e-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Exhibit E — Mossad Warnings: A Tabular Comparison</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/exhibit-e-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Exhibit E"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-map-1.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="map-1-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Map 1 — Hollywood, Florida Area: Central Area of
+                      Operations of Future Hijackers and the Israeli DEA
+                      Groups</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/map-1-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Map 1"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-map-2.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="map-2-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Map 2 — Hollywood, Florida: Core of Operations of the
+                      Future Hijackers and the Israeli DEA Groups</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/map-2-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Map 2"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-map-3.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="map-3-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Map 3 — Hudson and Bergen Counties, NJ, New York City
+                      Metropolitan Area</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/map-3-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Map 3"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-map-4.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="map-4-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >Map 4 — United States, Mid-2000 through August, 2001</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/map-4-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="Map 4"
+                      />
+                    </div>
+                  </li>
+                </ul>
+              </section>
 
-            <p>
-              This is the about page content. Lorem ipsum dolor sit amet,
-              consectetur adipiscing elit. Suspendisse dapibus dolor vitae
-              ultricies condimentum. Etiam ullamcorper tristique urna eget
-              commodo. Quisque eu tellus rutrum, tristique risus vitae,
-              porttitor est.
-            </p>
-
-            <h2 data-animation="title">Our Mission</h2>
-
-            <p>
-              Etiam posuere dolor ac sem dapibus consectetur. Vestibulum finibus
-              elit quis laoreet rutrum. Proin tincidunt erat et dictum tempus.
-              Praesent sed nulla interdum, dapibus tellus et, pulvinar enim.
-            </p>
-
-            <img
-              data-animation="title"
-              alt="About Image"
-              data-src="https://frontend-web-app.b-cdn.net/planet.webp"
-            />
-          </section>
-        </article>
+              <section class="hero-nav__section">
+                <header class="hero-nav__section-header">
+                  <h2 class="hero-nav__section-title">Additional Documents</h2>
+                </header>
+                <ul class="hero-nav__section-list" data-follower-collection="">
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-original.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="original-report-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >The Shea Memorandum (Original Report)</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/shea-report-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="The Shea Memorandum (Original Report)"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="https://shea-memorandum-site.b-cdn.net/pdfs/the-shea-memorandum-original.pdf"
+                      class="hero-nav__section-list-link"
+                      data-umami-event="fbi-report-link"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      >FBI Report on 5 Israeli's</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/fbi-report-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="FBI Report on the Dancing Israelis"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="media"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="media-link"
+                      >Media Stories & Reports</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-media-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="FBI Report on the Dancing Israelis"
+                      />
+                    </div>
+                  </li>
+                  <li class="hero-nav__section-list-item" data-follower-item="">
+                    <a
+                      href="manifest"
+                      class="hero-nav__section-list-link internal-link"
+                      data-umami-event="media-link"
+                      >"Art Students" Manifest</a
+                    >
+                    <div
+                      data-follower-visual=""
+                      class="home__nav-section-list-preview-item"
+                    >
+                      <img
+                        src="https://shea-memorandum-site.b-cdn.net/images/section-manifest-desktop.webp"
+                        class="home__nav-section-list-preview-item-image"
+                        alt="FBI Report on the Dancing Israelis"
+                      />
+                    </div>
+                  </li>
+                </ul>
+              </section>
+              <div
+                data-follower-cursor=""
+                class="home__nav-section-list-preview-follower"
+              >
+                <div
+                  data-follower-cursor-inner=""
+                  class="home__nav-section-list-preview-follower-inner"
+                >
+                  <div class="home__nav-section-list-preview-follower-label">
+                    <div
+                      class="home__nav-section-list-preview-follower-label-span"
+                    >
+                      Read
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nav>
+          </article>
+        </section>
       </section>
     </main>
+    <footer class="footer">
+      <div class="footer__content">
+        <p class="footer__text footer__text--highlight" data-animation="title">
+          <a href="https://conspirasee.com">Conspirasee</a>
+        </p>
+        <p class="footer__text footer__text--tagline" data-animation="title">
+          Compiled. Collated. Composed.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>
