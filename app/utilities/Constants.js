@@ -93,9 +93,6 @@ export const EVENTS = Object.freeze({
   // Custom events
   PRELOADER_COMPLETE: "preloader-complete",
   HARD_REFRESH: "hard-refresh",
-  PAGE_CHANGE: "page-change",
-  ROUTE_CHANGE: "route-change",
-  HISTORY_NAVIGATION: "history-navigation",
   
   // DOM events
   CLICK: "click",
@@ -113,7 +110,6 @@ export const VALUES = Object.freeze({
   TABINDEX_DISABLED: "-1",
   TARGET_BLANK: "_blank",
   NAV_SCROLL_THRESHOLD: 30,
-  ROUTER_TIMEOUT: 1000,
   NAV_TIMEOUT: 500,
 });
 

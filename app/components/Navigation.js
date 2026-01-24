@@ -68,9 +68,7 @@ export class Navigation extends Component {
   }
 
   setupLinkListeners() {
-    // Note: This handler is now blocked by Router's stopImmediatePropagation()
-    // Menu closing is handled in Router.afterPageUpdate() instead
-    // Keeping this code for reference, but it won't execute for internal links
+    // In MPA, browser handles navigation. Close menu when links are clicked.
     this.menuLinkHandlers = [];
     for (const link of this.menuLinks) {
       const handler = (event) => {

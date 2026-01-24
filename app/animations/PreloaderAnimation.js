@@ -33,7 +33,6 @@ export class PreloaderAnimation {
       return;
     }
 
-    // Normalize elements to array (handles Array, NodeList, single element, or null/undefined)
     const elementsArray = normalizeToArray(copyElements);
     if (elementsArray.length === 0) {
       console.warn('PreloaderAnimation: No copy elements found');
@@ -48,7 +47,6 @@ export class PreloaderAnimation {
       },
     });
 
-    // Check if SplitText is available (GSAP 3.13.0+)
     const hasSplitText = typeof SplitText !== 'undefined';
     
     if (hasSplitText && elementsArray.length > 0) {
@@ -122,10 +120,13 @@ export class PreloaderAnimation {
    * @private
    */
   createFallbackAnimation(elementsArray, preloaderElement) {
+    // Set initial state
     gsap.set(elementsArray, {
       y: 100,
+      opacity: 0,
     });
     
+    // Animate elements in
     this.timeline.to(elementsArray, {
       y: 0,
       opacity: 1,
@@ -134,15 +135,16 @@ export class PreloaderAnimation {
       ease: "power2.out",
     });
 
+    // Wait 1 second, then fade out elements
     this.timeline.to(elementsArray, {
-      delay: 1,
       y: "-100%",
       opacity: 0,
       duration: 0.75,
       stagger: 0.05,
       ease: "power2.inOut",
-    });
+    }, "+=1"); // Position parameter: wait 1 second after previous animation
     
+    // Fade out the preloader element (slightly before elements finish)
     this.timeline.to(preloaderElement, {
       opacity: 0,
       duration: 0.5,

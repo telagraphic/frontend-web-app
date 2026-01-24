@@ -1,28 +1,41 @@
 /**
  *  Entry point for the application
+ *  Handles shared initialization for MPA: preloader, navigation, page transitions
  */
 
-import { createServices } from "./services/ServiceFactory.js";
+import { createMPAServices } from "./services/MPAServiceFactory.js";
 import { Preloader } from "./components/Preloader.js";
-import { liveReload, setupPageConfig } from "./config/Environment.js";
+import { MPAPageTransition } from "./animations/MPAPageTransition.js";
+import { liveReload } from "./config/Environment.js";
 import { SELECTORS, EVENTS } from "./utilities/Constants.js";
 import { $ } from "./utilities/DOMHelpers.js";
 
 class App {
   constructor() {
-    this.pageConfig = setupPageConfig();
     this.preloaderVisible = false;
+    this.initialized = false;
   }
 
   /**
    * Initialize the application state
+   * Made idempotent - safe to run multiple times
    */
   async init() {
+    // Prevent multiple initializations
+    if (this.initialized) {
+      return;
+    }
+    
     this.createServices();
-    await this.transitionsManager.init();
-    await this.services.router.start(); // Calls pageLoader.create() to initialize the first page
     this.createNavigation();
     this.createPreloader();
+    this.createPageTransition();
+    
+    // Expose globally for inline scripts to use
+    window.app = this;
+    window.appServices = this.services;
+    
+    this.initialized = true;
     liveReload();
   }
 
@@ -30,55 +43,101 @@ class App {
    * Create the services for the application
    */
   createServices() {
-    this.services = createServices();
+    this.services = createMPAServices();
     this.siteConfig = this.services.siteConfig;
-    this.router = this.services.router;
     this.navigation = this.services.navigation;
     this.smoothScroll = this.services.smoothScroll;
     this.animationsManager = this.services.animationsManager;
-    this.transitionsManager = this.services.transitionsManager;
     this.footnotes = this.services.footnotes;
-    this.pageRegistry = this.services.pageRegistry;
-    this.pageLoader = this.services.pageLoader;
-    this.pageManager = this.services.pageManager;
-    this.routerHistory = this.services.routerHistory;
-    this.routerResolver = this.services.routerResolver;
   }
 
   /**
    * Create the navigation component
    */
   createNavigation() {
-    this.navigation.create();
+    if (this.navigation && !this.navigation.element) {
+      this.navigation.create();
+    }
   }
 
   /**
-   * Display preloader on first page visit only
+   * Display preloader on first page visit only (session-based)
    */
   createPreloader() {
-    // Don't create preloader if it's already been shown or if one already exists
-    if (this.preloaderVisible || this.preloader) return;    
-    const preloaderElement = $(SELECTORS.PRELOADER);
-    if (!preloaderElement) return;
+    // Check if preloader should be shown (first visit in session)
+    const shouldShowPreloader = !sessionStorage.getItem('preloaderShown');
     
-    this.currentPage = this.services.pageRegistry.getCurrentPage();
+    // Don't create preloader if it's already been shown or if one already exists
+    if (!shouldShowPreloader || this.preloaderVisible || this.preloader) {
+      // If preloader already shown, hide the element and ensure smoothScroll is ready
+      if (!shouldShowPreloader) {
+        const preloaderElement = $(SELECTORS.PRELOADER);
+        if (preloaderElement) {
+          preloaderElement.style.display = 'none';
+          preloaderElement.style.opacity = '0';
+        }
+        if (this.services.smoothScroll) {
+          if (!this.services.smoothScroll.isEnabled()) {
+            this.services.smoothScroll.create();
+          }
+          this.services.smoothScroll.scrollTo(0, { immediate: true });
+        }
+      }
+      return;
+    }
+    
+    const preloaderElement = $(SELECTORS.PRELOADER);
+    
+    if (!preloaderElement) {
+      // No preloader element, initialize smoothScroll immediately
+      if (this.services.smoothScroll && !this.services.smoothScroll.isEnabled()) {
+        this.services.smoothScroll.create();
+      }
+      return;
+    }
+    
     this.preloader = new Preloader();
+    
+    // Reset preloader element if it was previously hidden
+    preloaderElement.style.display = '';
+    preloaderElement.style.opacity = '';
+    
     this.preloader.create();
 
     this.preloaderHandler = ({ message }) => {
-      this.currentPage.smoothScroll.create(); // TODO: turn on smooth scroll on initial page load, or listen for this event in Page.listeners and keep it encapsulated
-      this.currentPage.smoothScroll.scrollTo(0, { immediate: true });
-      this.preloader.destroy();
+      sessionStorage.setItem('preloaderShown', 'true');
+      if (this.services.smoothScroll) {
+        this.services.smoothScroll.create();
+        this.services.smoothScroll.scrollTo(0, { immediate: true });
+      }
+      if (this.preloader) {
+        this.preloader.hide();
+        this.preloader.removeAllListeners(EVENTS.PRELOADER_COMPLETE);
+        if (this.preloader.preloaderAnimation) {
+          this.preloader.preloaderAnimation.remove();
+        }
+      }
       this.preloader = null;
       this.preloaderVisible = true;
     }
 
     this.preloader.on(EVENTS.PRELOADER_COMPLETE, this.preloaderHandler);
   }
+
+  /**
+   * Initialize page transition handler
+   */
+  createPageTransition() {
+    if (this.pageTransition) return;
+    this.pageTransition = new MPAPageTransition();
+    this.pageTransition.initialize();
+  }
 }
 
 const app = new App();
-app.init();
+app.init().catch((error) => {
+  console.error('App.init() failed:', error);
+});
 
 
 /*

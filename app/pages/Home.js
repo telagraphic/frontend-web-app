@@ -8,7 +8,6 @@ export class Home extends Page {
         wrapper: ".page-content",
         header: "h1",
         button: "button",
-        pageTransitionOverlay: ".page-transition-overlay",
       },
       // Forward services and any other options
       ...options,

@@ -69,7 +69,6 @@ export class Preloader extends Component {
    * Wait for images to load and then update the DOM with the path
    */
   async createLoader() {
-
     // If no images to load, wait for background image and complete
     if (this.images.length === 0) {
       await this.startPreloaderAnimation();
@@ -111,12 +110,10 @@ export class Preloader extends Component {
    * Delegates to PreloaderAnimation class for animation logic
    */
   async startPreloaderAnimation() {
-    // Guard: prevent multiple calls
     if (this.animationStarted) {
       return;
     }
     
-    // Validate elements exist before starting animation
     if (!this.element) {
       console.warn('Preloader: element not found, cannot start animation');
       return;
@@ -127,7 +124,6 @@ export class Preloader extends Component {
       return;
     }
     
-    // Normalize elements to array (handles Array, NodeList, single element, or null/undefined)
     const copyElements = normalizeToArray(this.elements.copy);
     
     if (copyElements.length === 0) {
@@ -135,7 +131,6 @@ export class Preloader extends Component {
       return;
     }
     
-    // Set flag AFTER validation passes
     this.animationStarted = true;
 
     await this.preloaderAnimation.create({
@@ -151,7 +146,10 @@ export class Preloader extends Component {
    * Hide the preloader element
    */
   hide() {
-    this.element.style.opacity = 0;
+    if (this.element) {
+      this.element.style.opacity = 0;
+      this.element.style.display = 'none';
+    }
   }
 
   /**

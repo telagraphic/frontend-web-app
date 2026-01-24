@@ -15,7 +15,6 @@ export class View extends Page {
   constructor({ element, elements, ...options }) {
     super({
       element: element,
-      pageTransitionOverlay: ".page-transition-overlay",
       elements: { wrapper: ".page-content", ...elements },
       // Forward services and any other options
       ...options,

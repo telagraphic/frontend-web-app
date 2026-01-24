@@ -10,7 +10,6 @@ export default class Page {
     elements,
     smoothScroll,
     animationsManager,
-    transitionsManager,
     footnotes,
   }) {
     this.selector = element;
@@ -22,7 +21,6 @@ export default class Page {
     this.smoothScroll = smoothScroll;
     this.footnotes = footnotes;
     this.animationsManager = animationsManager; // AnimationsManager is a utility class - doesn't need element/elements in constructor
-    this.transitionsManager = transitionsManager;
     this._created = false;
     this._destroyed = false;
     this._eventListenersSetup = false;
@@ -58,7 +56,6 @@ export default class Page {
       throw createError(ERROR_CODES.ELEMENT_NOT_FOUND, { element: `data-template attribute on ${this.selector}` });
     }
     this.elements = createPageObjectFromSelectors(this.selectorChildren);
-    this.pageTransition = $(SELECTORS.TRANSITION_OVERLAY);
     this.preloader = $(SELECTORS.PRELOADER); 
 
     this.smoothScroll?.scrollTo(0, { immediate: true });
@@ -124,7 +121,6 @@ export default class Page {
   destroyElements() {
     this.element = null;
     this.elements = null;
-    this.pageTransition = null;
     this.preloader = null;
     return true;
   }
@@ -135,21 +131,10 @@ export default class Page {
 
   /**
    * Show the page
+   * In MPA, transitions are handled by MPAPageTransition class, not here
    */
   async show() {
     await this.beforeShow?.()
-    if (this.pageTransition) {
-      if (this.smoothScroll.isStopped()) {
-        this.smoothScroll.start();
-        this.smoothScroll.scrollTo(0, { immediate: true }); 
-      }
-      try { 
-        await this.transitionsManager.hidePageTransition(this.pageTransition);
-      } catch (error) {
-        console.warn(`Page ${this.id}: Transition animation failed, continuing:`, error);
-        // Continue execution - page should still be shown even if animation fails
-      }
-    }
     
     if (this.smoothScroll.isEnabled()) {
       this.smoothScroll.scrollTo(0, { immediate: true });
@@ -159,26 +144,6 @@ export default class Page {
     }
 
     await this.afterShow?.()
-  }
-
-  /**
-   * Hide the page
-   */
-  async hide(route) {
-    await this.beforeHide?.();
-    await this.transitionsManager.updateTransitionOverlay(route); // update the transition overlay markup with the custom transition markup
-    await nextPaint();
-    if (this.pageTransition) {
-      try {
-        await this.transitionsManager.showPageTransition(this.pageTransition);
-      } catch (error) {
-        console.warn(`Page ${this.id}: Transition animation failed, continuing:`, error);
-        // NOTE: Continue execution - page should still be hidden even if animation fails
-      }
-      this.smoothScroll.scrollTo(0, { immediate: true });
-    }
-    this.destroy();
-    await this.afterHide?.();
   }
 
   // ============================================
