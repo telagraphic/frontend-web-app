@@ -26,6 +26,11 @@ export class Navigation extends Component {
    * Initialize Navigation component
    */
   create() {
+    // Idempotency check: prevent re-initialization if already created
+    if (this.element && this.menuButton) {
+      return;
+    }
+    
     super.create();
     this.navigation = $(SELECTORS.NAV);
     this.menuButton = $(SELECTORS.NAV_TOGGLE);

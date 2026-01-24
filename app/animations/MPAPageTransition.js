@@ -6,6 +6,8 @@
  * @version: 1.0.0
  * @since: 2026-01-21
  */
+import { ImageService } from '../utilities/ImageService.js';
+
 export class MPAPageTransition {
   constructor() {
     this.gsap = window.gsap;
@@ -13,6 +15,25 @@ export class MPAPageTransition {
     this.isPageNavigating = false;
     this.blocklistLinks = ["http", "mailto:", "tel:"];
     this.elements = {};
+    this.imageService = new ImageService();
+  }
+
+  /**
+   * Load all page images including navigation overlay background
+   * Uses ImageService to load all images with data-src attribute
+   * @returns {Promise<void>} Resolves when all images are loaded
+   */
+  async loadPageImages() {
+    try {
+      await this.imageService.preloadImages({
+        images: 'img[data-src]',
+        excludePreloader: true,
+        useDecode: true,
+      });
+    } catch (error) {
+      console.warn('Error loading page images:', error);
+      // Continue even if image loading fails
+    }
   }
 
   initialize() {
@@ -29,6 +50,14 @@ export class MPAPageTransition {
       transitionOverlay: document.querySelector(".page-transition-overlay"),
       menuToggleBtn: document.querySelector(".navigation__toggle"),
     };
+
+    // Check if transition overlay element exists
+    if (!this.elements.transitionOverlay) {
+      console.warn(
+        "Page transition overlay element not found. Transition animations may not work.",
+      );
+      return;
+    }
 
     this.isPageNavigating =
       this.sessionStorage.getItem("pageTransition") === "true";
@@ -77,6 +106,11 @@ export class MPAPageTransition {
 
   async showTransition() {
     return new Promise((resolve) => {
+      if (!this.elements.transitionOverlay) {
+        resolve();
+        return;
+      }
+
       this.gsap.set(this.elements.transitionOverlay, {
         scaleY: 0,
         transformOrigin: "bottom",
@@ -91,7 +125,15 @@ export class MPAPageTransition {
   }
 
   async hideTransition() {
+    // Wait for all page images to load before hiding transition
+    await this.loadPageImages();
+
     return new Promise((resolve) => {
+      if (!this.elements.transitionOverlay) {
+        resolve();
+        return;
+      }
+
       this.gsap.set(this.elements.transitionOverlay, {
         scaleY: 1,
         transformOrigin: "top",

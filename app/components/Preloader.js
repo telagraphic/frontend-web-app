@@ -26,6 +26,63 @@ export class Preloader extends Component {
   }
 
   /**
+   * Check if preloader should be shown based on sessionStorage
+   * @returns {boolean} True if preloader should be shown
+   */
+  static shouldShow() {
+    return !sessionStorage.getItem('preloaderShown');
+  }
+
+  /**
+   * Mark preloader as shown in sessionStorage
+   */
+  markAsShown() {
+    sessionStorage.setItem('preloaderShown', 'true');
+  }
+
+  /**
+   * Show and reset preloader element styles
+   */
+  show() {
+    if (!this.element) {
+      super.create();
+    }
+    if (this.element) {
+      this.element.style.display = '';
+      this.element.style.opacity = '';
+    }
+  }
+
+  /**
+   * Hide preloader element if it has already been shown
+   */
+  hideIfAlreadyShown() {
+    if (!this.element) {
+      super.create();
+    }
+    if (this.element && !Preloader.shouldShow()) {
+      this.hide();
+    }
+  }
+
+  /**
+   * Setup completion handler with cleanup
+   * @param {Function} callback - Optional callback to execute on completion
+   */
+  setupCompletionHandler(callback) {
+    const handler = () => {
+      this.markAsShown();
+      if (callback) callback();
+      this.hide();
+      this.removeAllListeners(EVENTS.PRELOADER_COMPLETE);
+      if (this.preloaderAnimation) {
+        this.preloaderAnimation.remove();
+      }
+    };
+    this.on(EVENTS.PRELOADER_COMPLETE, handler);
+  }
+
+  /**
    * Initialize Preloader component
    */
   create() {
