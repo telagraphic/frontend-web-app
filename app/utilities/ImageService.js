@@ -69,6 +69,8 @@ export class ImageService {
   loadImageOffDOM(src) {
     return new Promise((resolve, reject) => {
       const img = new Image();
+      // Set crossorigin to match preload links for CDN images
+      img.crossOrigin = 'anonymous';
       img.onload = () => resolve(img);
       img.onerror = reject;
       img.src = src;

@@ -2,6 +2,9 @@
 {% set siteName = "The Shea Memorandum" %}
 {% set socialImage = "https://shea-memorandum-site.b-cdn.net/images/social-media-mobile.webp" %}
 
+{# Preload transition image for instant display from cache #}
+{% if transitionPreloadLink %}{{ transitionPreloadLink | safe }}{% endif %}
+
 {# Canonical URL - Use canonicalPath (clean route) from template data #}
 {% if baseUrl and canonicalPath %}
 <link rel="canonical" href="{{ baseUrl }}{{ canonicalPath }}" />

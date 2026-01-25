@@ -1,7 +1,7 @@
 @layer components {
   .page-transition-overlay {
     inset: 0;
-    opacity: 0;
+    opacity: 1; /* CRITICAL: Visible by default to cover page content immediately, preventing blue flash */
     pointer-events: none;
     position: fixed;
     z-index: var(--z-index-page-transition);

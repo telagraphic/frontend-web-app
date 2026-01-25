@@ -7,6 +7,7 @@
  * @since: 2026-01-21
  */
 import { ImageService } from '../utilities/ImageService.js';
+import { Preloader } from '../components/Preloader.js';
 
 export class MPAPageTransition {
   constructor({ siteConfig, transitionsManager }) {
@@ -60,41 +61,52 @@ export class MPAPageTransition {
       if (!storedData) return;
 
       const transitionData = JSON.parse(storedData);
-      
-      // Update overlay image element
       const imageElement = this.elements.transitionOverlay?.querySelector('.page-transition-overlay__image');
+      
       if (imageElement && transitionData.image) {
-        // Check if image is preloaded
-        if (this.transitionsManager && this.transitionsManager.isImagePreloaded(transitionData.image)) {
-          imageElement.src = transitionData.image;
-        } else {
-          // Preload if not already loaded
-          const tempImg = document.createElement('img');
-          tempImg.setAttribute('data-src', transitionData.image);
-          if (this.transitionsManager) {
-            await this.transitionsManager.preloadSingleImage(tempImg);
-          } else {
-            await this.imageService.loadImage({ element: tempImg });
-          }
-          imageElement.src = transitionData.image;
+        imageElement.crossOrigin = 'anonymous';
+        
+        const fallbackImage = 'https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp';
+        const htmlHasValidImage = imageElement.src && 
+                                  imageElement.src !== '' && 
+                                  imageElement.src !== fallbackImage;
+        const imageMatchesSessionStorage = imageElement.src === transitionData.image;
+        
+        if (htmlHasValidImage && !imageMatchesSessionStorage) {
+          this.sessionStorage.removeItem('pageTransitionImage');
+          return;
         }
         
-        if (transitionData.alt) {
-          imageElement.alt = transitionData.alt;
+        const imageAlreadyCorrect = imageMatchesSessionStorage && 
+                                   imageElement.complete && 
+                                   imageElement.naturalHeight > 0;
+        
+        if (!imageAlreadyCorrect) {
+          const isPreloaded = this.transitionsManager && this.transitionsManager.isImagePreloaded(transitionData.image);
+          
+          if (isPreloaded) {
+            imageElement.src = transitionData.image;
+          } else {
+            const tempImg = document.createElement('img');
+            tempImg.setAttribute('data-src', transitionData.image);
+            tempImg.crossOrigin = 'anonymous';
+            if (this.transitionsManager) {
+              await this.transitionsManager.preloadSingleImage(tempImg);
+            } else {
+              await this.imageService.loadImage({ element: tempImg });
+            }
+            imageElement.src = transitionData.image;
+          }
+          
+          if (transitionData.alt) {
+            imageElement.alt = transitionData.alt;
+          }
         }
       }
 
-      // Update copy text if element exists
-      const copyElement = this.elements.transitionOverlay?.querySelector('.page-transition-overlay__copy');
-      if (copyElement && transitionData.copy) {
-        copyElement.textContent = transitionData.copy;
-      }
-
-      // Clear sessionStorage after restoring
       this.sessionStorage.removeItem('pageTransitionImage');
     } catch (error) {
       console.warn('Error restoring transition data:', error);
-      // Clear corrupted data
       this.sessionStorage.removeItem('pageTransitionImage');
     }
   }
@@ -134,6 +146,7 @@ export class MPAPageTransition {
       try {
         const tempImg = document.createElement('img');
         tempImg.setAttribute('data-src', imageUrl);
+        tempImg.crossOrigin = 'anonymous'; // Match preload link crossorigin
         
         if (this.transitionsManager) {
           await this.transitionsManager.preloadSingleImage(tempImg);
@@ -147,9 +160,11 @@ export class MPAPageTransition {
       }
     }
 
-    // Update overlay image element
     const imageElement = this.elements.transitionOverlay?.querySelector('.page-transition-overlay__image');
     if (imageElement) {
+      // Ensure crossorigin matches preload link
+      imageElement.crossOrigin = 'anonymous';
+      
       if (imageReady) {
         imageElement.src = imageUrl;
       } else {
@@ -162,19 +177,11 @@ export class MPAPageTransition {
       }
     }
 
-    // Update copy text if element exists
-    const copyElement = this.elements.transitionOverlay?.querySelector('.page-transition-overlay__copy');
-    if (copyElement && transitionData.copy) {
-      copyElement.textContent = transitionData.copy;
-    }
-
-    // Wait for image to be ready if element exists
     if (imageElement) {
       try {
         await this.imageService.waitForImageLoad(imageElement);
       } catch (error) {
         console.warn('Error waiting for transition image load:', error);
-        // Continue anyway
       }
     }
   }
@@ -200,33 +207,46 @@ export class MPAPageTransition {
       return;
     }
 
-    // Set up listeners after elements are found
+    this.isPageNavigating = this.sessionStorage.getItem("pageTransition") === "true";
+    const imageElement = this.elements.transitionOverlay?.querySelector('.page-transition-overlay__image');
+    
     this.setupListeners();
 
-    this.isPageNavigating =
-      this.sessionStorage.getItem("pageTransition") === "true";
-
     if (this.isPageNavigating) {
-      // Overlay should be visible (scaleY: 1, opacity: 1) when navigating to new page
-      // It will be hidden by hideTransition()
-      this.gsap.set(this.elements.transitionOverlay, { 
-        scaleY: 1,
-        opacity: 1,
-        transformOrigin: "top"
-      });
-      this.sessionStorage.removeItem("pageTransition");
-      
-      // Restore transition data from sessionStorage before hiding
-      // This ensures visual continuity - overlay shows correct image when hiding
       await this.restoreTransitionData();
       
-      this.hideTransition();
+      const imageAfterRestore = this.elements.transitionOverlay?.querySelector('.page-transition-overlay__image');
+      
+      if (imageAfterRestore && imageAfterRestore.src) {
+        imageAfterRestore.crossOrigin = 'anonymous';
+        
+        if (!imageAfterRestore.complete || imageAfterRestore.naturalHeight === 0) {
+          await this.imageService.waitForImageLoad(imageAfterRestore);
+        }
+        
+        void imageAfterRestore.offsetHeight;
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+      
+      this.sessionStorage.removeItem("pageTransition");
+      await this.hideTransition();
     } else {
       // Initial state: overlay hidden
       this.gsap.set(this.elements.transitionOverlay, { 
-        scaleY: 0,
         opacity: 0
       });
+      
+      // Ensure crossorigin is set for future use
+      if (imageElement && imageElement.src) {
+        imageElement.crossOrigin = 'anonymous';
+      }
+      
+      // If preloader didn't run, load page images now
+      // Preloader only runs on first visit (when 'preloaderShown' doesn't exist)
+      // On reload, preloader doesn't run, so we need to load images here
+      if (!Preloader.shouldShow()) {
+        await this.loadPageImages();
+      }
     }
   }
 
@@ -283,7 +303,6 @@ export class MPAPageTransition {
           }
         }
 
-        // 4. Show transition
         await this.showTransition();
         
         // 5. Navigate to new page
@@ -304,16 +323,13 @@ export class MPAPageTransition {
         return;
       }
 
-      // Set initial state: hidden (scaleY: 0, opacity: 0)
+      // Set initial state: hidden (opacity: 0)
       this.gsap.set(this.elements.transitionOverlay, {
-        scaleY: 0,
         opacity: 0,
-        transformOrigin: "bottom",
       });
       
-      // Animate to visible (scaleY: 1, opacity: 1)
+      // Fade in to visible (opacity: 1)
       this.gsap.to(this.elements.transitionOverlay, {
-        scaleY: 1,
         opacity: 1,
         duration: 0.6,
         ease: "power2.inOut",
@@ -323,7 +339,6 @@ export class MPAPageTransition {
   }
 
   async hideTransition() {
-    // Wait for all page images to load before hiding transition
     await this.loadPageImages();
 
     return new Promise((resolve) => {
@@ -332,16 +347,11 @@ export class MPAPageTransition {
         return;
       }
 
-      // Ensure overlay is visible before hiding
       this.gsap.set(this.elements.transitionOverlay, {
-        scaleY: 1,
         opacity: 1,
-        transformOrigin: "top",
       });
       
-      // Animate to hidden (scaleY: 0, opacity: 0)
       this.gsap.to(this.elements.transitionOverlay, {
-        scaleY: 0,
         opacity: 0,
         duration: 0.6,
         delay: 0.5,

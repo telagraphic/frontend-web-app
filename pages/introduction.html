@@ -14,6 +14,9 @@
 
 
 
+<link rel="preload" as="image" href="https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp" crossorigin="anonymous">
+
+
 
 <link rel="canonical" href="https://sheamemo.com/introduction" />
 
@@ -72,11 +75,11 @@
   </head>
   <body>
     <section class="page-transition-overlay">
-  <p class="page-transition-overlay__copy">The Shea Memorandum</p>
   <img
     class="page-transition-overlay__image"
     src="https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp"
-    alt="The Shea Memorandum Logo"
+    alt="Introduction"
+    crossorigin="anonymous"
   />
 </section>
 
@@ -329,10 +332,24 @@
 </footer>
 
     <script type="module">
-  import { Introduction } from '../app/pages/Introduction.js';
+  import { View } from '../app/pages/View.js';
   import { whenDOMReady } from '../app/utilities/AsyncHelpers.js';
+  import { $ } from '../app/utilities/DOMHelpers.js';
+  import { ATTRIBUTES } from '../app/utilities/Constants.js';
   
   whenDOMReady(async () => {
+    // Read the template from the main element to determine the element selector
+    const main = $("main[data-template]");
+    const template = main?.getAttribute(ATTRIBUTES.DATA_TEMPLATE);
+    
+    if (!template) {
+      console.error("No data-template attribute found on main element");
+      return;
+    }
+    
+    // Create element selector from template (e.g., "section-1" -> ".section-1")
+    const elementSelector = '.' + template;
+    
     // Get services from App.js (or create if App.js hasn't loaded yet)
     let services = window.appServices;
     if (!services) {
@@ -340,7 +357,11 @@
       services = createMPAServices();
     }
     
-    const page = new Introduction(services);
+    // Initialize page with the template-based element selector
+    const page = new View({
+      element: elementSelector,
+      ...services,
+    });
     await page.create();
     await page.show();
   });

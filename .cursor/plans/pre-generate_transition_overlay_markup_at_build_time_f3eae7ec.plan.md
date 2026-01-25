@@ -1,22 +1,7 @@
 ---
-name: Pre-generate Transition Overlay Markup at Build Time
-overview: Update build process to inject correct transition overlay markup into each page's HTML, eliminating runtime DOM updates and flash of content. Simplify MPAPageTransition to only handle animations.
-todos:
-  - id: "1"
-    content: Add transition data (image, alt, copy) to templateData in generate-static-pages.js
-    status: pending
-  - id: "2"
-    content: Update page-transition.html partial to use template variables with fallbacks
-    status: pending
-  - id: "3"
-    content: Remove updateTransitionOverlay(), storeTransitionData(), and restoreTransitionData() methods from MPAPageTransition
-    status: pending
-  - id: "4"
-    content: Simplify setupListeners() to remove overlay update and storage logic
-    status: pending
-  - id: "5"
-    content: Simplify initialize() to remove restoreTransitionData() call
-    status: pending
+name: ""
+overview: ""
+todos: []
 isProject: false
 ---
 
@@ -26,7 +11,7 @@ isProject: false
 
 **Root Cause**: In MPA, each page loads fresh HTML. The overlay markup is static (hardcoded in partial), then JavaScript tries to update it after page load, creating a race condition.
 
-**Solution**: Pre-generate the correct transition overlay markup for each page during build time, so the HTML already contains the right image/copy when the page loads.
+**Solution**: Pre-generate the correct transition overlay markup for each page during build time, so the HTML already contains the right image and alt text when the page loads.
 
 ## Benefits of Build-Time Approach
 
@@ -46,7 +31,7 @@ isProject: false
 **Changes**:
 
 - In the loop where `templateData` is built, add transition data from `routeConfig.transition`
-- Pass `transitionImage`, `transitionAlt`, and `transitionCopy` to template
+- Pass `transitionImage` and `transitionAlt` to template (no copy text)
 - Handle case where route doesn't have transition data (fallback to defaults)
 
 **Code location**: Around line 210-228 where `templateData` is populated
@@ -59,14 +44,12 @@ isProject: false
 
 - Replace hardcoded image `src` with `{{ transitionImage }}` or fallback
 - Replace hardcoded `alt` with `{{ transitionAlt }}` or fallback
-- Replace hardcoded copy text with `{{ transitionCopy }}` or fallback
 - Use Nunjucks conditionals to handle missing data gracefully
 
 **Current hardcoded values**:
 
 - Image: `"https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp"`
 - Alt: `"The Shea Memorandum Logo"`
-- Copy: `"The Shea Memorandum"`
 
 ### Step 3: Simplify MPAPageTransition.js
 
@@ -104,11 +87,10 @@ if (routeKey) {
   if (routeConfig) {
     // ... existing code ...
     
-    // Add transition data for overlay
+    // Add transition data for overlay (image and alt only, no copy)
     if (routeConfig.transition) {
       templateData.transitionImage = routeConfig.transition.image;
       templateData.transitionAlt = routeConfig.transition.alt;
-      templateData.transitionCopy = routeConfig.transition.copy;
     }
   }
 }
@@ -116,8 +98,7 @@ if (routeKey) {
 // Fallback defaults if no transition data
 if (!templateData.transitionImage) {
   templateData.transitionImage = "https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp";
-  templateData.transitionAlt = "The Shea Memorandum";
-  templateData.transitionCopy = "The Shea Memorandum";
+  templateData.transitionAlt = "The Shea Memorandum Logo";
 }
 ```
 
@@ -125,9 +106,6 @@ if (!templateData.transitionImage) {
 
 ```html
 <section class="page-transition-overlay">
-  <p class="page-transition-overlay__copy">
-    {{ transitionCopy or "The Shea Memorandum" }}
-  </p>
   <img
     class="page-transition-overlay__image"
     src="{{ transitionImage or 'https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp' }}"

@@ -1,9 +1,9 @@
 <section class="page-transition-overlay">
-  <p class="page-transition-overlay__copy">The Shea Memorandum</p>
   <img
     class="page-transition-overlay__image"
-    src="https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp"
-    alt="The Shea Memorandum Logo"
+    src="{{ transitionImage or 'https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp' }}"
+    alt="{{ transitionAlt or 'The Shea Memorandum Logo' }}"
+    crossorigin="anonymous"
   />
 </section>
 

@@ -222,8 +222,22 @@ async function generateStaticPages() {
           if (routeConfig.link) {
             templateData.canonicalPath = routeConfig.link;
           }
+          // Add transition data for overlay (image and alt only, no copy)
+          if (routeConfig.transition) {
+            templateData.transitionImage = routeConfig.transition.image;
+            templateData.transitionAlt = routeConfig.transition.alt;
+          }
         }
       }
+      
+      // Fallback defaults if no transition data
+      if (!templateData.transitionImage) {
+        templateData.transitionImage = "https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp";
+        templateData.transitionAlt = "The Shea Memorandum Logo";
+      }
+      
+      // Generate preload link for transition image to ensure browser cache
+      templateData.transitionPreloadLink = `<link rel="preload" as="image" href="${templateData.transitionImage}" crossorigin="anonymous">`;
       // Add page-specific inline script (use routeKey or null for fallback)
       templateData.pageScript = getPageInitScript(routeKey, isProduction);
 
