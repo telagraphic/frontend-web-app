@@ -6,6 +6,7 @@
 import { createMPAServices } from "./services/MPAServiceFactory.js";
 import { Preloader } from "./components/Preloader.js";
 import { MPAPageTransition } from "./animations/MPAPageTransition.js";
+import { TransitionsManager } from "./animations/TransitionsManager.js";
 import { liveReload } from "./config/Environment.js";
 import { SELECTORS, EVENTS } from "./utilities/Constants.js";
 import { $ } from "./utilities/DOMHelpers.js";
@@ -30,7 +31,7 @@ class App {
     this.createServices();
     this.createNavigation();
     this.createPreloader();
-    this.createPageTransition();
+    await this.createPageTransition();
     
     // Expose globally for inline scripts to use
     window.app = this;
@@ -106,10 +107,22 @@ class App {
   /**
    * Initialize page transition handler
    */
-  createPageTransition() {
+  async createPageTransition() {
     if (this.pageTransition) return;
-    this.pageTransition = new MPAPageTransition();
-    this.pageTransition.initialize();
+    
+    // Create and initialize TransitionsManager for preloading transition images
+    if (!this.transitionsManager) {
+      this.transitionsManager = new TransitionsManager({ 
+        siteConfig: this.siteConfig 
+      });
+      await this.transitionsManager.init();
+    }
+    
+    this.pageTransition = new MPAPageTransition({
+      siteConfig: this.siteConfig,
+      transitionsManager: this.transitionsManager
+    });
+    await this.pageTransition.initialize();
   }
 }
 

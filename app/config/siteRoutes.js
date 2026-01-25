@@ -5,7 +5,7 @@
  */
 
 export const siteRoutes = {
-  'home': {
+  '/': {
     template: "home",
     class: "Home",
     link: "/",
@@ -18,7 +18,7 @@ export const siteRoutes = {
       alt: "The Shea Memorandum",
     },
   },
-  'introduction': {
+  '/introduction': {
     template: "introduction",
     class: "Introduction",
     link: "/introduction",
@@ -31,7 +31,7 @@ export const siteRoutes = {
       alt: "Introduction",
     },
   },
-  "section-1": {
+  "/section-1": {
     template: "section-1",
     class: "View",
     link: "/section-1",
@@ -44,7 +44,7 @@ export const siteRoutes = {
       alt: "General Preliminary Conclusions",
     },
   },
-  "section-2": {
+  "/section-2": {
     template: "section-2",
     class: "View",
     link: "/section-2",
@@ -57,7 +57,7 @@ export const siteRoutes = {
       alt: "Imperatives and Priorities",
     },
   },
-  "section-3": {
+  "/section-3": {
     template: "section-3",
     class: "View",
     link: "/section-3",
@@ -70,7 +70,7 @@ export const siteRoutes = {
       alt: "The DEA Report",
     },
   },
-  "section-4": {
+  "/section-4": {
     template: "section-4",
     class: "View",
     link: "/section-4",
@@ -83,7 +83,7 @@ export const siteRoutes = {
       alt: "The Israeli DEA Groups",
     },
   },
-  "section-5": {
+  "/section-5": {
     template: "section-5",
     class: "View",
     link: "/section-5",
@@ -96,7 +96,7 @@ export const siteRoutes = {
       alt: "The Future Hijackers and FBI Suspects",
     },
   },
-  "section-6": {
+  "/section-6": {
     template: "section-6",
     class: "View",
     link: "/section-6",
@@ -109,7 +109,7 @@ export const siteRoutes = {
       alt: "Reports Concerning the Surveillance Activities of the Israeli DEA Groups",
     },
   },
-  "section-7": {
+  "/section-7": {
     template: "section-7",
     class: "View",
     link: "/section-7",
@@ -122,7 +122,7 @@ export const siteRoutes = {
       alt: "Northeastern New Jersey—Another Vital Center of Operations for Both Sides",
     },
   },
-  "section-8": {
+  "/section-8": {
     template: "section-8",
     class: "View",
     link: "/section-8",
@@ -135,7 +135,7 @@ export const siteRoutes = {
       alt: "Inadequate Israeli Warnings in August 2001",
     },
   },
-  "section-9": {
+  "/section-9": {
     template: "section-9",
     class: "View",
     link: "/section-9",
@@ -148,7 +148,7 @@ export const siteRoutes = {
       alt: "The Watchlisting of Khaled al Mihdhar and Nawaf al Hazmi in August 2001",
     },
   },
-  "section-10": {
+  "/section-10": {
     template: "section-10",
     class: "View",
     link: "/section-10",
@@ -161,7 +161,7 @@ export const siteRoutes = {
       alt: "Why the Israeli Groups?",
     },
   },
-  "section-11": {
+  "/section-11": {
     template: "section-11",
     class: "View",
     link: "/section-11",
@@ -174,7 +174,7 @@ export const siteRoutes = {
       alt: "The CIA's Role and Responsibilities",
     },
   },
-  "section-12": {
+  "/section-12": {
     template: "section-12",
     class: "View",
     link: "/section-12",
@@ -187,7 +187,7 @@ export const siteRoutes = {
       alt: "Detailed Summary",
     },
   },
-  'media': {
+  '/media': {
     template: "section-media",
     class: "View",
     link: "/media",
@@ -200,7 +200,7 @@ export const siteRoutes = {
       alt: "The Shea Memorandum",
     },
   },
-  'manifest': {
+  '/manifest': {
     template: "manifest",
     class: "View",
     link: "/manifest",
@@ -213,7 +213,7 @@ export const siteRoutes = {
       alt: "Manifest",
     },
   },
-  'references': {
+  '/references': {
     template: "references",
     class: "View",
     link: "/references",

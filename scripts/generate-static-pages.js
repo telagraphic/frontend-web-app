@@ -57,8 +57,12 @@ async function generateStaticPages() {
    * @returns {string|null} - Route key or null if not found
    */
   function getRouteKeyFromFilename(filename) {
-    if (filename === "index.html") return "home";
+    if (filename === "index.html") return "/";
     const nameWithoutExt = filename.replace(".html", "");
+    // Try with leading slash first (new format)
+    const routeWithSlash = "/" + nameWithoutExt;
+    if (siteConfig.has(routeWithSlash)) return routeWithSlash;
+    // Fallback to without slash for backward compatibility
     return siteConfig.has(nameWithoutExt) ? nameWithoutExt : null;
   }
 
