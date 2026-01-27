@@ -195,6 +195,30 @@ this.gsap.to(this.elements.transitionOverlay, {
 | Await hideTransition | Prevent content flash | **Important** - Prevents text flash |
 | Simple fade animation | Clean UX | **Design choice** - Simpler animation |
 
+## Technique 9: Refactored Image Preloading Architecture
+
+**Location:** `ImageService.ensureTransitionImageReady()` and `MPAPageTransition.updateOverlayImageElement()`
+
+**Refactoring Benefits:**
+- Centralized preload logic reduces duplication
+- Clear separation of concerns (preloading vs DOM updates)
+- Reusable across `updateTransitionOverlay()` and `restoreTransitionData()`
+- Reduced complexity: main functions now ~40 lines instead of ~67 lines
+
+**New Architecture:**
+```javascript
+// Preload logic extracted to ImageService
+await imageService.ensureTransitionImageReady(imageUrl, { transitionsManager });
+
+// DOM update logic extracted to helper method
+await updateOverlayImageElement(imageElement, imageUrl, altText);
+```
+
+**Why it matters:**
+- Eliminates duplicate code patterns between functions
+- Makes code more testable and maintainable
+- Clearer lifecycle: validate → preload → update DOM → verify
+
 ## Code Flow Diagram
 
 ```
@@ -220,6 +244,71 @@ New Page Load
 │  ├─ Force paint
 │  └─ hideTransition() ← Fade out (loads page images)
 ```
+
+## Image Preload Lifecycle Flowchart
+
+The following flowchart documents the complete lifecycle of `updateTransitionOverlay()` including all edge cases and decision points:
+
+```mermaid
+flowchart TD
+    Start([User clicks link]) --> ValidateRoute{siteConfig & route valid?}
+    ValidateRoute -->|No| Warn1[Log warning: missing config] --> End1([Return early])
+    ValidateRoute -->|Yes| GetConfig[Get routeConfig from siteConfig]
+    
+    GetConfig --> HasTransition{routeConfig.transition exists?}
+    HasTransition -->|No| Warn2[Log warning: no transition data] --> End2([Return early])
+    HasTransition -->|Yes| ExtractURL[Extract imageUrl from transitionData]
+    
+    ExtractURL --> HasURL{imageUrl exists?}
+    HasURL -->|No| Warn3[Log warning: no image URL] --> End3([Return early])
+    HasURL -->|Yes| EnsurePreload[ensureTransitionImageReady imageUrl]
+    
+    EnsurePreload --> CheckPreload{transitionsManager exists?}
+    CheckPreload -->|No| PreloadDirect[Use ImageService directly]
+    CheckPreload -->|Yes| IsPreloaded{isImagePreloaded imageUrl?}
+    
+    IsPreloaded -->|Yes| ImageReady[Image ready from cache]
+    IsPreloaded -->|No| CreateTempImg[Create temp img element]
+    
+    CreateTempImg --> SetDataSrc[Set data-src attribute]
+    SetDataSrc --> SetCrossOrigin1[Set crossOrigin = 'anonymous']
+    SetCrossOrigin1 --> PreloadChoice{transitionsManager exists?}
+    
+    PreloadChoice -->|Yes| PreloadViaTM[transitionsManager.preloadSingleImage tempImg]
+    PreloadChoice -->|No| PreloadViaIS[imageService.loadImage tempImg]
+    
+    PreloadViaTM --> PreloadSuccess{Preload succeeded?}
+    PreloadViaIS --> PreloadSuccess
+    PreloadDirect --> PreloadSuccess
+    
+    PreloadSuccess -->|Yes| ImageReady
+    PreloadSuccess -->|No| Warn4[Log warning: preload failed] --> ImageReady
+    
+    ImageReady --> FindDOMElement{Find .page-transition-overlay__image in DOM}
+    FindDOMElement -->|Not found| End4([Return - no element to update])
+    FindDOMElement -->|Found| UpdateDOM[updateOverlayImageElement]
+    
+    UpdateDOM --> SetCrossOrigin2[Set imageElement.crossOrigin = 'anonymous']
+    SetCrossOrigin2 --> SetSrc[Set imageElement.src = imageUrl]
+    SetSrc --> SetAlt{transitionData.alt exists?}
+    SetAlt -->|Yes| UpdateAlt[Set imageElement.alt]
+    SetAlt -->|No| WaitLoad
+    
+    UpdateAlt --> WaitLoad[Wait for imageElement to load]
+    WaitLoad --> WaitSuccess{waitForImageLoad succeeded?}
+    WaitSuccess -->|Yes| Complete([Function complete])
+    WaitSuccess -->|No| Warn5[Log warning: image load failed] --> Complete
+```
+
+**Edge Cases Handled:**
+1. Missing siteConfig or route → Early return with warning
+2. No transition data → Early return with warning
+3. No image URL → Early return with warning
+4. TransitionsManager not available → Falls back to ImageService
+5. Image already preloaded → Skips preload step
+6. Preload fails → Continues anyway (image may still load)
+7. DOM element not found → Returns early
+8. Image load fails → Logs warning but completes (non-blocking)
 
 ## Testing Checklist
 

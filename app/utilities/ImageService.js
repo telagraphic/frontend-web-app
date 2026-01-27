@@ -523,4 +523,64 @@ export class ImageService {
       return null;
     }
   }
+
+  /**
+   * Ensures a transition image is preloaded and ready
+   * 
+   * Handles the complete preload lifecycle for transition images:
+   * 1. Checks if image is already preloaded via TransitionsManager (if available)
+   * 2. If not preloaded, creates temp img element and preloads off-DOM
+   * 3. Sets crossOrigin = 'anonymous' to match HTML <link rel="preload"> crossorigin
+   * 4. Uses TransitionsManager.preloadSingleImage() if available, otherwise ImageService.loadImage()
+   * 
+   * Why extract this?
+   * - Centralizes preload check + preload logic (duplicated in updateTransitionOverlay and restoreTransitionData)
+   * - Handles crossOrigin matching automatically
+   * - Reusable across MPAPageTransition and TransitionsManager
+   * - Reduces code duplication and complexity
+   * 
+   * @param {string} imageUrl - Image URL to ensure is ready
+   * @param {Object} options - Configuration options
+   * @param {Object|null} options.transitionsManager - Optional TransitionsManager instance for preload tracking
+   * @returns {Promise<boolean>} True if image is ready (or preload attempted), false if preload failed
+   */
+  async ensureTransitionImageReady(imageUrl, { transitionsManager = null } = {}) {
+    if (!imageUrl) {
+      return false;
+    }
+
+    // Check if image is already preloaded via TransitionsManager
+    // TransitionsManager tracks preloaded URLs in ImageService's preloadedUrls Set
+    if (transitionsManager && transitionsManager.isImagePreloaded(imageUrl)) {
+      // Image already preloaded and cached → ready to use
+      return true;
+    }
+
+    // Image not preloaded → need to preload before use
+    // Create temp img element off-DOM to preload without affecting layout
+    try {
+      const tempImg = document.createElement('img');
+      tempImg.setAttribute('data-src', imageUrl);
+      
+      // CRITICAL: crossOrigin must match HTML <link rel="preload"> crossorigin attribute
+      // If mismatch, browser treats preloaded image and <img> tag as different resources
+      // Result: Preloaded image ignored, causing network request and flash
+      tempImg.crossOrigin = 'anonymous';
+      
+      // Preload via TransitionsManager (preferred) or ImageService (fallback)
+      // TransitionsManager uses ImageService internally but also tracks preloaded URLs
+      if (transitionsManager) {
+        await transitionsManager.preloadSingleImage(tempImg);
+      } else {
+        await this.loadImage({ element: tempImg });
+      }
+      
+      return true;
+    } catch (error) {
+      // Preload failed → return false but don't throw
+      // Caller can still set src on DOM element (browser will load it)
+      console.warn(`Failed to preload transition image: ${imageUrl}`, error);
+      return false;
+    }
+  }
 }

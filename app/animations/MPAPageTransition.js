@@ -52,7 +52,77 @@ export class MPAPageTransition {
   }
 
   /**
+   * Updates the overlay image element with transition image data
+   * 
+   * Handles DOM manipulation for transition overlay image:
+   * - Sets crossOrigin to match preload link (critical for browser cache usage)
+   * - Sets src to imageUrl (will use cached image if preloaded)
+   * - Updates alt text if provided
+   * - Waits for image to load (ensures DOM element is ready)
+   * 
+   * Why extract this?
+   * - Separates DOM manipulation from preloading logic
+   * - Makes function more testable
+   * - Clearer separation of concerns
+   * - Reusable for both updateTransitionOverlay and restoreTransitionData
+   * 
+   * @param {HTMLImageElement} imageElement - The overlay image element to update
+   * @param {string} imageUrl - Image URL to set as src
+   * @param {string} [altText] - Optional alt text for the image
+   * @returns {Promise<void>} Resolves when image element is updated and loaded
+   */
+  async updateOverlayImageElement(imageElement, imageUrl, altText) {
+    if (!imageElement || !imageUrl) {
+      return;
+    }
+
+    // CRITICAL: Set crossOrigin on DOM element to match preload link
+    // This ensures browser uses the preloaded/cached image instead of re-downloading
+    imageElement.crossOrigin = 'anonymous';
+    
+    // Set src on DOM element
+    // If image was preloaded, this should be instant from cache
+    // If not preloaded, browser will load it (may cause slight delay/flash)
+    imageElement.src = imageUrl;
+    
+    // Update alt text if provided
+    if (altText) {
+      imageElement.alt = altText;
+    }
+
+    // Wait for DOM element to finish loading
+    // Even if image was preloaded, we need to ensure the DOM element is ready
+    // This prevents blank image flash when overlay becomes visible
+    try {
+      await this.imageService.waitForImageLoad(imageElement);
+    } catch (error) {
+      // Non-blocking error: log warning but continue
+      // Transition will proceed even if image load verification fails
+      console.warn('Error waiting for transition image load:', error);
+    }
+  }
+
+  /**
    * Restore transition data from sessionStorage and update overlay markup
+   * 
+   * Lifecycle Overview:
+   * 1. Retrieves transition data from sessionStorage (stored before navigation)
+   * 2. Checks if HTML already has correct image (prevents stale overwrites)
+   * 3. If image needs updating, ensures it's preloaded via ensureTransitionImageReady()
+   * 4. Updates DOM element via updateOverlayImageElement()
+   * 
+   * Why this complexity?
+   * - HTML may have correct image from build-time generation
+   * - sessionStorage might have stale image from previous navigation
+   * - Prevents overwriting correct HTML image with stale sessionStorage data
+   * - Ensures image is preloaded before setting src (smooth transition)
+   * 
+   * Edge Cases Handled:
+   * - No sessionStorage data → return early
+   * - HTML has valid image that doesn't match sessionStorage → preserve HTML image
+   * - Image already correct and loaded → skip update
+   * - Image needs updating → preload then update DOM
+   * 
    * @returns {Promise<void>} Resolves when overlay is updated
    */
   async restoreTransitionData() {
@@ -64,43 +134,39 @@ export class MPAPageTransition {
       const imageElement = this.elements.transitionOverlay?.querySelector('.page-transition-overlay__image');
       
       if (imageElement && transitionData.image) {
-        imageElement.crossOrigin = 'anonymous';
-        
+        // CRITICAL: Prevent stale sessionStorage from overwriting correct HTML image
+        // HTML may have correct image from build-time generation
+        // sessionStorage might have stale image from previous navigation
         const fallbackImage = 'https://shea-memorandum-site.b-cdn.net/images/home-theme-desktop.webp';
         const htmlHasValidImage = imageElement.src && 
                                   imageElement.src !== '' && 
                                   imageElement.src !== fallbackImage;
         const imageMatchesSessionStorage = imageElement.src === transitionData.image;
         
+        // If HTML has valid image that doesn't match sessionStorage, preserve HTML image
+        // This prevents wrong image flash when navigating to unvisited pages
         if (htmlHasValidImage && !imageMatchesSessionStorage) {
           this.sessionStorage.removeItem('pageTransitionImage');
           return;
         }
         
+        // Check if image is already correct and loaded
+        // If so, skip unnecessary work (prevents redundant src assignment)
         const imageAlreadyCorrect = imageMatchesSessionStorage && 
                                    imageElement.complete && 
                                    imageElement.naturalHeight > 0;
         
+        // Only update if image is not already correct
         if (!imageAlreadyCorrect) {
-          const isPreloaded = this.transitionsManager && this.transitionsManager.isImagePreloaded(transitionData.image);
+          // Ensure image is preloaded before updating DOM
+          // Uses extracted method to handle preload check + preload logic
+          await this.imageService.ensureTransitionImageReady(transitionData.image, {
+            transitionsManager: this.transitionsManager
+          });
           
-          if (isPreloaded) {
-            imageElement.src = transitionData.image;
-          } else {
-            const tempImg = document.createElement('img');
-            tempImg.setAttribute('data-src', transitionData.image);
-            tempImg.crossOrigin = 'anonymous';
-            if (this.transitionsManager) {
-              await this.transitionsManager.preloadSingleImage(tempImg);
-            } else {
-              await this.imageService.loadImage({ element: tempImg });
-            }
-            imageElement.src = transitionData.image;
-          }
-          
-          if (transitionData.alt) {
-            imageElement.alt = transitionData.alt;
-          }
+          // Update DOM element with preloaded image
+          // Uses extracted method to handle crossOrigin, src, alt, and load verification
+          await this.updateOverlayImageElement(imageElement, transitionData.image, transitionData.alt);
         }
       }
 
@@ -113,11 +179,37 @@ export class MPAPageTransition {
 
   /**
    * Update overlay with transition data from SiteConfig
-   * Checks if image is preloaded, preloads if needed, then updates overlay markup
+   * 
+   * Lifecycle Overview:
+   * 1. Validates route and retrieves transition config from SiteConfig
+   * 2. Ensures image is preloaded via ImageService.ensureTransitionImageReady()
+   * 3. Updates DOM overlay image element via updateOverlayImageElement()
+   * 
+   * Why this approach?
+   * - Preloading ensures smooth transitions without image loading delays
+   * - crossOrigin matching is critical: must match HTML <link rel="preload"> crossorigin
+   *   attribute for browser to use cached/preloaded image (otherwise treated as different resource)
+   * - Off-DOM preloading prevents layout shifts and ensures image is decoded before display
+   * - Waiting for DOM element load ensures image is painted before transition starts
+   * 
+   * Edge Cases Handled:
+   * - Missing siteConfig or route → return early with warning
+   * - Route not found in config → return early with warning
+   * - No image URL in transition data → return early with warning
+   * - TransitionsManager not available → falls back to ImageService
+   * - Image already preloaded → skips preload step
+   * - Preload fails → continues anyway (image may still load)
+   * - DOM element not found → returns early
+   * - Image load fails → logs warning but completes (non-blocking)
+   * 
    * @param {string} route - SiteConfig route key (e.g., "/introduction", "/section-1")
    * @returns {Promise<void>} Resolves when overlay is updated and image is loaded
    */
   async updateTransitionOverlay(route) {
+    // ============================================
+    // SECTION 1: Route & Config Validation
+    // ============================================
+    // Early validation prevents unnecessary work if route/config invalid
     if (!this.siteConfig || !route) {
       console.warn('Cannot update transition overlay: missing siteConfig or route');
       return;
@@ -137,52 +229,22 @@ export class MPAPageTransition {
       return;
     }
 
-    // Check if image is preloaded
-    let imageReady = false;
-    if (this.transitionsManager && this.transitionsManager.isImagePreloaded(imageUrl)) {
-      imageReady = true;
-    } else {
-      // Preload image if not already loaded
-      try {
-        const tempImg = document.createElement('img');
-        tempImg.setAttribute('data-src', imageUrl);
-        tempImg.crossOrigin = 'anonymous'; // Match preload link crossorigin
-        
-        if (this.transitionsManager) {
-          await this.transitionsManager.preloadSingleImage(tempImg);
-        } else {
-          await this.imageService.loadImage({ element: tempImg });
-        }
-        imageReady = true;
-      } catch (error) {
-        console.warn(`Failed to preload transition image for route ${route}:`, error);
-        // Continue anyway - image may still load
-      }
-    }
+    // ============================================
+    // SECTION 2: Ensure Image is Preloaded
+    // ============================================
+    // Uses extracted method to handle preload check + preload logic
+    // Handles crossOrigin matching, temp img creation, and fallback logic
+    await this.imageService.ensureTransitionImageReady(imageUrl, {
+      transitionsManager: this.transitionsManager
+    });
 
+    // ============================================
+    // SECTION 3: Update DOM Element
+    // ============================================
+    // Find overlay image element and update it
     const imageElement = this.elements.transitionOverlay?.querySelector('.page-transition-overlay__image');
     if (imageElement) {
-      // Ensure crossorigin matches preload link
-      imageElement.crossOrigin = 'anonymous';
-      
-      if (imageReady) {
-        imageElement.src = imageUrl;
-      } else {
-        // Set src anyway - browser will load it
-        imageElement.src = imageUrl;
-      }
-      
-      if (transitionData.alt) {
-        imageElement.alt = transitionData.alt;
-      }
-    }
-
-    if (imageElement) {
-      try {
-        await this.imageService.waitForImageLoad(imageElement);
-      } catch (error) {
-        console.warn('Error waiting for transition image load:', error);
-      }
+      await this.updateOverlayImageElement(imageElement, imageUrl, transitionData.alt);
     }
   }
 
@@ -224,6 +286,9 @@ export class MPAPageTransition {
           await this.imageService.waitForImageLoad(imageAfterRestore);
         }
         
+        // Force browser to paint the image before overlay animation
+        // Even with CSS opacity: 1 by default, we need to ensure image is painted
+        // to prevent blank image flash when overlay is visible
         void imageAfterRestore.offsetHeight;
         await new Promise(resolve => requestAnimationFrame(resolve));
       }
@@ -231,7 +296,8 @@ export class MPAPageTransition {
       this.sessionStorage.removeItem("pageTransition");
       await this.hideTransition();
     } else {
-      // Initial state: overlay hidden
+      // Hide overlay immediately on initial page load (non-navigating case)
+      // CSS has opacity: 1 by default to prevent race condition, so we must hide it here
       this.gsap.set(this.elements.transitionOverlay, { 
         opacity: 0
       });
@@ -323,12 +389,8 @@ export class MPAPageTransition {
         return;
       }
 
-      // Set initial state: hidden (opacity: 0)
-      this.gsap.set(this.elements.transitionOverlay, {
-        opacity: 0,
-      });
-      
       // Fade in to visible (opacity: 1)
+      // Note: CSS already has opacity: 1 by default, so no need to set initial state
       this.gsap.to(this.elements.transitionOverlay, {
         opacity: 1,
         duration: 0.6,
@@ -347,10 +409,8 @@ export class MPAPageTransition {
         return;
       }
 
-      this.gsap.set(this.elements.transitionOverlay, {
-        opacity: 1,
-      });
-      
+      // Fade out to hidden (opacity: 0)
+      // Note: CSS already has opacity: 1 by default, so no need to set it before animating
       this.gsap.to(this.elements.transitionOverlay, {
         opacity: 0,
         duration: 0.6,
