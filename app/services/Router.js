@@ -6,7 +6,6 @@
  */
 import { ImageService } from "../utilities/ImageService.js";
 import { Preloader } from "../components/Preloader.js";
-import { PageTransition } from "../animations/PageTransition.js";
 import { createError, ERROR_CODES } from "../utilities/ErrorRegistry.js";
 import {
   SELECTORS,
@@ -26,7 +25,6 @@ export class Router {
     this.imageService = new ImageService();
     this.siteConfig = siteConfig;
     this.transitionsManager = transitionsManager;
-    this.pageTransition = new PageTransition();
   }
 
   /**
@@ -55,42 +53,23 @@ export class Router {
    * Handle page navigation restoration flow
    *
    * This method is called when the page loads after a navigation transition.
-   * It restores the transition image data from sessionStorage and ensures
-   * the image is fully loaded and painted before hiding the overlay.
+   * It delegates to TransitionsManager to restore transition state and hide the overlay.
    *
    * Flow:
-   * 1. Restore transition data from sessionStorage (image URL, alt text)
-   * 2. Wait for image to load if not already complete
-   * 3. Force browser paint to ensure image is visible before animation
-   * 4. Remove sessionStorage flag and hide transition overlay
+   * 1. Restore transition state (strategy-specific: may restore images, data, etc.)
+   * 2. Remove sessionStorage navigation flag
+   * 3. Hide transition overlay
    *
    * @private
    */
   async handlePageNavigation() {
+    // Restore transition state (strategy handles image loading, painting, etc.)
     await this.transitionsManager.restoreTransitionData();
 
-    const imageAfterRestore = this.elements.transitionOverlay?.querySelector(
-      SELECTORS.TRANSITION_IMAGE,
-    );
-
-    if (imageAfterRestore && imageAfterRestore.src) {
-      imageAfterRestore.crossOrigin = "anonymous";
-
-      if (
-        !imageAfterRestore.complete ||
-        imageAfterRestore.naturalHeight === 0
-      ) {
-        await this.imageService.waitForImageLoad(imageAfterRestore);
-      }
-
-      // Force browser to paint the image before overlay animation
-      // Even with CSS opacity: 1 by default, we need to ensure image is painted
-      // to prevent blank image flash when overlay is visible
-      void imageAfterRestore.offsetHeight;
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-    }
-
+    // Remove navigation flag
     this.sessionStorage.removeItem(STORAGE_KEYS.PAGE_TRANSITION);
+    
+    // Hide transition overlay
     await this.hideTransition();
   }
 
@@ -240,15 +219,8 @@ export class Router {
       const route = this.normalizeHrefToRoute(href);
 
       if (route && this.siteConfig) {
-        // 2. Update overlay with transition data via TransitionsManager
-        // This ensures the image is preloaded and ready before animation
-        await this.transitionsManager.updateTransitionOverlayFromRoute(route);
-
-        // 3. Store transition data in sessionStorage via TransitionsManager
-        const routeConfig = this.siteConfig.get(route);
-        if (routeConfig && routeConfig.transition) {
-          this.transitionsManager.storeTransitionData(routeConfig.transition);
-        }
+        // 2. Prepare transition (strategy handles preloading, image setup, etc.)
+        await this.transitionsManager.prepareTransition(route);
       }
 
       // Ensure overlay is visible before animation to prevent white flash
@@ -259,6 +231,7 @@ export class Router {
         void this.elements.transitionOverlay.offsetHeight;
       }
 
+      // 3. Show transition overlay
       await this.showTransition();
 
       // 4. Navigate to new page
@@ -323,28 +296,31 @@ export class Router {
     });
   }
 
+  /**
+   * Show the transition overlay
+   * Delegates to TransitionsManager which uses the selected strategy
+   * @returns {Promise<void>}
+   */
   async showTransition() {
     if (!this.elements.transitionOverlay) {
       return Promise.resolve();
     }
-
-    // Delegate to PageTransition for animation
-    return this.pageTransition.showPageTransition(
-      this.elements.transitionOverlay,
-    );
+    return this.transitionsManager.showTransition(this.elements.transitionOverlay);
   }
 
+  /**
+   * Hide the transition overlay
+   * Loads page images first, then delegates to TransitionsManager
+   * @returns {Promise<void>}
+   */
   async hideTransition() {
+    // Load page images before hiding transition
     await this.loadPageImages();
 
     if (!this.elements.transitionOverlay) {
       return Promise.resolve();
     }
-
-    // Delegate to PageTransition for animation
-    return this.pageTransition.hidePageTransition(
-      this.elements.transitionOverlay,
-    );
+    return this.transitionsManager.hideTransition(this.elements.transitionOverlay);
   }
 
   /**

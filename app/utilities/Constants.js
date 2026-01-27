@@ -147,3 +147,12 @@ export const BLOCKED_LINK_PREFIXES = Object.freeze([
   'mailto:',
   'tel:',
 ]);
+
+/**
+ * Transition types
+ * Defines available transition strategy types
+ */
+export const TRANSITION_TYPES = Object.freeze({
+  GENERIC: 'generic',
+  CUSTOM: 'custom',
+});

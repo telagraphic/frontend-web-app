@@ -317,3 +317,399 @@ flowchart TD
 - [ ] Navigate between pages → Transition images display correctly → No flash
 - [ ] Navigate to unvisited page → Correct image displays → No fallback image flash
 - [ ] Navigate after visiting `/references` → Correct page image (not stale) → No wrong image flash
+
+---
+
+## Current Architecture: Router and TransitionsManager
+
+### Separation of Concerns
+
+The page transition system is split into two main components:
+
+**Router.js** - Navigation Logic
+- Handles link clicks and event delegation
+- Validates and normalizes routes
+- Checks for same-page navigation
+- Blocks external/mailto/tel links
+- Coordinates the transition flow
+- Manages sessionStorage navigation flags
+- Loads general page images (not transition-specific)
+
+**TransitionsManager.js** - Transition Strategy Coordinator
+- Selects transition strategy (generic or custom)
+- Delegates to strategy for all transition operations
+- Manages overlay element reference
+- Provides unified API for Router
+
+**Transition Strategies** - Implementation Details
+- **GenericPageTransitions**: Simple fade in/out, no images
+- **CustomPageTransitions**: Complex image-based transitions with preloading, caching, sessionStorage
+
+### Architecture Diagram
+
+```mermaid
+graph TB
+    Router[Router.js<br/>Navigation Logic]
+    TM[TransitionsManager.js<br/>Strategy Coordinator]
+    Base[BaseTransitionStrategy<br/>Abstract Interface]
+    Generic[GenericPageTransitions<br/>Simple Fade]
+    Custom[CustomPageTransitions<br/>Image-Based]
+    
+    Router -->|delegates| TM
+    TM -->|selects| Base
+    Base <|-- Generic
+    Base <|-- Custom
+    TM -->|uses| Generic
+    TM -->|uses| Custom
+```
+
+### Method Responsibilities
+
+**Router Methods:**
+- `initialize()` - Setup DOM elements, check navigation state, route to restoration or initial load
+- `handleNavigation(href)` - Normalize route, prepare transition, show overlay, navigate
+- `handlePageNavigation()` - Restore transition, hide overlay
+- `handleInitialLoad()` - Hide overlay, load page images
+- `showTransition()` - Delegate to TransitionsManager
+- `hideTransition()` - Load page images, delegate to TransitionsManager
+
+**TransitionsManager Methods:**
+- `init()` - Initialize overlay element and selected strategy
+- `prepareTransition(route)` - Delegate to strategy.prepare()
+- `showTransition(element)` - Delegate to strategy.show()
+- `hideTransition(element)` - Delegate to strategy.hide()
+- `restoreTransition()` - Delegate to strategy.restore()
+- `updateTransitionOverlayFromRoute(route)` - Alias for prepareTransition()
+- `restoreTransitionData()` - Alias for restoreTransition()
+- `storeTransitionData(data)` - Delegate to custom strategy if available
+
+**Strategy Interface (BaseTransitionStrategy):**
+- `prepare(route)` - Prepare transition for route (preload images, setup data)
+- `show(element)` - Show transition overlay with animation
+- `hide(element)` - Hide transition overlay with animation
+- `restore()` - Restore transition state after page navigation
+
+## Transition Strategy Pattern
+
+### Strategy Selection
+
+TransitionsManager uses the Strategy pattern to support multiple transition types:
+
+```javascript
+// In App.js
+this.transitionsManager = new TransitionsManager({ 
+  siteConfig: this.siteConfig,
+  sessionStorage: window.sessionStorage,
+  transitionType: TRANSITION_TYPES.CUSTOM // or TRANSITION_TYPES.GENERIC
+});
+```
+
+### Strategy Types
+
+**GenericPageTransitions** (`TRANSITION_TYPES.GENERIC`)
+- Simple fade in/out animation
+- No image preloading
+- No sessionStorage persistence
+- Minimal overhead
+- Suitable for projects wanting fast, lightweight transitions
+
+**CustomPageTransitions** (`TRANSITION_TYPES.CUSTOM`)
+- Image-based transitions with preloading
+- SessionStorage persistence for image URLs
+- Template management
+- Image caching and tracking
+- Suitable for projects wanting rich visual continuity
+
+### Strategy Flow
+
+```mermaid
+sequenceDiagram
+    participant App
+    participant TM as TransitionsManager
+    participant Strategy as BaseTransitionStrategy
+    participant Router
+    
+    App->>TM: new TransitionsManager({transitionType})
+    App->>TM: init()
+    TM->>Strategy: createTransitionStrategy(type)
+    Strategy-->>TM: strategy instance
+    
+    Router->>TM: prepareTransition(route)
+    TM->>Strategy: prepare(route)
+    Strategy-->>TM: (image preloaded, data stored)
+    
+    Router->>TM: showTransition(element)
+    TM->>Strategy: show(element)
+    Strategy-->>TM: (animation complete)
+    
+    Note over Router: window.location.href = href
+    Note over Router: Browser navigates to new page
+    
+    Router->>TM: restoreTransitionData()
+    TM->>Strategy: restore()
+    Strategy-->>TM: (state restored)
+    
+    Router->>TM: hideTransition(element)
+    TM->>Strategy: hide(element)
+    Strategy-->>TM: (animation complete)
+```
+
+## Complete Timing Sequence: Click to Page Load
+
+The following sequence diagram shows the complete flow from user click to new page display, including all timing and browser events:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant User
+    participant Router
+    participant TM as TransitionsManager
+    participant Strategy as CustomPageTransitions
+    participant ImageService
+    participant Browser
+    participant SessionStorage
+    
+    User->>Router: Click internal link
+    Router->>Router: isInternalLink() ✓
+    Router->>Router: isBlockedLink() ✓
+    Router->>Router: isSamePage() ✗
+    Router->>Router: normalizeHrefToRoute()
+    Router->>TM: prepareTransition(route)
+    TM->>Strategy: prepare(route)
+    
+    Strategy->>Strategy: Validate route & config
+    Strategy->>ImageService: ensureTransitionImageReady(imageUrl)
+    ImageService->>Strategy: isImagePreloaded()?
+    
+    alt Image not preloaded
+        ImageService->>ImageService: Create temp img element
+        ImageService->>ImageService: Set crossOrigin='anonymous'
+        ImageService->>Strategy: preloadSingleImage(tempImg)
+        Strategy->>ImageService: preloadSingleImage()
+        ImageService-->>Strategy: Image loaded & cached
+    else Image already preloaded
+        ImageService-->>Strategy: Image ready from cache
+    end
+    
+    Strategy->>Strategy: updateOverlayImageElement()
+    Strategy->>Strategy: Set crossOrigin, src, alt
+    Strategy->>ImageService: waitForImageLoad()
+    ImageService-->>Strategy: Image element ready
+    Strategy->>Strategy: storeTransitionData()
+    Strategy->>SessionStorage: Store transition data
+    Strategy-->>TM: prepare() complete
+    TM-->>Router: prepareTransition() complete
+    
+    Router->>Router: Force reflow (offsetHeight)
+    Router->>TM: showTransition(overlay)
+    TM->>Strategy: show(overlay)
+    Strategy->>Strategy: PageTransition.showPageTransition()
+    Note over Strategy: GSAP fade in (0.6s)
+    Strategy-->>TM: Animation complete
+    TM-->>Router: showTransition() complete
+    
+    Router->>SessionStorage: setItem('isPageNavigation', 'true')
+    Router->>Browser: window.location.href = href
+    
+    Note over Browser: Browser unloads current page
+    Note over Browser: Browser loads new page HTML
+    Note over Browser: CSS renders (overlay opacity: 1)
+    
+    Browser->>Router: New page loads
+    Router->>Router: initialize()
+    Router->>Router: isPageNavigating = true
+    Router->>TM: restoreTransitionData()
+    TM->>Strategy: restore()
+    
+    Strategy->>SessionStorage: getItem('pageTransitionImage')
+    SessionStorage-->>Strategy: Transition data
+    
+    Strategy->>Strategy: Check HTML image vs sessionStorage
+    alt Image needs update
+        Strategy->>ImageService: ensureTransitionImageReady()
+        ImageService-->>Strategy: Image ready
+        Strategy->>Strategy: updateOverlayImageElement()
+        Strategy->>ImageService: waitForImageLoad()
+        ImageService-->>Strategy: Image loaded
+    end
+    
+    Strategy->>SessionStorage: removeItem('pageTransitionImage')
+    Strategy-->>TM: restore() complete
+    TM-->>Router: restoreTransitionData() complete
+    
+    Router->>SessionStorage: removeItem('isPageNavigation')
+    Router->>TM: hideTransition(overlay)
+    TM->>Strategy: hide(overlay)
+    Strategy->>Router: loadPageImages()
+    Router->>ImageService: preloadImages()
+    ImageService-->>Router: Images loaded
+    Strategy->>Strategy: PageTransition.hidePageTransition()
+    Note over Strategy: GSAP fade out (0.6s + 0.5s delay)
+    Strategy-->>TM: Animation complete
+    TM-->>Router: hideTransition() complete
+    Router-->>Browser: Page fully ready
+```
+
+## Image Loading & Caching Flow (Custom Transitions)
+
+For custom transitions, the image loading and caching flow is critical for smooth transitions:
+
+```mermaid
+sequenceDiagram
+    participant Router
+    participant CustomStrategy as CustomPageTransitions
+    participant ImageService
+    participant BrowserCache
+    participant SessionStorage
+    participant DOM as DOM Image Element
+    
+    Note over CustomStrategy: Navigation Click Flow
+    Router->>CustomStrategy: prepare(route)
+    CustomStrategy->>CustomStrategy: Get imageUrl from SiteConfig
+    CustomStrategy->>ImageService: ensureTransitionImageReady(imageUrl)
+    
+    ImageService->>CustomStrategy: isImagePreloaded(imageUrl)?
+    
+    alt Image in cache
+        ImageService-->>CustomStrategy: true (instant)
+    else Image not cached
+        ImageService->>ImageService: Create temp <img>
+        ImageService->>ImageService: Set crossOrigin='anonymous'
+        ImageService->>CustomStrategy: preloadSingleImage(tempImg)
+        CustomStrategy->>ImageService: loadImage()
+        ImageService->>BrowserCache: Load & cache image
+        BrowserCache-->>ImageService: Image cached
+        ImageService->>CustomStrategy: Mark as preloaded
+    end
+    
+    ImageService-->>CustomStrategy: Image ready
+    CustomStrategy->>DOM: updateOverlayImageElement()
+    DOM->>DOM: Set crossOrigin='anonymous'
+    DOM->>DOM: Set src=imageUrl (uses cache)
+    DOM->>ImageService: waitForImageLoad()
+    ImageService-->>DOM: Image loaded (instant from cache)
+    DOM-->>CustomStrategy: Element ready
+    CustomStrategy->>SessionStorage: storeTransitionData()
+    SessionStorage-->>CustomStrategy: Data stored
+    CustomStrategy-->>Router: prepare() complete
+    
+    Note over Router: Show transition & navigate
+    
+    Note over CustomStrategy: New Page Load Flow
+    Router->>CustomStrategy: restore()
+    CustomStrategy->>SessionStorage: getItem('pageTransitionImage')
+    SessionStorage-->>CustomStrategy: Transition data
+    
+    CustomStrategy->>CustomStrategy: Check HTML image vs stored
+    alt HTML image is correct
+        CustomStrategy-->>Router: Skip update (preserve HTML)
+    else Need to update
+        CustomStrategy->>ImageService: ensureTransitionImageReady()
+        ImageService-->>CustomStrategy: Image ready
+        CustomStrategy->>DOM: updateOverlayImageElement()
+        DOM-->>CustomStrategy: Image loaded
+    end
+    
+    CustomStrategy->>SessionStorage: removeItem()
+    CustomStrategy-->>Router: restore() complete
+```
+
+## Browser Navigation Events Timeline
+
+Understanding how `window.location.href` affects the transition flow:
+
+```mermaid
+gantt
+    title Page Transition Timeline
+    dateFormat X
+    axisFormat %Ls
+    
+    section Current Page
+    Click Handler          :0, 100
+    Prepare Transition     :100, 200
+    Show Overlay           :200, 800
+    Set Navigation Flag    :800, 850
+    window.location.href   :850, 900
+    
+    section Browser
+    Unload Current Page    :900, 1000
+    Load New HTML          :1000, 1500
+    CSS Render (opacity:1) :1500, 1600
+    
+    section New Page
+    Router.initialize()    :1600, 1700
+    Restore Transition     :1700, 2000
+    Hide Overlay           :2000, 3100
+    Page Ready             :3100, 3200
+```
+
+### Critical Timing Points
+
+1. **Before Navigation (Current Page)**
+   - Image must be preloaded and ready
+   - Overlay must be visible (opacity: 1)
+   - SessionStorage flag set: `isPageNavigation = 'true'`
+
+2. **During Navigation (Browser)**
+   - Current page unloads
+   - New page HTML loads
+   - CSS renders overlay at `opacity: 1` (prevents flash)
+
+3. **After Navigation (New Page)**
+   - Router.initialize() detects `isPageNavigating = true`
+   - Restores transition data from sessionStorage
+   - Ensures image is painted
+   - Hides overlay with animation
+
+### Browser Event Sequence
+
+```
+User Click
+  ↓
+Router.handleNavigation()
+  ↓
+TransitionsManager.prepareTransition()
+  ↓ (image preloaded, data stored)
+Router.showTransition()
+  ↓ (overlay fades in: 0.6s)
+sessionStorage.setItem('isPageNavigation', 'true')
+  ↓
+window.location.href = href
+  ↓
+[Browser unloads current page]
+  ↓
+[Browser loads new page HTML]
+  ↓
+CSS renders (overlay opacity: 1 by default)
+  ↓
+Router.initialize()
+  ↓
+TransitionsManager.restoreTransitionData()
+  ↓ (image restored, painted)
+Router.hideTransition()
+  ↓ (overlay fades out: 0.6s + 0.5s delay)
+Page fully ready
+```
+
+## Strategy-Specific Flows
+
+### Generic Transition Flow
+
+```
+Click → prepare() [no-op] → show() [fade in] → Navigate → restore() [no-op] → hide() [fade out]
+```
+
+### Custom Transition Flow
+
+```
+Click → prepare() [preload image, update DOM, store data] → show() [fade in] → Navigate → restore() [restore image, verify, paint] → hide() [fade out]
+```
+
+## Key Design Decisions
+
+1. **Strategy Pattern**: Allows switching between generic and custom without changing Router code
+2. **Delegation**: TransitionsManager delegates all operations to strategies
+3. **SessionStorage**: Only custom transitions use sessionStorage for image persistence
+4. **Image Preloading**: Only custom transitions preload images
+5. **Template System**: Only custom transitions use HTML templates
+6. **Project-Level Configuration**: One transition type per project (not per-route)

@@ -8,7 +8,7 @@ import { Preloader } from "./components/Preloader.js";
 import { Router } from "./services/Router.js";
 import { TransitionsManager } from "./animations/TransitionsManager.js";
 import { liveReload } from "./config/Environment.js";
-import { SELECTORS, EVENTS } from "./utilities/Constants.js";
+import { SELECTORS, EVENTS, TRANSITION_TYPES } from "./utilities/Constants.js";
 import { $ } from "./utilities/DOMHelpers.js";
 import { whenDOMReady } from "./utilities/AsyncHelpers.js";
 
@@ -110,11 +110,13 @@ class App {
   async createPageTransition() {
     if (this.pageTransition) return;
     
-    // Create and initialize TransitionsManager for preloading transition images
+    // Create and initialize TransitionsManager with selected transition strategy
+    // Default to 'custom' for image-based transitions, set to 'generic' for simple fade transitions
     if (!this.transitionsManager) {
       this.transitionsManager = new TransitionsManager({ 
         siteConfig: this.siteConfig,
-        sessionStorage: window.sessionStorage
+        sessionStorage: window.sessionStorage,
+        transitionType: TRANSITION_TYPES.CUSTOM // Change to TRANSITION_TYPES.GENERIC for simple fade transitions
       });
       await this.transitionsManager.init();
     }
