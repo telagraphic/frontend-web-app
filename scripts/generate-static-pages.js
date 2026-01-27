@@ -108,8 +108,8 @@ async function generateStaticPages() {
     // Get services from App.js (or create if App.js hasn't loaded yet)
     let services = window.appServices;
     if (!services) {
-      const { createMPAServices } = await import('${basePath}services/MPAServiceFactory.js');
-      services = createMPAServices();
+      const { createServices } = await import('${basePath}services/ServiceFactory.js');
+      services = createServices();
     }
     
     const page = new Home(services);
@@ -128,8 +128,8 @@ async function generateStaticPages() {
     // Get services from App.js (or create if App.js hasn't loaded yet)
     let services = window.appServices;
     if (!services) {
-      const { createMPAServices } = await import('${basePath}services/MPAServiceFactory.js');
-      services = createMPAServices();
+      const { createServices } = await import('${basePath}services/ServiceFactory.js');
+      services = createServices();
     }
     
     const page = new Introduction(services);
@@ -162,8 +162,8 @@ async function generateStaticPages() {
     // Get services from App.js (or create if App.js hasn't loaded yet)
     let services = window.appServices;
     if (!services) {
-      const { createMPAServices } = await import('${basePath}services/MPAServiceFactory.js');
-      services = createMPAServices();
+      const { createServices } = await import('${basePath}services/ServiceFactory.js');
+      services = createServices();
     }
     
     // Initialize page with the template-based element selector

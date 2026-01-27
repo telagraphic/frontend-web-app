@@ -76,6 +76,7 @@ export const ATTRIBUTES = Object.freeze({
   DATA_COLOR: "data-color",
   DATA_ID: "data-id",
   DATA_ANIMATION: "data-animation",
+  DATA_NAVIGATION_STATUS: "data-navigation-status",
 
   // Standard attributes
   HREF: "href",
@@ -119,3 +120,30 @@ export const VALUES = Object.freeze({
 export const BACKGROUND_IMAGES = Object.freeze({
   PRELOADER_COPY: "https://shea-memorandum-site.b-cdn.net/images/fbi-report-dancing-israelis-3.jpg",
 });
+
+/**
+ * SessionStorage keys
+ */
+export const STORAGE_KEYS = Object.freeze({
+  PAGE_TRANSITION: 'isPageNavigation',
+  PRELOADER_SHOWN: 'preloaderShown',
+  PAGE_TRANSITION_IMAGE: 'pageTransitionImage',
+});
+
+/**
+ * Navigation status values
+ */
+export const NAVIGATION_STATUS = Object.freeze({
+  ACTIVE: 'active',
+  NOT_ACTIVE: 'not-active',
+});
+
+/**
+ * Blocked link prefixes
+ * Links starting with these prefixes should not trigger page transitions
+ */
+export const BLOCKED_LINK_PREFIXES = Object.freeze([
+  'http',
+  'mailto:',
+  'tel:',
+]);

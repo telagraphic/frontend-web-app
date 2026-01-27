@@ -6,7 +6,7 @@ import { SELECTORS, VALUES } from "../utilities/Constants.js";
  * Navigation component is responsible for updating the navigation links when the page changes, hide links, change colors depending on the page, etc...
  */
 export class Navigation extends Component {
-  constructor({ siteConfig, pageRegistry, smoothScroll }) {
+  constructor({ siteConfig, smoothScroll }) {
     super({
       element: SELECTORS.NAV,
       elements: {
@@ -18,7 +18,6 @@ export class Navigation extends Component {
     });
 
     this.siteConfig = siteConfig;
-    this.pageRegistry = pageRegistry;
     this.smoothScroll = smoothScroll;
   }
 

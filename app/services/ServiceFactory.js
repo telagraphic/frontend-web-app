@@ -3,15 +3,26 @@ import { Footnotes } from "../components/Footnotes.js";
 import { SmoothScroll } from "../components/SmoothScroll.js";
 import { Navigation } from "../components/Navigation.js";
 import { AnimationsManager } from "../animations/AnimationsManager.js";
-import { TransitionsManager } from "../animations/TransitionsManager.js";
 
-
+/**
+ * Simplified service factory for Multi-Page Application (MPA)
+ */
 export function createServices() {
   const siteConfig = new SiteConfig();
-  const animationsManager = new AnimationsManager();
-  const transitionsManager = new TransitionsManager({ siteConfig });
   const smoothScroll = new SmoothScroll();
+  const animationsManager = new AnimationsManager();
   const footnotes = new Footnotes({ smoothScroll });
-  const navigation = new Navigation({ siteConfig, smoothScroll });
-  return { siteConfig, smoothScroll, animationsManager, transitionsManager, footnotes, navigation };
+  
+  const navigation = new Navigation({ 
+    siteConfig, 
+    smoothScroll 
+  });
+
+  return {
+    siteConfig,
+    smoothScroll,
+    animationsManager,
+    footnotes,
+    navigation,
+  };
 }

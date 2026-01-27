@@ -3,9 +3,9 @@
  *  Handles shared initialization for MPA: preloader, navigation, page transitions
  */
 
-import { createMPAServices } from "./services/MPAServiceFactory.js";
+import { createServices } from "./services/ServiceFactory.js";
 import { Preloader } from "./components/Preloader.js";
-import { MPAPageTransition } from "./animations/MPAPageTransition.js";
+import { Router } from "./services/Router.js";
 import { TransitionsManager } from "./animations/TransitionsManager.js";
 import { liveReload } from "./config/Environment.js";
 import { SELECTORS, EVENTS } from "./utilities/Constants.js";
@@ -15,7 +15,7 @@ import { whenDOMReady } from "./utilities/AsyncHelpers.js";
 class App {
   constructor() {
     this.preloaderVisible = false;
-    this.initialized = false;
+    this.isAppInitialized = false;
   }
 
   /**
@@ -24,7 +24,7 @@ class App {
    */
   async init() {
     // Prevent multiple initializations
-    if (this.initialized) {
+    if (this.isAppInitialized) {
       return;
     }
     
@@ -37,7 +37,7 @@ class App {
     window.app = this;
     window.appServices = this.services;
     
-    this.initialized = true;
+    this.isAppInitialized = true;
     liveReload();
   }
 
@@ -45,7 +45,7 @@ class App {
    * Create the services for the application
    */
   createServices() {
-    this.services = createMPAServices();
+    this.services = createServices();
     this.siteConfig = this.services.siteConfig;
     this.navigation = this.services.navigation;
     this.smoothScroll = this.services.smoothScroll;
@@ -113,12 +113,13 @@ class App {
     // Create and initialize TransitionsManager for preloading transition images
     if (!this.transitionsManager) {
       this.transitionsManager = new TransitionsManager({ 
-        siteConfig: this.siteConfig 
+        siteConfig: this.siteConfig,
+        sessionStorage: window.sessionStorage
       });
       await this.transitionsManager.init();
     }
     
-    this.pageTransition = new MPAPageTransition({
+    this.pageTransition = new Router({
       siteConfig: this.siteConfig,
       transitionsManager: this.transitionsManager
     });

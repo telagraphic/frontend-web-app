@@ -9,6 +9,9 @@ export const ERROR_CODES = {
   CLASS_NOT_FOUND: 'CLASS_NOT_FOUND',
   NETWORK_ERROR: 'NETWORK_ERROR',
   VALIDATION_ERROR: 'VALIDATION_ERROR',
+  INITIALIZATION_ERROR: 'INITIALIZATION_ERROR',
+  STORAGE_ERROR: 'STORAGE_ERROR',
+  IMAGE_LOAD_ERROR: 'IMAGE_LOAD_ERROR',
 };
 
 export const ERROR_MESSAGES = {
@@ -17,6 +20,9 @@ export const ERROR_MESSAGES = {
   [ERROR_CODES.CLASS_NOT_FOUND]: 'Class not found: {className}',
   [ERROR_CODES.NETWORK_ERROR]: 'Network error: {message}',
   [ERROR_CODES.VALIDATION_ERROR]: 'Validation error: {message}',
+  [ERROR_CODES.INITIALIZATION_ERROR]: 'Initialization error: {message}',
+  [ERROR_CODES.STORAGE_ERROR]: 'Storage error: {message}',
+  [ERROR_CODES.IMAGE_LOAD_ERROR]: 'Image load error: {message}',
 };
 
 /**
