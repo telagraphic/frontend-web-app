@@ -389,6 +389,225 @@ graph TB
 - `hide(element)` - Hide transition overlay with animation
 - `restore()` - Restore transition state after page navigation
 
+---
+
+## Design Pattern Rationale: Why BaseTransitionStrategy?
+
+### The Problem: Multiple Transition Requirements
+
+The page transition system needed to support different use cases:
+
+1. **Simple Projects**: Need lightweight, fast transitions with minimal overhead
+   - No image preloading
+   - No sessionStorage persistence
+   - Simple fade animations only
+   - Minimal JavaScript execution
+
+2. **Rich Projects**: Need sophisticated image-based transitions
+   - Image preloading and caching
+   - SessionStorage for state persistence
+   - Template management
+   - Complex image readiness checks
+   - Visual continuity between pages
+
+3. **Future Projects**: May need entirely different transition types
+   - Slide animations
+   - 3D transitions
+   - Route-specific transitions
+   - A/B testing different transition styles
+
+### Problems Without a Strategy Pattern
+
+**Problem 1: Code Duplication**
+Without a strategy pattern, Router would need to handle both transition types directly:
+```javascript
+// BAD: Router knows about all transition types
+if (transitionType === 'generic') {
+  // Generic transition logic
+  await fadeIn();
+} else if (transitionType === 'custom') {
+  // Custom transition logic
+  await preloadImage();
+  await updateOverlay();
+  await storeData();
+  await fadeIn();
+}
+```
+This violates the **Open/Closed Principle** - Router must be modified every time a new transition type is added.
+
+**Problem 2: Tight Coupling**
+Router would be tightly coupled to transition implementation details:
+- Router would need to know about image preloading
+- Router would need to know about sessionStorage keys
+- Router would need to know about template management
+- Changes to transition logic would require Router changes
+
+**Problem 3: Testing Complexity**
+Testing Router would require:
+- Mocking image loading services
+- Mocking sessionStorage
+- Setting up transition templates
+- Testing both transition types in every Router test
+
+**Problem 4: Runtime Flexibility**
+Switching transition types would require:
+- Conditional logic throughout Router
+- Recompiling/bundling different Router versions
+- Complex configuration management
+
+### Solution: Strategy Pattern with BaseTransitionStrategy
+
+The Strategy Pattern solves all these problems by:
+
+1. **Encapsulating Variation**: Each transition type is encapsulated in its own class
+2. **Defining Common Interface**: `BaseTransitionStrategy` ensures all strategies implement the same methods
+3. **Delegating Responsibility**: Router delegates to TransitionsManager, which delegates to the selected strategy
+4. **Enabling Polymorphism**: Router code works with any strategy without knowing implementation details
+
+### Why BaseTransitionStrategy is the Best Approach
+
+**1. Enforces Contract**
+```javascript
+// BaseTransitionStrategy.js
+async prepare(route) {
+  throw new Error('prepare() must be implemented by subclass');
+}
+```
+- Forces all strategies to implement required methods
+- Prevents incomplete implementations
+- Makes the interface explicit and discoverable
+
+**2. Provides Common Dependencies**
+```javascript
+constructor({ siteConfig, sessionStorage, overlayElement }) {
+  this.siteConfig = siteConfig;
+  this.sessionStorage = sessionStorage;
+  this.overlayElement = overlayElement;
+}
+```
+- All strategies receive the same dependencies
+- Consistent initialization pattern
+- Reduces boilerplate in subclasses
+
+**3. Enables Type Safety (Future)**
+- Base class defines the contract
+- TypeScript/JSdoc can validate implementations
+- IDE autocomplete works correctly
+- Refactoring tools can find all implementations
+
+**4. Supports Composition**
+- Strategies can compose other strategies
+- Strategies can share common utilities (e.g., `FadeInOutAnimation`)
+- Strategies can extend base functionality without modifying base class
+
+**5. Simplifies Testing**
+```javascript
+// Test Router with mock strategy
+class MockTransitionStrategy extends BaseTransitionStrategy {
+  async prepare() { /* test implementation */ }
+  async show() { /* test implementation */ }
+  async hide() { /* test implementation */ }
+  async restore() { /* test implementation */ }
+}
+```
+- Router tests don't need real transition implementations
+- Strategy tests are isolated and focused
+- Easy to test edge cases with custom mock strategies
+
+**6. Enables Runtime Strategy Selection**
+```javascript
+// App.js - Select strategy at initialization
+this.transitionsManager = new TransitionsManager({ 
+  transitionType: TRANSITION_TYPES.CUSTOM // or GENERIC
+});
+```
+- Strategy selected once at app initialization
+- No conditional logic in Router
+- Easy to switch strategies via configuration
+
+**7. Supports Future Extensibility**
+Adding a new transition type requires:
+- Creating new class extending `BaseTransitionStrategy`
+- Implementing four methods: `prepare()`, `show()`, `hide()`, `restore()`
+- Adding one case to `TransitionsManager.createTransitionStrategy()`
+- **No changes to Router.js**
+
+### Comparison: With vs Without Strategy Pattern
+
+| Aspect | Without Strategy Pattern | With BaseTransitionStrategy |
+|--------|-------------------------|----------------------------|
+| **Router Complexity** | High (knows all transition types) | Low (knows only interface) |
+| **Adding New Type** | Modify Router + add conditionals | Extend BaseTransitionStrategy |
+| **Testing Router** | Mock all transition types | Mock one interface |
+| **Code Duplication** | High (logic scattered) | Low (encapsulated per strategy) |
+| **Coupling** | Tight (Router → all types) | Loose (Router → interface) |
+| **Maintainability** | Low (changes affect Router) | High (changes isolated) |
+
+### Real-World Benefits
+
+**Scenario 1: Switching Transition Types**
+```javascript
+// Change one line in App.js
+transitionType: TRANSITION_TYPES.GENERIC // Was CUSTOM
+```
+- Router code unchanged
+- No conditional logic needed
+- No performance overhead from unused code
+
+**Scenario 2: Adding New Transition Type**
+```javascript
+// 1. Create SlidePageTransitions.js
+export class SlidePageTransitions extends BaseTransitionStrategy {
+  async prepare(route) { /* slide-specific prep */ }
+  async show(element) { /* slide animation */ }
+  async hide(element) { /* slide animation */ }
+  async restore() { /* slide-specific restore */ }
+}
+
+// 2. Add to TransitionsManager
+case TRANSITION_TYPES.SLIDE:
+  return new SlidePageTransitions(options);
+
+// Done! Router works immediately.
+```
+
+**Scenario 3: Testing Edge Cases**
+```javascript
+// Create test strategy that simulates slow image loading
+class SlowImageStrategy extends CustomPageTransitions {
+  async prepare(route) {
+    await super.prepare(route);
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+  }
+}
+```
+- Test Router behavior with slow transitions
+- No need to modify production code
+- Isolated test scenarios
+
+### Design Principles Applied
+
+1. **Single Responsibility Principle**: Each strategy handles one transition type
+2. **Open/Closed Principle**: Open for extension (new strategies), closed for modification (Router)
+3. **Dependency Inversion**: Router depends on abstraction (BaseTransitionStrategy), not concrete implementations
+4. **Interface Segregation**: BaseTransitionStrategy defines minimal, focused interface
+5. **Liskov Substitution**: Any strategy can replace another without breaking Router
+
+### Conclusion
+
+`BaseTransitionStrategy` is the best approach because it:
+- **Eliminates code duplication** by encapsulating transition logic per type
+- **Reduces coupling** between Router and transition implementations
+- **Enables extensibility** without modifying existing code
+- **Simplifies testing** with isolated, mockable strategies
+- **Provides runtime flexibility** for strategy selection
+- **Enforces consistency** through a common interface
+- **Supports future growth** with minimal architectural changes
+
+The Strategy Pattern, implemented through `BaseTransitionStrategy`, transforms page transitions from a monolithic, hard-to-maintain system into a flexible, extensible architecture that can grow with project needs.
+
+---
+
 ## Transition Strategy Pattern
 
 ### Strategy Selection

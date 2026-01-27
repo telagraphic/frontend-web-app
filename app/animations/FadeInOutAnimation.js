@@ -2,8 +2,9 @@ import { $ } from "../utilities/DOMHelpers.js";
 
 /**
  * Link transitions that animate between pages
+ * We need to update the page-transition-overlay markup to remove the image and replace with a blank div with proper styling!
  */
-export class PageTransition {
+export class FadeInOutAnimation {
   constructor() {
     this.timelines = [];
   }

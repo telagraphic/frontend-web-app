@@ -90,93 +90,6 @@ async function generateStaticPages() {
     return `${baseTitle} | The Shea Memorandum`;
   }
 
-  /**
-   * Generates inline script for page-specific initialization
-   * @param {string|null} routeKey - SiteConfig route key
-   * @param {boolean} isProduction - Whether in production mode
-   * @returns {string} - Inline script HTML
-   */
-  function getPageInitScript(routeKey, isProduction) {
-    const basePath = isProduction ? "./" : "../app/";
-    
-    if (!routeKey || routeKey === "home") {
-      return `<script type="module">
-  import { Home } from '${basePath}pages/Home.js';
-  import { whenDOMReady } from '${basePath}utilities/AsyncHelpers.js';
-  
-  whenDOMReady(async () => {
-    // Get services from App.js (or create if App.js hasn't loaded yet)
-    let services = window.appServices;
-    if (!services) {
-      const { createServices } = await import('${basePath}services/ServiceFactory.js');
-      services = createServices();
-    }
-    
-    const page = new Home(services);
-    await page.create();
-    await page.show();
-  });
-</script>`;
-    }
-    
-    if (routeKey === "introduction") {
-      return `<script type="module">
-  import { Introduction } from '${basePath}pages/Introduction.js';
-  import { whenDOMReady } from '${basePath}utilities/AsyncHelpers.js';
-  
-  whenDOMReady(async () => {
-    // Get services from App.js (or create if App.js hasn't loaded yet)
-    let services = window.appServices;
-    if (!services) {
-      const { createServices } = await import('${basePath}services/ServiceFactory.js');
-      services = createServices();
-    }
-    
-    const page = new Introduction(services);
-    await page.create();
-    await page.show();
-  });
-</script>`;
-    }
-    
-    // All other pages use View class
-    return `<script type="module">
-  import { View } from '${basePath}pages/View.js';
-  import { whenDOMReady } from '${basePath}utilities/AsyncHelpers.js';
-  import { $ } from '${basePath}utilities/DOMHelpers.js';
-  import { ATTRIBUTES } from '${basePath}utilities/Constants.js';
-  
-  whenDOMReady(async () => {
-    // Read the template from the main element to determine the element selector
-    const main = $("main[data-template]");
-    const template = main?.getAttribute(ATTRIBUTES.DATA_TEMPLATE);
-    
-    if (!template) {
-      console.error("No data-template attribute found on main element");
-      return;
-    }
-    
-    // Create element selector from template (e.g., "section-1" -> ".section-1")
-    const elementSelector = '.' + template;
-    
-    // Get services from App.js (or create if App.js hasn't loaded yet)
-    let services = window.appServices;
-    if (!services) {
-      const { createServices } = await import('${basePath}services/ServiceFactory.js');
-      services = createServices();
-    }
-    
-    // Initialize page with the template-based element selector
-    const page = new View({
-      element: elementSelector,
-      ...services,
-    });
-    await page.create();
-    await page.show();
-  });
-</script>`;
-  }
-
   // Ensure dist directory exists
   await mkdir(outputDir.pathname, { recursive: true });
 
@@ -207,6 +120,9 @@ async function generateStaticPages() {
       // Add base URL for all templates
       templateData.baseUrl = baseUrl;
       
+      // Compute base path for page initialization scripts
+      templateData.basePath = isProduction ? "./" : "../app/";
+      
       if (routeKey) {
         const routeConfig = siteConfig.get(routeKey);
         if (routeConfig) {
@@ -221,6 +137,10 @@ async function generateStaticPages() {
           // 'url' is the file path like "/pages/index.html"
           if (routeConfig.link) {
             templateData.canonicalPath = routeConfig.link;
+          }
+          // Add page class from SiteConfig to drive template logic
+          if (routeConfig.class) {
+            templateData.pageClass = routeConfig.class;
           }
           // Add transition data for overlay (image and alt only, no copy)
           if (routeConfig.transition) {
@@ -238,8 +158,6 @@ async function generateStaticPages() {
       
       // Generate preload link for transition image to ensure browser cache
       templateData.transitionPreloadLink = `<link rel="preload" as="image" href="${templateData.transitionImage}" crossorigin="anonymous">`;
-      // Add page-specific inline script (use routeKey or null for fallback)
-      templateData.pageScript = getPageInitScript(routeKey, isProduction);
 
       // Render the template with environment-specific asset paths and page title
       let rendered = nunjucks.render(`pages/${file}`, templateData);

@@ -1,5 +1,5 @@
 import { BaseTransitionStrategy } from './BaseTransitionStrategy.js';
-import { PageTransition } from './PageTransition.js';
+import { FadeInOutAnimation } from '../animations/FadeInOutAnimation.js';
 import { ImageService } from '../utilities/ImageService.js';
 import { whenDOMReady } from '../utilities/AsyncHelpers.js';
 import { $ } from '../utilities/DOMHelpers.js';
@@ -20,7 +20,7 @@ export class CustomPageTransitions extends BaseTransitionStrategy {
   constructor(options) {
     super(options);
     this.imageLoader = new ImageService();
-    this.pageTransition = new PageTransition();
+    this.pageTransition = new FadeInOutAnimation();
     this.transitionTemplates = null;
     // Note: overlayElement is set by parent, but we also track it here for convenience
   }

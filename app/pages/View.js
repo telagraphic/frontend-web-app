@@ -21,7 +21,11 @@ export class View extends Page {
     });
   }
 
-  create() {
-    super.create({});
+  async create() {
+    await super.create();
+  }
+
+  async afterShow() {
+    console.log("View page shown");
   }
 }

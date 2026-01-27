@@ -10,7 +10,7 @@ export class Introduction extends Page {
     });
   }
 
-  create() {
-    super.create({});
+  async create() {
+    await super.create();
   }
 }

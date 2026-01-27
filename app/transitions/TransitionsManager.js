@@ -1,8 +1,8 @@
 import { whenDOMReady } from "../utilities/AsyncHelpers.js";
 import { $ } from "../utilities/DOMHelpers.js";
 import { SELECTORS, TRANSITION_TYPES } from "../utilities/Constants.js";
-import { GenericPageTransitions } from "./GenericPageTransitions.js";
-import { CustomPageTransitions } from "./CustomPageTransitions.js";
+import { GenericPageTransitions } from "../transitions/GenericPageTransitions.js";
+import { CustomPageTransitions } from "../transitions/CustomPageTransitions.js";
 
 /**
  * TransitionsManager class for managing page transitions

@@ -14,9 +14,10 @@ export class Home extends Page {
     });
   }
 
-  create() {
-    super.create({});
+  async create() {
+    await super.create();
     this.setup();
+    console.log("Home page created");
   }
 
   setup() {

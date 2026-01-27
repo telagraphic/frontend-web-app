@@ -20,6 +20,6 @@
     {% include "partials/page-transition.html" %} {% include
     "partials/preloader.html" %} {% include "partials/navigation.html" %} {%
     block content %} {% endblock %} {% include "partials/footer.html" %}
-    {% if pageScript %}{{ pageScript | safe }}{% endif %}
+    {% include "partials/page-init.html" %}
   </body>
 </html>

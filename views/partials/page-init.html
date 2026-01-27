@@ -1,0 +1,77 @@
+{# Page initialization script - driven by SiteConfig class property #}
+{% if pageClass %}
+  {% if pageClass === "Home" %}
+<script type="module">
+  import { Home } from '{{ basePath }}pages/Home.js';
+  import { whenDOMReady } from '{{ basePath }}utilities/AsyncHelpers.js';
+  
+  whenDOMReady(async () => {
+    // Get services from App.js (or create if App.js hasn't loaded yet)
+    let services = window.appServices;
+    if (!services) {
+      const { createServices } = await import('{{ basePath }}services/ServiceFactory.js');
+      services = createServices();
+    }
+    
+    const page = new Home(services);
+    await page.create();
+    await page.show();
+  });
+</script>
+  {% elif pageClass === "Introduction" %}
+<script type="module">
+  import { Introduction } from '{{ basePath }}pages/Introduction.js';
+  import { whenDOMReady } from '{{ basePath }}utilities/AsyncHelpers.js';
+  
+  whenDOMReady(async () => {
+    // Get services from App.js (or create if App.js hasn't loaded yet)
+    let services = window.appServices;
+    if (!services) {
+      const { createServices } = await import('{{ basePath }}services/ServiceFactory.js');
+      services = createServices();
+    }
+    
+    const page = new Introduction(services);
+    await page.create();
+    await page.show();
+  });
+</script>
+  {% else %}
+{# Default: View class for all other pages #}
+<script type="module">
+  import { View } from '{{ basePath }}pages/View.js';
+  import { whenDOMReady } from '{{ basePath }}utilities/AsyncHelpers.js';
+  import { $ } from '{{ basePath }}utilities/DOMHelpers.js';
+  import { ATTRIBUTES } from '{{ basePath }}utilities/Constants.js';
+  
+  whenDOMReady(async () => {
+    // Read the template from the main element to determine the element selector
+    const main = $("main[data-template]");
+    const template = main?.getAttribute(ATTRIBUTES.DATA_TEMPLATE);
+    
+    if (!template) {
+      console.error("No data-template attribute found on main element");
+      return;
+    }
+    
+    // Create element selector from template (e.g., "section-1" -> ".section-1")
+    const elementSelector = '.' + template;
+    
+    // Get services from App.js (or create if App.js hasn't loaded yet)
+    let services = window.appServices;
+    if (!services) {
+      const { createServices } = await import('{{ basePath }}services/ServiceFactory.js');
+      services = createServices();
+    }
+    
+    // Initialize page with the template-based element selector
+    const page = new View({
+      element: elementSelector,
+      ...services,
+    });
+    await page.create();
+    await page.show();
+  });
+</script>
+  {% endif %}
+{% endif %}

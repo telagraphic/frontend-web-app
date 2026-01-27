@@ -6,7 +6,7 @@
 import { createServices } from "./services/ServiceFactory.js";
 import { Preloader } from "./components/Preloader.js";
 import { Router } from "./services/Router.js";
-import { TransitionsManager } from "./animations/TransitionsManager.js";
+import { TransitionsManager } from "./transitions/TransitionsManager.js";
 import { liveReload } from "./config/Environment.js";
 import { SELECTORS, EVENTS, TRANSITION_TYPES } from "./utilities/Constants.js";
 import { $ } from "./utilities/DOMHelpers.js";

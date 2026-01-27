@@ -1,5 +1,5 @@
 import { BaseTransitionStrategy } from './BaseTransitionStrategy.js';
-import { PageTransition } from './PageTransition.js';
+import { FadeInOutAnimation } from '../animations/FadeInOutAnimation.js';
 
 /**
  * Generic page transition strategy
@@ -13,7 +13,7 @@ import { PageTransition } from './PageTransition.js';
 export class GenericPageTransitions extends BaseTransitionStrategy {
   constructor(options) {
     super(options);
-    this.pageTransition = new PageTransition();
+    this.pageTransition = new FadeInOutAnimation();
   }
 
   /**
