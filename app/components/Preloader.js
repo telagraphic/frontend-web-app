@@ -41,31 +41,6 @@ export class Preloader extends Component {
   }
 
   /**
-   * Preload the background image used in CSS
-   * @returns {Promise<HTMLImageElement|null>} Resolves when background image is loaded
-   */
-  async preloadBackgroundImage() {
-    try {
-      // Create a temporary image element to use with ImageService
-      const tempImg = document.createElement('img');
-      tempImg.setAttribute('data-src', this.backgroundImageUrl);
-      
-      const result = await this.imageLoader.loadImage({
-        element: tempImg,
-        useDecode: true,
-      });
-      
-      this.backgroundImageLoaded = true;
-      return result;
-    } catch (error) {
-      console.error('Error preloading background image:', error);
-      // Continue anyway to prevent hanging
-      this.backgroundImageLoaded = true;
-      return null;
-    }
-  }
-
-  /**
    * Wait for images to load and then update the DOM with the path
    */
   async createLoader() {

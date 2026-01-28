@@ -115,6 +115,7 @@ export const VALUES = Object.freeze({
   NAV_SCROLL_THRESHOLD: 30,
   ROUTER_TIMEOUT: 1000,
   NAV_TIMEOUT: 500,
+  PREFETCH_HOVER_DELAY_MS: 100,
 });
 
 /**

@@ -10,6 +10,8 @@ import { RouterHistory } from "../router/RouterHistory.js";
 import { RouterResolver } from "../router/RouterResolver.js";
 import { RouterPageLoader } from "../router/RouterPageLoader.js";
 import { RouterPageManager } from "../router/RouterPageManager.js";
+import { RouterPrefetchCache } from "../router/RouterPrefetchCache.js";
+import { RouterPrefetchManager } from "../router/RouterPrefetchManager.js";
 import { TRANSITION_TYPES } from "../utilities/Constants.js";
 
 
@@ -29,16 +31,25 @@ export function createServices() {
   const routerHistory = new RouterHistory({ siteConfig });
   const routerResolver = new RouterResolver({ siteConfig, routerHistory });
 
+  // Prefetch (cache-aside): hover/focus prefetch of page HTML
+  const prefetchCache = new RouterPrefetchCache({});
+  const prefetchManager = new RouterPrefetchManager({
+    routerResolver,
+    routerPageManager,
+    prefetchCache,
+  });
+
   // Phase 2: Wire circular dependencies using setters
   routerPageLoader.setRegistryService(registryService);
   registryService.setRouterPageLoader(routerPageLoader);
   routerHistory.setRouterResolver(routerResolver);
   routerResolver.setRouterHistory(routerHistory);
   routerPageManager.setRouterResolver(routerResolver);
+  routerPageManager.setPrefetchCache(prefetchCache);
 
   // Create remaining services that depend on the wired services
   const navigation = new Navigation({ siteConfig, registryService, smoothScroll });
-  const router = new Router({ siteConfig, registryService, routerPageLoader, routerPageManager, routerHistory, routerResolver, smoothScroll, animationsService, transitionsService, footnotes, navigation });
+  const router = new Router({ siteConfig, registryService, routerPageLoader, routerPageManager, routerHistory, routerResolver, smoothScroll, animationsService, transitionsService, footnotes, navigation, prefetchManager });
 
   return {
     siteConfig,
@@ -53,5 +64,7 @@ export function createServices() {
     routerHistory,
     routerResolver,
     navigation,
+    prefetchCache,
+    prefetchManager,
   };
 }

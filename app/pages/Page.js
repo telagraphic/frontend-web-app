@@ -4,6 +4,19 @@ import { SELECTORS, ATTRIBUTES, VALUES } from "../utilities/Constants.js";
 import { createError, ERROR_CODES } from "../utilities/ErrorRegistry.js";
 
 
+/**
+ * Base Page class providing lifecycle hooks for page management
+ * 
+ * Implements a hook-based lifecycle system similar to barba.js, allowing subclasses
+ * to execute custom code at specific points during page creation, showing, hiding, and destruction.
+ * 
+ * Lifecycle hooks (all optional):
+ * - Creation: `beforeCreate()`, `afterCreate()`
+ * - Visibility: `beforeShow()`, `afterShow()`, `beforeHide()`, `afterHide()`
+ * - Destruction: `beforeDestroy()`, `afterDestroy()`
+ * 
+ * See `documentation/guides/PAGE_LIFECYCLE.md` for complete documentation and examples.
+ */
 export default class Page {
   constructor({
     element,
@@ -35,6 +48,9 @@ export default class Page {
   /**
    * Create a page object of elements
    * Initialize any other components for the page
+   * 
+   * Lifecycle hooks: `beforeCreate()`, `afterCreate()` (optional)
+   * See `documentation/guides/PAGE_LIFECYCLE.md` for examples.
    */
   async create() {
     if (this._created) {
@@ -47,7 +63,6 @@ export default class Page {
     await this.createComponents();
     this.createPageAnimations();
     this.createPage();
-
     this._created = true;
     await this.afterCreate?.()
   }
@@ -90,6 +105,9 @@ export default class Page {
 
   /**
    * Remove page state to avoid memory leaks (duplicate animations on page return, etc...)
+   * 
+   * Lifecycle hooks: `beforeDestroy()`, `afterDestroy()` (optional)
+   * See `documentation/guides/PAGE_LIFECYCLE.md` for examples.
    */
   async destroy() {
     if (this._destroyed) {
@@ -98,8 +116,6 @@ export default class Page {
     }
 
     this._destroyed = true;
-
-    // NOTE: Destroy function are in reverse order of create
     await this.beforeDestroy?.()
     this.destroyPageAnimations();
     this.removeEventListeners();
@@ -135,8 +151,17 @@ export default class Page {
 
   /**
    * Show the page
+   * 
+   * Called when a page becomes visible, typically after navigation completes.
+   * Hides the transition overlay and enables smooth scrolling.
+   * 
+   * Lifecycle hooks: `beforeShow()`, `afterShow()` (optional)
+   * See `documentation/guides/PAGE_LIFECYCLE.md` for examples.
    */
   async show() {
+    // Router locks scroll during navigation; unlock as soon as show begins.
+    // This prevents scrolling during the hide->show transition window.
+    
     await this.beforeShow?.()
     if (this.pageTransition) {
       if (this.smoothScroll.isStopped()) {
@@ -148,6 +173,8 @@ export default class Page {
       } catch (error) {
         console.warn(`Page ${this.id}: Transition animation failed, continuing:`, error);
         // Continue execution - page should still be shown even if animation fails
+      } finally {
+        this.smoothScroll?.unlock?.(); // Unlock scroll after transition animation
       }
     }
     
@@ -163,10 +190,19 @@ export default class Page {
 
   /**
    * Hide the page
+   * 
+   * Called when navigating away from a page. Executes hide animations,
+   * shows the transition overlay, and destroys the page instance.
+   * 
+   * Lifecycle hooks: `beforeHide()`, `afterHide()` (optional)
+   * Use `beforeHide()` for custom exit animations (e.g., GSAP SplitText, images).
+   * See `documentation/guides/PAGE_LIFECYCLE.md` for examples.
+   * 
+   * @param {string} route - The route being navigated to (used for transition image)
    */
   async hide(route) {
     await this.beforeHide?.();
-    await this.transitionsManager.updateTransitionOverlay(route); // update the transition overlay markup with the custom transition markup
+    await this.transitionsManager.updateTransitionOverlay(route);
     await nextPaint();
     if (this.pageTransition) {
       try {

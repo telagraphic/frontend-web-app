@@ -17,6 +17,8 @@ export class SmoothScroll {
     this.resizeHandler = null;
     this.eventManager = new EventManager();
     this.isMobile = window.innerWidth < 768;
+    this._isLocked = false;
+    this._lockedScrollY = 0;
     // See https://github.com/darkroomengineering/lenis?tab=readme-ov-file#settings
     this.lenisSettings = {
       duration: this.isMobile ? 1 : 1.2, // The duration of scroll animation (in seconds). Useless if lerp defined.
@@ -80,6 +82,56 @@ export class SmoothScroll {
     if (this.lenis) {
       this.lenis.stop();
     }
+  }
+
+  /**
+   * Lock scrolling (idempotent)
+   * - Stops Lenis
+   * - Freezes native scroll via fixed body positioning
+   */
+  lock() {
+    if (this._isLocked) return;
+
+    this._isLocked = true;
+    this._lockedScrollY = window.scrollY || 0;
+
+    // Stop Lenis so it doesn't try to animate while locked
+    this.lenis?.stop?.();
+
+    const body = document.body;
+    const html = document.documentElement;
+
+    // Freeze scroll position
+    body.style.position = "fixed";
+    body.style.top = `-${this._lockedScrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+
+    // Hardening: prevent smooth scroll behavior from interfering with unlock resets
+    html.style.scrollBehavior = "auto";
+  }
+
+  /**
+   * Unlock scrolling (idempotent)
+   */
+  unlock() {
+    if (!this._isLocked) return;
+
+    const body = document.body;
+    const html = document.documentElement;
+
+    // Clear mutated inline styles (we don't attempt to preserve prior inline values)
+    body.style.position = "";
+    body.style.top = "";
+    body.style.left = "";
+    body.style.right = "";
+    body.style.width = "";
+    html.style.scrollBehavior = "";
+    this._isLocked = false;
+
+    // Resume Lenis after position is restored
+    this.lenis?.start?.();
   }
 
   /**

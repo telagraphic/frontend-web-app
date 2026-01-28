@@ -14,6 +14,7 @@ export class RouterPageManager {
     this.routerResolver = routerResolver; // Can be undefined initially, set via setRouterResolver()
     this.imageService = new ImageService();
     this.fetchController = null; // AbortController for canceling in-flight fetch requests
+    this.prefetchCache = null;
   }
 
   /**
@@ -22,6 +23,14 @@ export class RouterPageManager {
    */
   setRouterResolver(routerResolver) {
     this.routerResolver = routerResolver;
+  }
+
+  /**
+   * Set the prefetch cache (optional)
+   * @param {import("../router/RouterPrefetchCache.js").RouterPrefetchCache|null} prefetchCache
+   */
+  setPrefetchCache(prefetchCache) {
+    this.prefetchCache = prefetchCache;
   }
 
   /**
@@ -62,8 +71,15 @@ export class RouterPageManager {
    * @param {AbortSignal} options.signal - Optional AbortSignal to cancel the request
    * @returns {Promise<string|null>} The HTML content of the page, or null if aborted/error
    */
-  async requestPage(href, { signal } = {}) {
+  async requestPage(href, { signal, useCache = true } = {}) {
     if (!href) return null;
+
+    if (useCache && this.prefetchCache) {
+      const cached = this.prefetchCache.get(href);
+      if (cached?.html) {
+        return cached.html;
+      }
+    }
 
     // Abort any existing fetch request
     if (this.fetchController) {
@@ -100,6 +116,11 @@ export class RouterPageManager {
       // Check if aborted after reading response
       if (signal.aborted) {
         throw new DOMException('Request aborted', 'AbortError');
+      }
+
+      if (useCache && this.prefetchCache && html) {
+        // Store by route key (href is already route key in our SPA flow)
+        this.prefetchCache.set(href, html, { url });
       }
 
       return html;

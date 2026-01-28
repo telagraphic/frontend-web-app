@@ -21,6 +21,7 @@ class App {
     this.createServices();
     await this.transitionsService.init();
     await this.services.router.start(); // Calls pageLoader.create() to initialize the first page
+    this.currentPage = this.services.registryService.getCurrentPage();
     this.createNavigation();
     this.createPreloader();
     liveReload();
@@ -61,16 +62,18 @@ class App {
     const preloaderElement = $(SELECTORS.PRELOADER);
     if (!preloaderElement) return;
     
-    this.currentPage = this.services.registryService.getCurrentPage();
     this.preloader = new Preloader();
+    this.smoothScroll?.lock?.();
     this.preloader.create();
 
     this.preloaderHandler = ({ message }) => {
+      this.smoothScroll?.unlock?.();
       this.currentPage.smoothScroll.create(); // TODO: turn on smooth scroll on initial page load, or listen for this event in Page.listeners and keep it encapsulated
       this.currentPage.smoothScroll.scrollTo(0, { immediate: true });
       this.preloader.destroy();
       this.preloader = null;
       this.preloaderVisible = true;
+      
     }
 
     this.preloader.on(EVENTS.PRELOADER_COMPLETE, this.preloaderHandler);

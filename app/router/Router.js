@@ -32,6 +32,7 @@ export class Router {
     transitionsManager,
     footnotes,
     navigation,
+    prefetchManager,
   }) {
     this.siteConfig = siteConfig;
     this.registryService = registryService;
@@ -43,6 +44,7 @@ export class Router {
     this.transitionsManager = transitionsManager;
     this.footnotes = footnotes;
     this.navigation = navigation;
+    this.prefetchManager = prefetchManager;
     this.isNavigating = false; // Guard to prevent concurrent navigations
   }
 
@@ -52,6 +54,9 @@ export class Router {
     await this.routerResolver.create();
     await this.routerPageLoader.create();
     this.routerHistory.create();
+
+    // Optional: enable hover/focus prefetch
+    this.prefetchManager?.init?.();
   }
 
   /**
@@ -181,6 +186,12 @@ export class Router {
     }
 
     this.isNavigating = true;
+    this.smoothScroll?.lock?.();
+    const transitionOverlay = document.querySelector(SELECTORS.TRANSITION_OVERLAY);
+    if (transitionOverlay) {
+      transitionOverlay.style.pointerEvents = "all";
+    }
+    let didShow = false;
     try {
       const routeInfo = await this.beforePageUpdate(href);
 
@@ -195,6 +206,7 @@ export class Router {
       }
 
       await this.afterPageUpdate(nextPageInstance, routeInfo);
+      didShow = true;
     } catch (error) {
       if (isErrorCode(error, ERROR_CODES.PAGE_NOT_FOUND)) {
         console.error('Page loading failed:', error.message);
@@ -206,6 +218,14 @@ export class Router {
       this.routerResolver.redirectToHome();
     } finally {
       this.isNavigating = false;
+      // `Page.show()` performs the normal unlock.
+      // If navigation fails before show, ensure we don't stay locked.
+      if (!didShow) {
+        this.smoothScroll?.unlock?.();
+      }
+      if (transitionOverlay) {
+        transitionOverlay.style.pointerEvents = "";
+      }
     }
   }
 
@@ -268,6 +288,12 @@ export class Router {
   }
 
   async handleHistoryNavigation({ route, pathname, state }) {
+    this.smoothScroll?.lock?.();
+    const transitionOverlay = document.querySelector(SELECTORS.TRANSITION_OVERLAY);
+    if (transitionOverlay) {
+      transitionOverlay.style.pointerEvents = "all";
+    }
+    let didShow = false;
     try {
       // For history navigation (back/forward), trust the route from history state
       // Normalize route - empty string means home
@@ -285,6 +311,7 @@ export class Router {
 
       // ✅ CRITICAL: Show the next page (this was missing!)
       await this.afterPageUpdate(nextPageInstance, routeInfo);
+      didShow = true;
     } catch (error) {
       if (isErrorCode(error, ERROR_CODES.PAGE_NOT_FOUND)) {
         console.error('Page loading failed during history navigation:', error.message);
@@ -294,6 +321,15 @@ export class Router {
         console.error(`Error handling history navigation:`, error);
       }
       this.routerResolver.redirectToHome();
+    } finally {
+      // `Page.show()` performs the normal unlock.
+      // If navigation fails before show, ensure we don't stay locked.
+      if (!didShow) {
+        this.smoothScroll?.unlock?.();
+      }
+      if (transitionOverlay) {
+        transitionOverlay.style.pointerEvents = "";
+      }
     }
   }
 
