@@ -3,7 +3,7 @@ import { $ } from "../utilities/DOMHelpers.js";
 /**
  * Link transitions that animate between pages
  */
-export class PageTransition {
+export class FadeInAndOut {
   constructor() {
     this.timelines = [];
   }

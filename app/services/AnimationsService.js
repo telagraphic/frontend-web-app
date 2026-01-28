@@ -1,4 +1,4 @@
-import { Titles } from "./Titles.js";
+import { Titles } from "../animations/Titles.js";
 import { SELECTORS, ATTRIBUTES } from "../utilities/Constants.js";
 import { createError, ERROR_CODES } from "../utilities/ErrorRegistry.js";
 
@@ -9,7 +9,7 @@ import { createError, ERROR_CODES } from "../utilities/ErrorRegistry.js";
  * - Registers and tracks animation instances
  * - Kills all animations on destroy
  */
-export class AnimationsManager {
+export class AnimationsService {
   constructor() {
     this.animationRegistry = {
       title: Titles,

@@ -2,7 +2,7 @@
  *  Entry point for the application
  */
 
-import { createServices } from "./services/ServiceFactory.js";
+import { createServices } from "./services/ServicesFactory.js";
 import { Preloader } from "./components/Preloader.js";
 import { liveReload, setupPageConfig } from "./config/Environment.js";
 import { SELECTORS, EVENTS } from "./utilities/Constants.js";
@@ -19,7 +19,7 @@ class App {
    */
   async init() {
     this.createServices();
-    await this.transitionsManager.init();
+    await this.transitionsService.init();
     await this.services.router.start(); // Calls pageLoader.create() to initialize the first page
     this.createNavigation();
     this.createPreloader();
@@ -35,8 +35,8 @@ class App {
     this.router = this.services.router;
     this.navigation = this.services.navigation;
     this.smoothScroll = this.services.smoothScroll;
-    this.animationsManager = this.services.animationsManager;
-    this.transitionsManager = this.services.transitionsManager;
+    this.animationsService = this.services.animationsService;
+    this.transitionsService = this.services.transitionsService;
     this.footnotes = this.services.footnotes;
     this.pageRegistry = this.services.pageRegistry;
     this.pageLoader = this.services.pageLoader;
@@ -61,7 +61,7 @@ class App {
     const preloaderElement = $(SELECTORS.PRELOADER);
     if (!preloaderElement) return;
     
-    this.currentPage = this.services.pageRegistry.getCurrentPage();
+    this.currentPage = this.services.registryService.getCurrentPage();
     this.preloader = new Preloader();
     this.preloader.create();
 

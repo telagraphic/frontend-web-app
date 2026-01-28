@@ -5,13 +5,13 @@ import { createError, ERROR_CODES } from "../utilities/ErrorRegistry.js";
 
 
 /**
- * PageLoader is responsible for loading the page class
+ * RouterPageLoader is responsible for loading the page class
  */
-export class PageLoader {
-  constructor({ siteConfig, pageRegistry, smoothScroll, animationsManager, transitionsManager, footnotes }) {
+export class RouterPageLoader {
+  constructor({ siteConfig, registryService, smoothScroll, animationsManager, transitionsManager, footnotes }) {
     this.pageConfig = setupPageConfig();
     this.siteConfig = siteConfig;
-    this.pageRegistry = pageRegistry; // Can be undefined initially, set via setPageRegistry()
+    this.registryService = registryService; // Can be undefined initially, set via setregistryService()
     this.smoothScroll = smoothScroll;
     this.animationsManager = animationsManager;
     this.transitionsManager = transitionsManager;
@@ -23,10 +23,10 @@ export class PageLoader {
 
   /**
    * Set the page registry (injected after construction to resolve circular dependency)
-   * @param {PageRegistry} pageRegistry - The page registry instance
+   * @param {registryService} registryService - The page registry instance
    */
-  setPageRegistry(pageRegistry) {
-    this.pageRegistry = pageRegistry;
+  setRegistryService(registryService) {
+    this.registryService = registryService;
   }
 
   async create() {
@@ -40,18 +40,18 @@ export class PageLoader {
 
    /**
    * Initialize the page on first visit
-   * Called from App#init -> Router#start -> PageLoader#create
+   * Called from App#init -> Router#start -> RouterPageLoader#create
    * @returns {Promise<void>}
    */
    async createPageOnFirstVisit() {
     try {
       // Loads the page class on direct visits to the page and initial page load
       let pageClass;
-      if (!this.pageRegistry.hasPage(this.template)) {
+      if (!this.registryService.hasPage(this.template)) {
         this.loadedPageClass = await this.loadPage(this.template);
         pageClass = this.loadedPageClass;
       } else {
-        this.cachedPageClass = this.pageRegistry.getPage(this.template);
+        this.cachedPageClass = this.registryService.getPage(this.template);
         pageClass = this.cachedPageClass;
       }
       
@@ -81,13 +81,13 @@ export class PageLoader {
   }
 
   /**
-   * Gets the page instance from the pageRegistry or loads the page class and returns the page instance
+   * Gets the page instance from the registryService or loads the page class and returns the page instance
    * @param {string} pageTemplate - The template of the page to get
    * @returns {Promise<Page>} The page instance
    */
   async getPage(pageTemplate) {
-    if (this.pageRegistry.hasPage(pageTemplate)) {
-      this.cachedPageClass = this.pageRegistry.getPage(pageTemplate);
+    if (this.registryService.hasPage(pageTemplate)) {
+      this.cachedPageClass = this.registryService.getPage(pageTemplate);
       return this.initializePage(this.cachedPageClass);
     } else {
       this.loadedPageClass = await this.loadPage(pageTemplate);
@@ -96,7 +96,7 @@ export class PageLoader {
   }
 
   /**
-   * Initialize the page instance and set the currentPage in the pageRegistry
+   * Initialize the page instance and set the currentPage in the registryService
    * @param {*} pageTemplate 
    * @returns {Page} The page instance
    */
@@ -107,7 +107,7 @@ export class PageLoader {
       transitionsManager: this.transitionsManager,
       footnotes: this.footnotes,
     });
-    this.pageRegistry.setCurrentPage(pageInstance);
+    this.registryService.setCurrentPage(pageInstance);
     return pageInstance;
   }
 
@@ -117,8 +117,8 @@ export class PageLoader {
    */
   async loadPage(page) {
     // Check if already loaded
-    if (this.pageRegistry.hasPage(page)) {
-      return this.pageRegistry.getPage(page);
+    if (this.registryService.hasPage(page)) {
+      return this.registryService.getPage(page);
     }
 
     // Get class name from site config
@@ -143,7 +143,7 @@ export class PageLoader {
       }
 
       // Store the loaded class
-      this.pageRegistry.setPage(page, pageClass);
+      this.registryService.setPage(page, pageClass);
       return pageClass;
     } catch (error) {
       // Re-throw if it's already an ErrorRegistry error

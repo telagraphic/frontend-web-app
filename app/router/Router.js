@@ -23,9 +23,9 @@ import { createError, ERROR_CODES, isErrorCode } from "../utilities/ErrorRegistr
 export class Router {
   constructor({
     siteConfig,
-    pageRegistry,
-    pageLoader,
-    pageManager,
+    registryService,
+    routerPageLoader,
+    routerPageManager,
     routerHistory,
     routerResolver,
     smoothScroll,
@@ -34,9 +34,9 @@ export class Router {
     navigation,
   }) {
     this.siteConfig = siteConfig;
-    this.pageRegistry = pageRegistry;
-    this.pageLoader = pageLoader;
-    this.pageManager = pageManager;
+    this.registryService = registryService;
+    this.routerPageLoader = routerPageLoader;
+    this.routerPageManager = routerPageManager;
     this.routerHistory = routerHistory;
     this.routerResolver = routerResolver;
     this.smoothScroll = smoothScroll;
@@ -50,7 +50,7 @@ export class Router {
     this.setupLinkListeners();
     this.setupEventListeners();
     await this.routerResolver.create();
-    await this.pageLoader.create();
+    await this.routerPageLoader.create();
     this.routerHistory.create();
   }
 
@@ -233,12 +233,12 @@ export class Router {
    * @returns {Promise<void>}
    */
   async startPageUpdate(routeInfo, addToHistory = true) {
-    const currentPage = this.pageRegistry.getCurrentPage();
+    const currentPage = this.registryService.getCurrentPage();
     if (currentPage) {
       await currentPage.hide(routeInfo.route);
     }
 
-    await this.pageManager.updatePage(routeInfo.route);
+    await this.routerPageManager.updatePage(routeInfo.route);
 
     // add to afterPageNavigation?
     if (addToHistory) {
@@ -246,7 +246,7 @@ export class Router {
     }
 
     await nextPaint();
-    const nextPageInstance = await this.pageLoader.getPage(routeInfo.route);
+    const nextPageInstance = await this.routerPageLoader.getPage(routeInfo.route);
 
     if (!nextPageInstance) {
       throw createError(ERROR_CODES.PAGE_NOT_FOUND, { page: routeInfo.route });

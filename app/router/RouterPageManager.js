@@ -5,7 +5,7 @@ import BackgroundColors from "../animations/BackgroundColors.js";
 import { SELECTORS, ATTRIBUTES, EVENTS } from "../utilities/Constants.js";
 import { createError, ERROR_CODES, isErrorCode } from "../utilities/ErrorRegistry.js";
 
-export class PageManager {
+export class RouterPageManager {
   constructor({ siteConfig, routerResolver }) {
     this.siteConfig = siteConfig;
     this.pageTemplate = null;

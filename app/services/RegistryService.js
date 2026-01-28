@@ -2,7 +2,7 @@
 /**
  * PageRegistry is responsible for registering the page classes and managing the class instances
  */
-export class PageRegistry {
+export class RegistryService {
   constructor({ siteConfig, pageLoader}) {
     this.siteConfig = siteConfig;
     this.pageLoader = pageLoader; // Can be undefined initially, set via setPageLoader()
@@ -13,9 +13,9 @@ export class PageRegistry {
 
   /**
    * Set the page loader (injected after construction to resolve circular dependency)
-   * @param {PageLoader} pageLoader - The page loader instance
+   * @param {RouterPageLoader} pageLoader - The page loader instance
    */
-  setPageLoader(pageLoader) {
+  setRouterPageLoader(pageLoader) {
     this.pageLoader = pageLoader;
   }
 

@@ -16,6 +16,22 @@ export class SmoothScroll {
     };
     this.resizeHandler = null;
     this.eventManager = new EventManager();
+    this.isMobile = window.innerWidth < 768;
+    // See https://github.com/darkroomengineering/lenis?tab=readme-ov-file#settings
+    this.lenisSettings = {
+      duration: this.isMobile ? 1 : 1.2, // The duration of scroll animation (in seconds). Useless if lerp defined.
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // The easing function applied to scroll animation.
+      gestureDirection: "vertical",
+      smooth: true,
+      smoothWheel: true, // Smooth the scroll initiated by wheel events.
+      touchMultiplier: this.isMobile ? 1.5 : 2, //The multiplier to use for touch events.
+      infinite: false, // Enable infinite scrolling! syncTouch: true is required on touch devices 
+      lerp: this.isMobile ? 0.05 : 0.1, // Linear interpolation (lerp) intensity (between 0 and 1).
+      wheelMultiplier: 1, // The multiplier to use for mouse wheel events.
+      orientation: "vertical", // The orientation of the scrolling. Can be vertical or horizontal.
+      smoothWheel: true, // Smooth the scroll initiated by wheel events.
+      syncTouch: true, // Mimic touch device scroll while allowing scroll sync (can be unstable on iOS<16).
+    };
   }
 
   /**
@@ -74,7 +90,6 @@ export class SmoothScroll {
     return this.lenis ? true : false;
   }
 
-
   /**
    * Check if the Lenis instance is stopped
    * @returns {boolean}
@@ -82,7 +97,6 @@ export class SmoothScroll {
   isStopped() {
     return this.lenis ? this.lenis.isStopped : false;
   }
-
 
   /**
    * Get the Lenis instance
@@ -126,7 +140,7 @@ export class SmoothScroll {
     this.eventManager.addListenerAndRegister(
       window,
       "resize",
-      this.resizeHandler
+      this.resizeHandler,
     );
   }
 
@@ -138,7 +152,7 @@ export class SmoothScroll {
       this.eventManager.removeListenerAndDeregister(
         window,
         "resize",
-        this.resizeHandler
+        this.resizeHandler,
       );
       this.resizeHandler = null;
     }

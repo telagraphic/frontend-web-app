@@ -123,3 +123,12 @@ export const VALUES = Object.freeze({
 export const BACKGROUND_IMAGES = Object.freeze({
   PRELOADER_COPY: "https://shea-memorandum-site.b-cdn.net/images/fbi-report-dancing-israelis-3.jpg",
 });
+
+/**
+ * Transition types
+ * Defines available transition strategy types
+ */
+export const TRANSITION_TYPES = Object.freeze({
+  GENERIC: 'generic',
+  CUSTOM: 'custom',
+});
