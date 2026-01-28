@@ -14,6 +14,10 @@ export class SiteConfig {
 
   initializeSettings() {
     this.settings = siteRoutes;
+    this.settingsByTemplate = Object.values(siteRoutes).reduce((acc, routeConfig) => {
+      if (routeConfig?.template) acc[routeConfig.template] = routeConfig;
+      return acc;
+    }, {});
   }
 
   get(template) {
@@ -22,6 +26,19 @@ export class SiteConfig {
 
   getClass(template) {
     return this.settings[template]?.class;
+  }
+
+  /**
+   * Lookup a route config by `data-template` value.
+   * `siteRoutes` is keyed by URL path, so this provides a template-first lookup
+   * for MPA bootstrapping.
+   */
+  getByTemplate(template) {
+    return this.settingsByTemplate?.[template];
+  }
+
+  getClassByTemplate(template) {
+    return this.getByTemplate(template)?.class;
   }
 
   getLink(template) {

@@ -3,7 +3,7 @@
  *  Handles shared initialization for MPA: preloader, navigation, page transitions
  */
 
-import { createServices } from "./services/ServiceFactory.js";
+import { createServicesOnce } from "./services/ServiceFactory.js";
 import { Preloader } from "./components/Preloader.js";
 import { Router } from "./services/Router.js";
 import { TransitionsManager } from "./transitions/TransitionsManager.js";
@@ -11,6 +11,7 @@ import { liveReload } from "./config/Environment.js";
 import { SELECTORS, EVENTS, TRANSITION_TYPES } from "./utilities/Constants.js";
 import { $ } from "./utilities/DOMHelpers.js";
 import { whenDOMReady } from "./utilities/AsyncHelpers.js";
+import { setupPageConfig } from "./config/Environment.js";
 
 class App {
   constructor() {
@@ -32,10 +33,7 @@ class App {
     this.createNavigation();
     this.createPreloader();
     await this.createPageTransition();
-    
-    // Expose globally for inline scripts to use
-    window.app = this;
-    window.appServices = this.services;
+    await this.bootstrapCurrentPage();
     
     this.isAppInitialized = true;
     liveReload();
@@ -45,12 +43,49 @@ class App {
    * Create the services for the application
    */
   createServices() {
-    this.services = createServices();
+    this.services = createServicesOnce();
     this.siteConfig = this.services.siteConfig;
     this.navigation = this.services.navigation;
     this.smoothScroll = this.services.smoothScroll;
     this.animationsManager = this.services.animationsManager;
     this.footnotes = this.services.footnotes;
+  }
+
+  /**
+   * Bootstrap the current page module based on `main[data-template]`.
+   */
+  async bootstrapCurrentPage() {
+    const main = document.querySelector(SELECTORS.MAIN_WITH_TEMPLATE);
+    const template = main?.getAttribute("data-template");
+    if (!template) {
+      console.error("App.bootstrapCurrentPage(): missing main[data-template]");
+      return;
+    }
+
+    const className = this.siteConfig.getClassByTemplate(template);
+    if (!className) {
+      console.error(`App.bootstrapCurrentPage(): no page class for template: ${template}`);
+      return;
+    }
+
+    const { pagePath } = setupPageConfig();
+    const pageModule = await import(`${pagePath}${className}.js`);
+    const PageClass = pageModule.default || pageModule[className];
+    if (!PageClass) {
+      console.error(`App.bootstrapCurrentPage(): failed to resolve export for ${className}`);
+      return;
+    }
+
+    // For View pages we pass the template-based selector so it can target the correct root.
+    const elementSelector = `.${template}`;
+
+    const page =
+      className === "View"
+        ? new PageClass({ element: elementSelector, ...this.services })
+        : new PageClass({ ...this.services });
+
+    await page.create();
+    await page.show();
   }
 
   /**
@@ -123,7 +158,8 @@ class App {
     
     this.pageTransition = new Router({
       siteConfig: this.siteConfig,
-      transitionsManager: this.transitionsManager
+      transitionsManager: this.transitionsManager,
+      smoothScroll: this.smoothScroll,
     });
     await this.pageTransition.initialize();
   }

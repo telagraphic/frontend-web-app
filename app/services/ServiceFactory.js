@@ -26,3 +26,24 @@ export function createServices() {
     navigation,
   };
 }
+
+let servicesInstance = null;
+
+/**
+ * Create services once per document (module-level singleton).
+ * Avoids `window.*` globals while ensuring all consumers share one instance.
+ *
+ * @returns {ReturnType<typeof createServices>}
+ */
+export function createServicesOnce() {
+  if (servicesInstance) return servicesInstance;
+  servicesInstance = createServices();
+  return servicesInstance;
+}
+
+/**
+ * Reset cached services (primarily for tests/dev).
+ */
+export function resetServicesForTest() {
+  servicesInstance = null;
+}

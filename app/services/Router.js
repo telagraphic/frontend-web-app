@@ -17,7 +17,7 @@ import {
 } from "../utilities/Constants.js";
 
 export class Router {
-  constructor({ siteConfig, transitionsManager }) {
+  constructor({ siteConfig, transitionsManager, smoothScroll }) {
     this.sessionStorage = window.sessionStorage;
     this.isPageNavigating = false;
     this.blocklistLinks = BLOCKED_LINK_PREFIXES;
@@ -25,6 +25,7 @@ export class Router {
     this.imageService = new ImageService();
     this.siteConfig = siteConfig;
     this.transitionsManager = transitionsManager;
+    this.smoothScroll = smoothScroll;
   }
 
   /**
@@ -39,6 +40,15 @@ export class Router {
 
     this.isPageNavigating =
       this.sessionStorage.getItem(STORAGE_KEYS.PAGE_TRANSITION) === "true";
+
+    // On an MPA navigation, the document reloads so any previous scroll lock state is lost.
+    // Re-lock immediately on the destination page while we restore/hide the transition overlay.
+    if (this.isPageNavigating) {
+      this.smoothScroll?.toggleScrollLock?.(true);
+    } else {
+      // Defensive: ensure we're not left locked on initial loads.
+      this.smoothScroll?.toggleScrollLock?.(false);
+    }
 
     this.setupListeners();
 
@@ -71,6 +81,9 @@ export class Router {
     
     // Hide transition overlay
     await this.hideTransition();
+
+    // Unlock scrolling after the transition overlay has been hidden
+    this.smoothScroll?.toggleScrollLock?.(false);
   }
 
   /**
@@ -231,7 +244,10 @@ export class Router {
         void this.elements.transitionOverlay.offsetHeight;
       }
 
+
       // 3. Show transition overlay
+      // Lock scroll during transition/navigation
+      this.smoothScroll?.toggleScrollLock?.(true);
       await this.showTransition();
 
       // 4. Navigate to new page

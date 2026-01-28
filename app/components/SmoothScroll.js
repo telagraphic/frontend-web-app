@@ -17,6 +17,7 @@ export class SmoothScroll {
     this.resizeHandler = null;
     this.eventManager = new EventManager();
     this.isMobile = window.innerWidth < 768;
+    this.isLocked = false;
     // See https://github.com/darkroomengineering/lenis?tab=readme-ov-file#settings
     this.lenisSettings = {
       duration: this.isMobile ? 1 : 1.2, // The duration of scroll animation (in seconds). Useless if lerp defined.
@@ -80,6 +81,43 @@ export class SmoothScroll {
     if (this.lenis) {
       this.lenis.stop();
     }
+  }
+
+  /**
+   * Toggle scroll locking (used during page transitions).
+   * Stops/starts Lenis and locks/unlocks native scrolling styles.
+   *
+   * @param {boolean} shouldLock
+   */
+  toggleScrollLock(shouldLock) {
+    if (shouldLock === this.isLocked) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+
+    if (shouldLock) {
+      this.stop();
+      html.style.overflow = "hidden";
+      body.style.overflow = "hidden";
+
+      this.isLocked = true;
+      return;
+    }
+
+    html.style.overflow = "";
+    body.style.overflow = "";
+
+    this.start();
+
+    this.isLocked = false;
+  }
+
+  lock() {
+    this.toggleScrollLock(true);
+  }
+
+  unlock() {
+    this.toggleScrollLock(false);
   }
 
   /**
