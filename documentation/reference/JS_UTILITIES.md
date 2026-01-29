@@ -1,5 +1,30 @@
 # DRY Utilities Guide: Centralizing Helpers, Constants, and Shared Behaviors
 
+## Table of Contents
+
+- [What Are "Magic Strings"?](#what-are-magic-strings)
+  - [The Problem](#the-problem)
+  - [The Solution](#the-solution)
+- [Structure Overview](#structure-overview)
+- [1. Constants: Selectors, Attributes, Events](#1-constants-selectors-attributes-events)
+  - [Selectors (CSS Classes/IDs)](#selectors-css-classesids)
+  - [Attributes (HTML Attributes)](#attributes-html-attributes)
+  - [Events (Custom Event Names)](#events-custom-event-names)
+- [2. DOM Helpers (Extend Existing)](#2-dom-helpers-extend-existing)
+- [3. Timing Helpers](#3-timing-helpers)
+- [4. Image Loading Utilities](#4-image-loading-utilities)
+- [5. Usage Examples](#5-usage-examples)
+  - [Before (Magic Strings)](#before-magic-strings)
+  - [After (Centralized Constants)](#after-centralized-constants)
+- [6. Complete Refactored Examples](#6-complete-refactored-examples)
+  - [Page.js Refactored](#pagejs-refactored)
+  - [Router.js Refactored](#routerjs-refactored)
+  - [App.js Refactored](#appjs-refactored)
+- [Benefits Summary](#benefits-summary)
+- [Migration Strategy](#migration-strategy)
+
+---
+
 ## What Are "Magic Strings"?
 
 **Magic strings** are hardcoded string literals scattered throughout your code that represent:

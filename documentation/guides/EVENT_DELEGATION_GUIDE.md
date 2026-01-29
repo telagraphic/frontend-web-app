@@ -1,5 +1,42 @@
 # Event Delegation Guide: Edge Cases and Best Practices
 
+## Table of Contents
+
+- [Overview](#overview)
+- [1. What Was the Issue?](#1-what-was-the-issue)
+  - [Problem Description](#problem-description)
+  - [Root Cause](#root-cause)
+- [2. What Broke the Functionality?](#2-what-broke-the-functionality)
+  - [The Breaking Change](#the-breaking-change)
+  - [Event Phase Execution Order](#event-phase-execution-order)
+- [3. How Did Navigation's `link.on("click")` Break Functionality?](#3-how-did-navigations-linkonclick-break-functionality)
+  - [The Specific Problem](#the-specific-problem)
+  - [Why This Caused Issues](#why-this-caused-issues)
+- [4. The Solution](#4-the-solution)
+  - [Final Implementation](#final-implementation)
+- [5. Key Lessons and Edge Cases](#5-key-lessons-and-edge-cases)
+  - [Event Delegation Best Practices](#event-delegation-best-practices)
+  - [Common Edge Cases](#common-edge-cases)
+  - [Event Phase Diagram](#event-phase-diagram)
+- [6. Testing Event Delegation](#6-testing-event-delegation)
+  - [What to Test](#what-to-test)
+  - [Debugging Tips](#debugging-tips)
+- [7. Summary](#7-summary)
+- [8. Deep Dive: Event Phases, Capture, and Propagation Control](#8-deep-dive-event-phases-capture-and-propagation-control)
+  - [Understanding the Event Propagation Lifecycle](#understanding-the-event-propagation-lifecycle)
+  - [The Three Phases of Event Propagation](#the-three-phases-of-event-propagation)
+  - [Complete Event Flow Example](#complete-event-flow-example)
+  - [Real-World Example: Our Router Implementation](#real-world-example-our-router-implementation)
+  - [Real-World Example: Footnotes with Event Delegation](#real-world-example-footnotes-with-event-delegation)
+  - [Understanding `{ capture: true }`](#understanding-capture-true)
+  - [Understanding `stopImmediatePropagation()`](#understanding-stopimmediatepropagation)
+  - [Practical Examples: Common Web Patterns](#practical-examples-common-web-patterns)
+  - [Event Phase Detection in Code](#event-phase-detection-in-code)
+  - [Debugging Event Propagation](#debugging-event-propagation)
+  - [Summary: Choosing the Right Approach](#summary-choosing-the-right-approach)
+
+---
+
 ## Overview
 
 This guide documents a critical bug that occurred when implementing event delegation for asynchronous page navigation in a single-page application (SPA). The issue involved conflicting event handlers that caused full page reloads instead of smooth async page swaps.

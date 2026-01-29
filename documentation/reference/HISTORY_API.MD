@@ -1,3 +1,17 @@
+# History API Guide
+
+## Table of Contents
+
+- [History API methods used and their purposes](#history-api-methods-used-and-their-purposes)
+  - [1. `window.history.pushState(state, title, url)`](#1-windowhistorypushstatestate-title-url)
+  - [2. `window.history.replaceState(state, title, url)`](#2-windowhistoryreplacestatestate-title-url)
+  - [3. `window.history.state`](#3-windowhistorystate)
+  - [4. `popstate` event](#4-popstate-event)
+  - [5. `window.history.length` (read-only)](#5-windowhistorylength-read-only)
+- [HistoryManager example](#historymanager-example)
+
+---
+
 ## History API methods used and their purposes
 
 ### 1. `window.history.pushState(state, title, url)`

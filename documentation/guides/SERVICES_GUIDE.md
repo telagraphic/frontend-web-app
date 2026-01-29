@@ -1,5 +1,47 @@
 # Dependency Injection vs ES6 Imports: A Practical Guide
 
+## Table of Contents
+
+- [TL;DR](#tldr)
+- [The Spectrum](#the-spectrum)
+- [ES6 Imports: When They Work Well](#es6-imports-when-they-work-well)
+  - [✅ Good Candidates for ES6 Imports](#-good-candidates-for-es6-imports)
+  - [❌ Problems with ES6 Imports for Stateful Services](#-problems-with-es6-imports-for-stateful-services)
+- [Dependency Injection: When It Helps](#dependency-injection-when-it-helps)
+  - [✅ Good Candidates for DI](#-good-candidates-for-di)
+- [Hybrid Approach: Best of Both Worlds](#hybrid-approach-best-of-both-worlds)
+  - [Strategy 1: Import Utilities, Inject Services](#strategy-1-import-utilities-inject-services)
+  - [Strategy 2: Factory Functions (Simplicity)](#strategy-2-factory-functions-simplicity)
+  - [Strategy 3: Service Locator (Simpler Alternative)](#strategy-3-service-locator-simpler-alternative)
+- [Practical Example: Your Codebase Refactored](#practical-example-your-codebase-refactored)
+  - [Current Problem](#current-problem)
+  - [Refactored with Hybrid Approach](#refactored-with-hybrid-approach)
+- [Pros and Cons Comparison](#pros-and-cons-comparison)
+  - [ES6 Imports](#es6-imports)
+  - [Dependency Injection](#dependency-injection)
+  - [Hybrid (Recommended)](#hybrid-recommended)
+- [Composition vs Inheritance](#composition-vs-inheritance)
+- [Recommended Structure (Without Over-Engineering)](#recommended-structure-without-over-engineering)
+  - [Option 1: App Creates Services (Simplest)](#option-1-app-creates-services-simplest)
+  - [Option 2: Services Module (Clean Separation)](#option-2-services-module-clean-separation)
+  - [Option 3: Service Locator (Most Flexible)](#option-3-service-locator-most-flexible)
+- [Decision Matrix](#decision-matrix)
+- [Conclusion](#conclusion)
+- [Service Factory vs Service Locator: Complete Comparison](#service-factory-vs-service-locator-complete-comparison)
+  - [Quick Decision Tree](#quick-decision-tree)
+  - [Comparison Table](#comparison-table)
+  - [Service Factory Pattern](#service-factory-pattern)
+  - [Service Locator Pattern](#service-locator-pattern)
+  - [Detailed Comparison](#detailed-comparison)
+  - [Real-World Scenarios](#real-world-scenarios)
+  - [Hybrid Approach (Best of Both)](#hybrid-approach-best-of-both)
+  - [Recommendation Matrix](#recommendation-matrix)
+  - [For Your Codebase](#for-your-codebase)
+  - [Summary Table](#summary-table)
+  - [Final Recommendation](#final-recommendation)
+
+---
+
 ## TL;DR
 
 - **ES6 imports**: Great for **pure utilities**, **stateless helpers**, and **stable singletons**
@@ -12,7 +54,7 @@
 Pure Utilities ←────────────→ Stateful Services
    (imports)                    (injection)
 
-Helpers, Constants         Router, PageManager
+Helpers, Constants         Router, RouterPageManager
 Pure Functions             Components with lifecycle
 Stateless Classes          Things needing config
 ```
@@ -208,7 +250,7 @@ export default class Page {
 Instead of a complex Init.js, use factory functions:
 
 ```js
-// services/createServices.js
+// services/ServicesFactory.js
 export function createAppServices(config = {}) {
   const transitionManager = new TransitionManager(config.transition);
   const smoothScroll = new SmoothScroll(config.scroll);
@@ -222,7 +264,7 @@ export function createAppServices(config = {}) {
 }
 
 // App.js
-import { createAppServices } from './services/createServices.js';
+import { createServices } from './services/ServicesFactory.js';
 
 class App {
   constructor() {
@@ -503,7 +545,7 @@ export function createServices(config = {}) {
 }
 
 // App.js
-import { createServices } from './services/index.js';
+import { createServices } from './services/ServicesFactory.js';
 
 class App {
   constructor() {
@@ -603,7 +645,7 @@ Need services in many places?
 A function that creates and wires up all services, returning an object of services.
 
 ```js
-// services/createServices.js
+// services/ServicesFactory.js
 export function createServices(config = {}) {
   const registry = new Registry();
   const transitionManager = new TransitionManager({ registry });
@@ -617,7 +659,7 @@ export function createServices(config = {}) {
 }
 
 // App.js
-import { createServices } from './services/createServices.js';
+import { createServices } from './services/ServicesFactory.js';
 
 class App {
   constructor() {
@@ -910,7 +952,7 @@ class MyPlugin {
 You can combine both patterns:
 
 ```js
-// services/createServices.js - Factory
+// services/ServicesFactory.js - Factory
 export function createServices(config = {}) {
   const registry = new Registry();
   const transitionManager = new TransitionManager({ registry });
@@ -990,7 +1032,7 @@ class Footer {
 
 **Implementation:**
 ```js
-// services/createServices.js
+// services/ServicesFactory.js
 export function createServices(config = {}) {
   const registry = new Registry();
   const transitionManager = new TransitionManager({ 
@@ -1010,7 +1052,7 @@ export function createServices(config = {}) {
 }
 
 // App.js
-import { createServices } from './services/createServices.js';
+import { createServices } from './services/ServicesFactory.js';
 
 class App {
   constructor() {

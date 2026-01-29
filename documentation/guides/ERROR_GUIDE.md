@@ -2,6 +2,58 @@
 
 Short answer: errors thrown in child functions propagate up to the parent try-catch. The try-catch catches errors from the entire call stack within the try block.
 
+## Table of Contents
+
+- [Summary: where try-catch is needed](#summary-where-try-catch-is-needed)
+- [Best practice rule](#best-practice-rule)
+- [When to use try-catch: Use cases and non-use cases](#when-to-use-try-catch-use-cases-and-non-use-cases)
+  - [✅ Use try-catch for: Operations that can throw errors](#-use-try-catch-for-operations-that-can-throw-errors)
+    - [1. Async operations (fetch, promises, async/await)](#1-async-operations-fetch-promises-asyncawait)
+    - [2. Animations (GSAP timelines, animation errors)](#2-animations-gsap-timelines-animation-errors)
+    - [3. DOM updates (querySelector, DOM manipulation)](#3-dom-updates-queryselector-dom-manipulation)
+    - [4. JSON parsing and data transformation](#4-json-parsing-and-data-transformation)
+    - [5. External API calls and third-party libraries](#5-external-api-calls-and-third-party-libraries)
+    - [6. File operations and resource loading](#6-file-operations-and-resource-loading)
+  - [❌ Don't use try-catch for: Operations that don't throw errors](#-dont-use-try-catch-for-operations-that-dont-throw-errors)
+    - [1. Simple property access (when null/undefined is expected)](#1-simple-property-access-when-nullundefined-is-expected)
+    - [2. Simple assignments and variable declarations](#2-simple-assignments-and-variable-declarations)
+    - [3. Simple conditionals and boolean operations](#3-simple-conditionals-and-boolean-operations)
+    - [4. Operations that return null/undefined instead of throwing](#4-operations-that-return-nullundefined-instead-of-throwing)
+    - [5. Simple arithmetic and string operations](#5-simple-arithmetic-and-string-operations)
+    - [6. Simple object/array access (when using optional chaining)](#6-simple-objectarray-access-when-using-optional-chaining)
+  - [Decision matrix: When to use try-catch](#decision-matrix-when-to-use-try-catch)
+  - [Best practices summary](#best-practices-summary)
+- [How error propagation works](#how-error-propagation-works)
+  - [Rule 1: Errors bubble up the call stack](#rule-1-errors-bubble-up-the-call-stack)
+  - [Rule 2: Try-catch catches errors from the entire call chain](#rule-2-try-catch-catches-errors-from-the-entire-call-chain)
+- [Flowchart: error propagation](#flowchart-error-propagation)
+- [Detailed sequence table](#detailed-sequence-table)
+- [What triggers the catch block](#what-triggers-the-catch-block)
+  - [1. Errors thrown in child functions](#1-errors-thrown-in-child-functions)
+  - [2. Rejected promises (async/await)](#2-rejected-promises-asyncawait)
+  - [3. Explicit throw statements](#3-explicit-throw-statements)
+  - [4. Synchronous errors in try block](#4-synchronous-errors-in-try-block)
+- [What does not trigger catch](#what-does-not-trigger-catch)
+  - [1. Returned values (not errors)](#1-returned-values-not-errors)
+  - [2. Errors caught in child try-catch](#2-errors-caught-in-child-try-catch)
+  - [3. Errors thrown outside try block](#3-errors-thrown-outside-try-block)
+- [Complete example with error propagation](#complete-example-with-error-propagation)
+- [Visual error propagation path](#visual-error-propagation-path)
+- [Key takeaways](#key-takeaways)
+- [Practical example](#practical-example)
+- [Try...Catch...Finally Use Case](#trycatchfinally-use-case)
+  - [When to use `finally`](#when-to-use-finally)
+  - [Common `finally` use cases](#common-finally-use-cases)
+  - [What not to put in `finally`](#what-not-to-put-in-finally)
+  - [Recommended pattern for your code](#recommended-pattern-for-your-code)
+  - [Summary](#summary-1)
+- [Don't Nest Try...Catch Blocks](#dont-nest-trycatch-blocks)
+  - [Current flow (problematic)](#current-flow-problematic)
+  - [When to use try-catch: decision tree](#when-to-use-try-catch-decision-tree)
+  - [Recommended pattern for your code](#recommended-pattern-for-your-code-1)
+  - [Error propagation flow](#error-propagation-flow)
+
+---
 
 ## Summary: where try-catch is needed
 

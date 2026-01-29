@@ -1,11 +1,50 @@
 # Page Animation System Documentation
 
+## Table of Contents
+
+- [Overview](#overview)
+- [How to Set Up a Page Animation](#how-to-set-up-a-page-animation)
+  - [Step 1: Add `data-animation` Attribute to HTML](#step-1-add-data-animation-attribute-to-html)
+  - [Step 2: Register Animation Class (if creating new type)](#step-2-register-animation-class-if-creating-new-type)
+  - [Step 3: Create Animation Class (if new type)](#step-3-create-animation-class-if-new-type)
+  - [Step 4: Automatic Setup](#step-4-automatic-setup)
+- [How AnimationsService Coordinates Animations](#how-animationsservice-coordinates-animations)
+  - [Architecture Overview](#architecture-overview)
+  - [Step-by-Step Process](#step-by-step-process)
+    - [1. Page Creation (`Page.create()` → `createPageAnimations()`)](#1-page-creation-pagecreate--createpageanimations)
+    - [2. Cleanup Previous Page (`destroyPageAnimations()`)](#2-cleanup-previous-page-destroypageanimations)
+    - [3. Validation (`validatePageElement()`)](#3-validation-validatepageelement)
+    - [4. Discovery (`findAnimatedElements()`)](#4-discovery-findanimatedelements)
+    - [5. Grouping (`groupElementsByType()`)](#5-grouping-groupelementsbytype)
+    - [6. Instance Creation (`createAnimationInstances()`)](#6-instance-creation-createanimationinstances)
+    - [7. Observer Setup (`createSharedIntersectionObserver()`)](#7-observer-setup-createsharedintersectionobserver)
+    - [8. Page Destruction (`Page.destroy()` → `destroyPageAnimations()`)](#8-page-destruction-pagedestroy--destroypageanimations)
+- [Key Design Patterns](#key-design-patterns)
+  - [1. Single IntersectionObserver Pattern](#1-single-intersectionobserver-pattern)
+  - [2. Registry Pattern](#2-registry-pattern)
+  - [3. Factory Pattern](#3-factory-pattern)
+  - [4. Pure Functions](#4-pure-functions)
+- [Animation Instance Lifecycle](#animation-instance-lifecycle)
+- [Example Flow](#example-flow)
+- [Benefits of This Architecture](#benefits-of-this-architecture)
+- [GSAP `kill()` vs `killTweensOf()` - Key Differences](#gsap-kill-vs-killtweensof---key-differences)
+  - [1. `kill()` - On Individual Tweens/Timelines](#1-kill---on-individual-tweenstimelines)
+  - [2. `gsap.killTweensOf()` - Static Method for Targets](#2-gsapkilltweensof---static-method-for-targets)
+- [Your Use Case: Animation Registry Pattern](#your-use-case-animation-registry-pattern)
+  - [Understanding Your Animation Structure](#understanding-your-animation-structure)
+  - [Solution: Enhanced Animation Classes](#solution-enhanced-animation-classes)
+- [Recommended Implementation](#recommended-implementation)
+- [Key Points from GSAP Documentation](#key-points-from-gsap-documentation)
+- [Best Practice for Your Code](#best-practice-for-your-code)
+
+---
+
 ## Overview
 
 The animation system automatically handles page animations based on `data-animation` attributes in your HTML. It uses a single `IntersectionObserver` per page to efficiently trigger animations when elements enter or leave the viewport.
 
 **Key Components:**
-- **`AnimationsManager`**: Manages the animation lifecycle, auto-detects animated elements, and coordinates a shared IntersectionObserver
+- **`AnimationsService`**: Manages the animation lifecycle, auto-detects animated elements, and coordinates a shared IntersectionObserver
 - **`Titles`**: Animation class that fades in title elements when they enter the viewport
 - **Page Integration**: `Page.js` calls the manager during create/destroy lifecycle
 
@@ -19,11 +58,11 @@ Simply add the `data-animation` attribute to any element you want to animate:
 <h2 data-animation="title">My Animated Title</h2>
 ```
 
-The attribute value (`"title"`) corresponds to an animation class registered in the `AnimationsManager` registry.
+The attribute value (`"title"`) corresponds to an animation class registered in the `AnimationsService` registry.
 
 ### Step 2: Register Animation Class (if creating new type)
 
-If you're creating a new animation type (e.g., `"image"`), add it to the registry in `AnimationsManager.js`:
+If you're creating a new animation type (e.g., `"image"`), add it to the registry in `AnimationsService.js`:
 
 ```javascript
 this.animationRegistry = {
@@ -67,15 +106,15 @@ The system automatically:
 
 **No additional code needed in `Page.js`** - it's all handled automatically!
 
-## How AnimationsManager Coordinates Animations
+## How AnimationsService Coordinates Animations
 
 ### Architecture Overview
 
-`AnimationsManager` uses a factory pattern with a registry to manage animations:
+`AnimationsService` uses a factory pattern with a registry to manage animations:
 
 ```
 Page.js
-  └─> AnimationsManager.createPageAnimations(pageElement)
+  └─> AnimationsService.createPageAnimations(pageElement)
        ├─> validatePageElement()          [Validates input]
        ├─> findAnimatedElements()         [Discovers elements]
        ├─> groupElementsByType()          [Groups by type]
@@ -180,7 +219,7 @@ The refactored code uses pure functions (`validatePageElement`, `findAnimatedEle
 Each animation instance (e.g., `Titles`) follows this lifecycle:
 
 1. **Construction**: Element is passed to constructor, timelines array is initialized
-2. **Registration**: Instance is added to `AnimationsManager.pageAnimations`
+2. **Registration**: Instance is added to `AnimationsService.pageAnimations`
 3. **Observation**: Element is observed by the shared IntersectionObserver
 4. **Animation**: `animateIn()` or `animateOut()` is called when element intersects viewport
 5. **Cleanup**: `kill()` is called on page destroy to clean up all timelines
@@ -197,14 +236,14 @@ Each animation instance (e.g., `Titles`) follows this lifecycle:
 
 **Execution Flow:**
 1. `Page.create()` is called
-2. `Page.createPageAnimations()` calls `AnimationsManager.createPageAnimations(mainElement)`
+2. `Page.createPageAnimations()` calls `AnimationsService.createPageAnimations(mainElement)`
 3. Manager finds 2 elements with `data-animation="title"`
 4. Manager groups them: `Map { 'title' => [h2, h2] }`
 5. Manager creates 2 `Titles` instances, one per element
 6. Manager creates a single IntersectionObserver
 7. Observer watches both h2 elements
 8. When user scrolls and first h2 enters viewport → `Titles.animateIn()` is called
-9. When user navigates away → `AnimationsManager.destroyPageAnimations()` kills both instances
+9. When user navigates away → `AnimationsService.destroyPageAnimations()` kills both instances
 
 ## Benefits of This Architecture
 

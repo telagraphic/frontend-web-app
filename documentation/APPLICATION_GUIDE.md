@@ -16,15 +16,17 @@ This guide walks you through creating a complete new page from scratch.
 
 ### Step 1: Register in SiteConfig
 
-First, add your page configuration to `app/config/SiteConfig.js`:
+First, add your page configuration to `app/config/siteRoutes.js`:
 
 ```javascript
-// In SiteConfig.initializeSettings()
-'my-new-page': {
+// In siteRoutes object
+'/my-new-page': {
   template: "my-new-page",        // Must match data-template in HTML
   class: "MyNewPage",              // JavaScript class name
   link: "/my-new-page",            // URL path
   url: "/pages/my-new-page.html",  // HTML file path
+  title: "My New Page",
+  metaDescription: "Description for SEO",
   transition: {
     image: "https://example.com/transition-image.jpg",
     copy: "My New Page",           // Text shown during transition
@@ -34,10 +36,11 @@ First, add your page configuration to `app/config/SiteConfig.js`:
 ```
 
 **Important Notes:**
+- Route keys use `/` format (e.g., `/` for home, `/my-new-page` for other pages)
 - `template` must match the `data-template` attribute in your HTML
 - `class` must match your JavaScript class name
 - `link` is the URL path users will navigate to
-- `url` is the path to the HTML file (used by PageManager.fetch)
+- `url` is the path to the HTML file (used by RouterPageManager.fetch)
 
 ### Step 2: Create HTML Template
 
@@ -125,10 +128,14 @@ export class MyNewPage extends Page {
 If your page doesn't need custom logic, use the `View` class:
 
 ```javascript
-// In SiteConfig
-'my-section': {
+// In siteRoutes.js
+'/my-section': {
   template: "my-section",
   class: "View",  // Use View class
+  link: "/my-section",
+  url: "/pages/my-section.html",
+  title: "My Section",
+  metaDescription: "Description",
   // ... rest of config
 }
 ```
@@ -165,10 +172,10 @@ The Page Registry automatically manages page classes. Here's how it works:
 Pages are registered automatically when first loaded:
 
 ```javascript
-// PageLoader.loadPage() automatically:
+// RouterPageLoader.loadPage() automatically:
 1. Checks if page class is already in registry
 2. If not, dynamically imports the page class
-3. Stores it in PageRegistry.pages Map
+3. Stores it in RegistryService.pages Map
 4. Returns the class for instantiation
 ```
 
@@ -179,19 +186,19 @@ You can manually register pages if needed:
 ```javascript
 // In your code
 const MyPageClass = await import('./pages/MyPage.js');
-pageRegistry.setPage('my-page', MyPageClass.default);
+registryService.setPage('my-page', MyPageClass.default);
 ```
 
 ### Checking Page Status
 
 ```javascript
 // Check if page is registered
-if (pageRegistry.hasPage('my-page')) {
-  const PageClass = pageRegistry.getPage('my-page');
+if (registryService.hasPage('my-page')) {
+  const PageClass = registryService.getPage('my-page');
 }
 
 // Get current page instance
-const currentPage = pageRegistry.getCurrentPage();
+const currentPage = registryService.getCurrentPage();
 ```
 
 ## Animation System
@@ -215,7 +222,7 @@ The `Titles` animation class will:
 - Automatically clean up on page destroy
 
 **How it works:**
-1. `AnimationsManager` scans the page for `[data-animation]` attributes
+1. `AnimationsService` scans the page for `[data-animation]` attributes
 2. Groups elements by animation type
 3. Creates animation instances from the registry
 4. Sets up a shared IntersectionObserver
@@ -303,12 +310,12 @@ export class MyCustomAnimation {
 
 #### Step 2: Register Animation
 
-Add to `app/animations/AnimationsManager.js`:
+Add to `app/services/AnimationsService.js`:
 
 ```javascript
-import { MyCustomAnimation } from "./MyCustomAnimation.js";
+import { MyCustomAnimation } from "../animations/MyCustomAnimation.js";
 
-export class AnimationsManager {
+export class AnimationsService {
   constructor() {
     this.animationRegistry = {
       title: Titles,
@@ -348,7 +355,7 @@ async create() {
     duration: 1
   });
   
-  // Register with AnimationsManager
+  // Register with AnimationsService
   this.animationsManager.register(customTimeline);
   
   // Play when ready
@@ -375,7 +382,7 @@ Use `data-src` instead of `src` for images that should be preloaded:
 />
 ```
 
-The `PageManager` automatically preloads all `img[data-src]` elements before showing the page.
+The `RouterPageManager` automatically preloads all `img[data-src]` elements before showing the page.
 
 #### Excluding Preloader Images
 
@@ -489,7 +496,7 @@ Transitions are configured in `SiteConfig`:
 ### How Transitions Work
 
 1. **On Page Hide**: 
-   - `TransitionsManager.updateTransitionOverlay()` updates the overlay with the next page's transition data
+   - `TransitionsService.updateTransitionOverlay()` updates the overlay with the next page's transition data
    - Image is preloaded if not already cached
    - `showPageTransition()` animates the overlay in
 
@@ -502,11 +509,11 @@ Transitions are configured in `SiteConfig`:
 Transition images are automatically preloaded:
 - During browser idle time (via `requestIdleCallback`)
 - Before showing transition (if not already preloaded)
-- Cached in `TransitionsManager.preloadedImageUrls` Set
+- Cached in `TransitionsService.preloadedImageUrls` Set
 
 ### Customizing Transition Animation
 
-Edit `app/animations/PageTransition.js`:
+Edit `app/transitions/CustomPageTransitions.js` or `app/transitions/GenericPageTransitions.js`:
 
 ```javascript
 async showPageTransition(element) {
@@ -837,7 +844,7 @@ this.myComponent.on('custom-event', (detail) => {
 - Always implement `kill()` method for cleanup
 - Store animation timelines in arrays for batch cleanup
 - Use IntersectionObserver for scroll-triggered animations
-- Register custom animations with AnimationsManager for automatic cleanup
+- Register custom animations with AnimationsService for automatic cleanup
 
 ### Images
 - Use `data-src` for lazy-loaded images
@@ -861,14 +868,14 @@ this.myComponent.on('custom-event', (detail) => {
 ## Troubleshooting
 
 ### Page Not Loading
-- Check SiteConfig registration
-- Verify `data-template` matches SiteConfig template
+- Check siteRoutes.js registration
+- Verify `data-template` matches siteRoutes template
 - Check browser console for import errors
 - Verify HTML file exists in `pages/` directory
 
 ### Animations Not Working
 - Verify `data-animation` attribute is set
-- Check animation is registered in AnimationsManager
+- Check animation is registered in AnimationsService
 - Ensure element is in viewport (IntersectionObserver)
 - Check browser console for errors
 
@@ -879,8 +886,8 @@ this.myComponent.on('custom-event', (detail) => {
 - Check network tab for failed requests
 
 ### Transitions Not Showing
-- Verify transition config in SiteConfig
+- Verify transition config in siteRoutes.js
 - Check transition image URL is valid
-- Verify PageTransition class is working
+- Verify TransitionsService is working
 - Check browser console for errors
 

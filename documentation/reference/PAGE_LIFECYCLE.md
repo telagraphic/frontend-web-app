@@ -1,5 +1,36 @@
 # Page Lifecycle Hooks
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Lifecycle Hooks](#lifecycle-hooks)
+  - [Creation Hooks](#creation-hooks)
+  - [Visibility Hooks](#visibility-hooks)
+  - [Destruction Hooks](#destruction-hooks)
+- [Hook Implementation](#hook-implementation)
+- [Lifecycle Flow](#lifecycle-flow)
+  - [Page Creation Flow](#page-creation-flow)
+  - [Page Show Flow](#page-show-flow)
+  - [Page Hide Flow](#page-hide-flow)
+- [Hook Execution Order](#hook-execution-order)
+- [Use Case Examples](#use-case-examples)
+  - [Example 1: Custom Exit Animations with GSAP SplitText](#example-1-custom-exit-animations-with-gsap-splittext)
+  - [Example 2: Custom Entrance Animations](#example-2-custom-entrance-animations)
+  - [Example 3: Component Setup and Teardown](#example-3-component-setup-and-teardown)
+  - [Example 4: Pre-show Preparation](#example-4-pre-show-preparation)
+  - [Example 5: Complex Exit Animation Sequence](#example-5-complex-exit-animation-sequence)
+- [Best Practices](#best-practices)
+  - [Async Hooks](#async-hooks)
+  - [Error Handling](#error-handling)
+  - [Cleanup](#cleanup)
+  - [Performance](#performance)
+  - [Idempotency](#idempotency)
+  - [Memory Management](#memory-management)
+- [Integration with Router](#integration-with-router)
+- [Reference](#reference)
+
+---
+
 ## Overview
 
 The `Page` class implements a hook-based lifecycle system similar to barba.js, allowing subclasses to execute custom code at specific points during page creation, showing, hiding, and destruction.

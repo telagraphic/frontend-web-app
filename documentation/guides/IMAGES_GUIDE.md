@@ -1,5 +1,37 @@
 # Image Preloading Utilities Documentation
 
+## Table of Contents
+
+- [Introduction](#introduction)
+  - [Key Features](#key-features)
+  - [Module Structure](#module-structure)
+- [Public API Functions](#public-api-functions)
+  - [`preloadImages(options)`](#preloadimagesoptions)
+  - [`loadSingleImage(options)`](#loadsingleimageoptions)
+  - [`normalizeImages(images, container)`](#normalizeimagesimages-container)
+  - [`isImageLoaded(element)`](#isimageloadedelement)
+  - [`loadImageOffDOM(src)`](#loadimageoffdomsrc)
+  - [`waitForElementLoad(element)`](#waitforelementloadelement)
+  - [`decodeImage(element)`](#decodeimageelement)
+- [Composition Patterns](#composition-patterns)
+  - [Pattern 1: `preloadImages` Internal Composition](#pattern-1-preloadimages-internal-composition)
+  - [Pattern 2: Priority-Based Loading](#pattern-2-priority-based-loading)
+  - [Pattern 3: Viewport-Based Conditional Loading](#pattern-3-viewport-based-conditional-loading)
+  - [Pattern 4: Sequential Loading with Progress](#pattern-4-sequential-loading-with-progress)
+  - [Pattern 5: Parallel with Concurrency Limit](#pattern-5-parallel-with-concurrency-limit)
+  - [Pattern 6: Custom Flow with Individual Utilities](#pattern-6-custom-flow-with-individual-utilities)
+- [Flow Charts](#flow-charts)
+  - [Main Entry Point Flow (`preloadImages`)](#main-entry-point-flow-preloadimages)
+  - [Single Image Loading Flow (`loadSingleImage`)](#single-image-loading-flow-loadsingleimage)
+  - [`loadImageWithDecode` Flow (Decode-Before-DOM)](#loadimagewithdecode-flow-decode-before-dom)
+  - [`loadImageWithoutDecode` Flow (Traditional)](#loadimagewithoutdecode-flow-traditional)
+  - [Progress Tracking Flow](#progress-tracking-flow)
+  - [Complete Call Sequence Diagram](#complete-call-sequence-diagram)
+- [Function Dependency Map](#function-dependency-map)
+- [Decision Points](#decision-points)
+
+---
+
 ## Introduction
 
 The `Images.js` module provides a comprehensive set of utilities for image preloading, lazy loading, and decode support. It's designed to handle various image loading scenarios with support for progress tracking, decode-before-DOM strategies, and flexible input types.

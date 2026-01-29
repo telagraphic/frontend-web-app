@@ -1,5 +1,50 @@
 # Document.readyState Guide: Modern Use Cases and Best Practices
 
+## Table of Contents
+
+- [Overview](#overview)
+- [ReadyState and DOMContentLoaded: What's Complete at Each Stage](#readystate-and-domcontentloaded-whats-complete-at-each-stage)
+  - [Detailed Breakdown by Stage](#detailed-breakdown-by-stage)
+  - [Quick Reference: Event Timing](#quick-reference-event-timing)
+  - [Decision Guide: Which State Do You Need?](#decision-guide-which-state-do-you-need)
+- [Summary](#summary)
+  - [Key Takeaways](#key-takeaways)
+- [The Three States](#the-three-states)
+- [Modern Use Cases](#modern-use-cases)
+  - [Use Case 1: Service Initialization (Your Current Case)](#use-case-1-service-initialization-your-current-case)
+  - [Use Case 2: Progressive Enhancement](#use-case-2-progressive-enhancement)
+  - [Use Case 3: Analytics and Performance Monitoring](#use-case-3-analytics-and-performance-monitoring)
+  - [Use Case 4: Code Splitting and Dynamic Imports](#use-case-4-code-splitting-and-dynamic-imports)
+  - [Use Case 5: Web Components and Custom Elements](#use-case-5-web-components-and-custom-elements)
+  - [Use Case 6: SSR (Server-Side Rendering) / Hydration](#use-case-6-ssr-server-side-rendering--hydration)
+  - [Use Case 7: Image Lazy Loading Initialization](#use-case-7-image-lazy-loading-initialization)
+- [When to Use Each State](#when-to-use-each-state)
+- [Comparison with Other Approaches](#comparison-with-other-approaches)
+  - [`DOMContentLoaded` Event](#domcontentloaded-event)
+  - [`window.load` Event](#windowload-event)
+  - [jQuery `$(document).ready()`](#jquery-documentready)
+- [Real-World Examples](#real-world-examples)
+  - [Example 1: Your TransitionManager Pattern](#example-1-your-transitionmanager-pattern)
+  - [Example 2: Modern Framework Initialization](#example-2-modern-framework-initialization)
+  - [Example 3: Third-Party Script Integration](#example-3-third-party-script-integration)
+- [Best Practices](#best-practices)
+- [Performance Considerations](#performance-considerations)
+- [Your Current Implementation (TransitionManager)](#your-current-implementation-transitionmanager)
+- [readyState vs DOMContentLoaded: Detailed Comparison](#readystate-vs-domcontentloaded-detailed-comparison)
+  - [Overview](#overview-1)
+  - [What Each Does](#what-each-does)
+  - [Pros and Cons](#pros-and-cons)
+  - [Nuances and Edge Cases](#nuances-and-edge-cases)
+  - [When to Use Each](#when-to-use-each-1)
+  - [Best Practice: Combine Both (Recommended) ✅](#best-practice-combine-both-recommended-)
+  - [Real-World Comparison](#real-world-comparison)
+  - [Practical Recommendations](#practical-recommendations)
+  - [Summary Table](#summary-table)
+  - [Final Recommendation](#final-recommendation)
+  - [Conclusion](#conclusion)
+
+---
+
 ## Overview
 
 `document.readyState` is a property that indicates the current loading state of the document. It's a modern, reliable way to check if the DOM is ready without relying solely on event listeners.

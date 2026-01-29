@@ -28,19 +28,36 @@ class App {
   }
 
   async init() {
-    setupElementHelpers();
-    this.createServices(); // Creates all services via ServiceFactory
-    await this.transitionsManager.init();
-    await this.services.router.start(); // Initializes routing
+    this.createServices();
+    await this.transitionsService.init();
+    await this.services.router.start(); // Calls pageLoader.create() to initialize the first page
+    this.currentPage = this.services.registryService.getCurrentPage();
+    this.createNavigation();
     this.createPreloader();
     liveReload();
+  }
+
+  createServices() {
+    this.services = createServices();
+    this.siteConfig = this.services.siteConfig;
+    this.router = this.services.router;
+    this.navigation = this.services.navigation;
+    this.smoothScroll = this.services.smoothScroll;
+    this.animationsService = this.services.animationsService;
+    this.transitionsService = this.services.transitionsService;
+    this.footnotes = this.services.footnotes;
+    this.pageRegistry = this.services.registryService;
+    this.pageLoader = this.services.routerPageLoader;
+    this.pageManager = this.services.routerPageManager;
+    this.routerHistory = this.services.routerHistory;
+    this.routerResolver = this.services.routerResolver;
   }
 }
 ```
 
 ### Service Factory Pattern
 
-The `ServiceFactory` (`app/services/ServiceFactory.js`) implements the **Factory Pattern** and **Dependency Injection** to create and wire all services together. This centralizes service creation and ensures proper dependency management.
+The `ServicesFactory` (`app/services/ServicesFactory.js`) implements the **Factory Pattern** and **Dependency Injection** to create and wire all services together. This centralizes service creation and ensures proper dependency management.
 
 **Key Benefits:**
 - Single point of service creation
@@ -49,22 +66,27 @@ The `ServiceFactory` (`app/services/ServiceFactory.js`) implements the **Factory
 - Clear dependency graph
 
 ```javascript
-// ServiceFactory creates all services with proper dependencies
+// ServicesFactory creates all services with proper dependencies
 export function createServices() {
   const siteConfig = new SiteConfig();
-  const animationsManager = new AnimationsManager();
-  const transitionsManager = new TransitionsManager({ siteConfig });
+  const animationsService = new AnimationsService();
+  const transitionsService = new TransitionsService({ 
+    siteConfig,
+    transitionType: TRANSITION_TYPES.CUSTOM
+  });
   const smoothScroll = new SmoothScroll();
   const footnotes = new Footnotes({ smoothScroll });
-  const pageLoader = new PageLoader({ siteConfig, smoothScroll, animationsManager, transitionsManager, footnotes });
-  const pageRegistry = new PageRegistry({ siteConfig, pageLoader });
+  const routerPageLoader = new RouterPageLoader({ siteConfig, smoothScroll, animationsManager: animationsService, transitionsManager: transitionsService, footnotes });
+  const registryService = new RegistryService({ siteConfig, routerPageLoader });
+  const routerPageManager = new RouterPageManager({ siteConfig, routerPageLoader });
   // ... more services
   
   return {
     siteConfig,
     router,
     smoothScroll,
-    animationsManager,
+    animationsService,
+    transitionsService,
     // ... all services
   };
 }
@@ -73,14 +95,14 @@ export function createServices() {
 ## Design Patterns
 
 ### 1. Service Factory Pattern
-**Location:** `app/services/ServiceFactory.js`
+**Location:** `app/services/ServicesFactory.js`
 
 Creates and configures all application services with proper dependency injection. Services are created once and shared across the application.
 
 ### 2. Registry Pattern
-**Location:** `app/services/PageRegistry.js`
+**Location:** `app/services/RegistryService.js`
 
-The `PageRegistry` maintains a registry of page classes and their instances. It tracks:
+The `RegistryService` maintains a registry of page classes and their instances. It tracks:
 - Loaded page classes (Map of template → PageClass)
 - Current page instance
 - Current page template
@@ -88,21 +110,21 @@ The `PageRegistry` maintains a registry of page classes and their instances. It 
 **Usage:**
 ```javascript
 // Register a page class
-pageRegistry.setPage('home', Home);
+registryService.setPage('home', Home);
 
 // Get a page class
-const HomeClass = pageRegistry.getPage('home');
+const HomeClass = registryService.getPage('home');
 
 // Track current page
-pageRegistry.setCurrentPage(pageInstance);
+registryService.setCurrentPage(pageInstance);
 ```
 
 ### 3. Manager Pattern
 Multiple managers coordinate specific domains:
 
-- **PageManager** (`app/services/PageManager.js`): Manages page content updates, DOM manipulation, and page metadata
-- **AnimationsManager** (`app/animations/AnimationsManager.js`): Manages page animations lifecycle, IntersectionObserver setup, and animation cleanup
-- **TransitionsManager** (`app/animations/TransitionsManager.js`): Manages page transition overlays, image preloading, and transition templates
+- **RouterPageManager** (`app/router/RouterPageManager.js`): Manages page content updates, DOM manipulation, and page metadata
+- **AnimationsService** (`app/services/AnimationsService.js`): Manages page animations lifecycle, IntersectionObserver setup, and animation cleanup
+- **TransitionsService** (`app/services/TransitionsService.js`): Manages page transition overlays, image preloading, and transition templates
 
 ### 4. Component Base Class Pattern
 **Location:** `app/components/Component.js`
@@ -196,20 +218,20 @@ This allows easy extension with new animation types without modifying core logic
 ### Application Layer
 ```
 App
-├── ServiceFactory (creates all services)
+├── ServicesFactory (creates all services)
 │   ├── SiteConfig
 │   ├── Router
-│   ├── PageRegistry
-│   ├── PageLoader
-│   ├── PageManager
+│   ├── RegistryService
+│   ├── RouterPageLoader
+│   ├── RouterPageManager
 │   ├── RouterHistory
 │   ├── RouterResolver
-│   ├── AnimationsManager
-│   ├── TransitionsManager
+│   ├── AnimationsService
+│   ├── TransitionsService
 │   ├── SmoothScroll
 │   └── Footnotes
 ├── Preloader (Component)
-└── Navigation (Component) [TODO]
+└── Navigation (Component)
 ```
 
 ### Page Layer
@@ -232,10 +254,10 @@ Component (base class)
 
 ### Animation Layer
 ```
-AnimationsManager
+AnimationsService
 ├── Titles
-├── PageTransition
-└── BackgroundColors
+├── BackgroundColors
+└── PreloaderAnimation
 ```
 
 ## Data Flow
@@ -255,15 +277,15 @@ Router.beforePageUpdate(href)
     ↓
 Router.startPageUpdate(routeInfo)
     ├── CurrentPage.hide(route)
-    │   ├── TransitionsManager.updateTransitionOverlay()
-    │   └── TransitionsManager.showPageTransition()
-    ├── PageManager.updatePage(route)
+    │   ├── TransitionsService.updateTransitionOverlay()
+    │   └── TransitionsService.showPageTransition()
+    ├── RouterPageManager.updatePage(route)
     │   ├── Fetch HTML
     │   ├── Update DOM
     │   ├── Update page metadata
     │   └── Preload images
     ├── RouterHistory.updateHistory()
-    └── PageLoader.getPage(route)
+    └── RouterPageLoader.getPage(route)
         ├── Load page class (if not cached)
         └── Initialize page instance
     ↓
@@ -274,7 +296,7 @@ Router.afterPageUpdate(newPage, routeInfo)
     │   ├── createPageAnimations()
     │   └── setupEventListeners()
     └── newPage.show()
-        ├── TransitionsManager.hidePageTransition()
+        ├── TransitionsService.hidePageTransition()
         └── SmoothScroll.scrollTo(0)
 ```
 
@@ -304,7 +326,7 @@ Page.create()
     ↓
 Page.createPageAnimations()
     ↓
-AnimationsManager.createPageAnimations(pageElement)
+AnimationsService.createPageAnimations(pageElement)
     ├── Find elements with [data-animation]
     ├── Group by animation type
     ├── Create animation instances
@@ -319,48 +341,48 @@ GSAP timeline animates element
 
 ## Key Components
 
-### Router (`app/services/Router.js`)
+### Router (`app/router/Router.js`)
 - Handles navigation lifecycle
 - Delegates route validation to RouterResolver
 - Coordinates page hiding/showing
 - Manages browser history via RouterHistory
 
-### PageLoader (`app/services/PageLoader.js`)
+### RouterPageLoader (`app/router/RouterPageLoader.js`)
 - Dynamically loads page classes
-- Caches loaded classes in PageRegistry
+- Caches loaded classes in RegistryService
 - Initializes page instances with dependencies
 - Handles first page load
 
-### PageManager (`app/services/PageManager.js`)
+### RouterPageManager (`app/router/RouterPageManager.js`)
 - Fetches page HTML via fetch()
 - Updates DOM with new page content
 - Extracts page metadata (template, background, color)
 - Preloads images before page display
 
-### PageRegistry (`app/services/PageRegistry.js`)
+### RegistryService (`app/services/RegistryService.js`)
 - Registry of page classes (template → PageClass)
 - Tracks current page instance
 - Provides lookup methods
 
-### RouterResolver (`app/services/RouterResolver.js`)
+### RouterResolver (`app/router/RouterResolver.js`)
 - Validates routes against SiteConfig
 - Normalizes route formats
 - Handles invalid routes (redirects, external links)
 - Returns RouteValidationResult objects
 
-### RouterHistory (`app/services/RouterHistory.js`)
+### RouterHistory (`app/router/RouterHistory.js`)
 - Manages browser history state
 - Handles popstate events (back/forward)
 - Normalizes routes for history
 - Prevents duplicate history entries
 
-### AnimationsManager (`app/animations/AnimationsManager.js`)
+### AnimationsService (`app/services/AnimationsService.js`)
 - Discovers animations via data-animation attributes
 - Creates animation instances from registry
 - Manages shared IntersectionObserver
 - Cleans up animations on page destroy
 
-### TransitionsManager (`app/animations/TransitionsManager.js`)
+### TransitionsService (`app/services/TransitionsService.js`)
 - Manages page transition overlays
 - Preloads transition images
 - Updates transition templates from SiteConfig

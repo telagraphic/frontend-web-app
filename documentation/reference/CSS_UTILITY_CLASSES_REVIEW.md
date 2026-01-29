@@ -1,5 +1,40 @@
 # Utility Classes Review & Design System Approach
 
+## Table of Contents
+
+- [Executive Summary](#executive-summary)
+- [1. CSS Duplicate Patterns for Utility Classes](#1-css-duplicate-patterns-for-utility-classes)
+  - [1.1 Container & Width Utilities](#11-container--width-utilities)
+  - [1.2 Layout Utilities](#12-layout-utilities)
+  - [1.3 Spacing Utilities](#13-spacing-utilities)
+  - [1.4 Typography Utilities](#14-typography-utilities)
+  - [1.5 Transition Utilities](#15-transition-utilities)
+  - [1.6 Responsive Width Patterns](#16-responsive-width-patterns)
+  - [1.7 Overflow & Box-Sizing](#17-overflow--box-sizing)
+- [2. Manifest Table Code Analysis](#2-manifest-table-code-analysis)
+  - [2.1 Current Structure](#21-current-structure)
+  - [2.2 Recommended Refactoring](#22-recommended-refactoring)
+  - [2.3 Specific Manifest Table Opportunities](#23-specific-manifest-table-opportunities)
+- [3. Container Code Analysis](#3-container-code-analysis)
+  - [3.1 Page vs Home Container Patterns](#31-page-vs-home-container-patterns)
+  - [3.2 Recommended Container Utilities](#32-recommended-container-utilities)
+  - [3.3 Article/Content Wrapper Patterns](#33-articlecontent-wrapper-patterns)
+- [4. Itemized List of Utility Class Opportunities](#4-itemized-list-of-utility-class-opportunities)
+- [5. Developing a Utility Library for SPA Web Apps](#5-developing-a-utility-library-for-spa-web-apps)
+  - [5.1 Core Principles](#51-core-principles)
+  - [5.2 Utility Categories](#52-utility-categories)
+  - [5.3 Implementation Strategies](#53-implementation-strategies)
+  - [5.4 Naming Conventions](#54-naming-conventions)
+  - [5.5 File Organization](#55-file-organization)
+  - [5.6 Considerations from Popular Libraries](#56-considerations-from-popular-libraries)
+  - [5.7 Best Practices for SPA Context](#57-best-practices-for-spa-context)
+  - [5.8 Migration Strategy](#58-migration-strategy)
+- [6. Recommended Next Steps](#6-recommended-next-steps)
+- [7. Example Implementation](#7-example-implementation)
+- [Conclusion](#conclusion)
+
+---
+
 ## Executive Summary
 
 This document identifies opportunities for utility classes to DRY (Don't Repeat Yourself) up the codebase and formalize a design system approach. The review covers CSS patterns, container implementations, manifest table code, and provides an overview of developing a utility library for SPA web applications.

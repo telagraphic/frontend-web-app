@@ -1,5 +1,33 @@
 # Utility Classes vs Mixins vs Extends: Strategy Guide
 
+## Table of Contents
+
+- [Overview](#overview)
+- [The Three Approaches](#the-three-approaches)
+  - [1. Utility Classes](#1-utility-classes)
+  - [2. Mixins](#2-mixins)
+  - [3. @extend](#3-extend)
+- [Recommended Hybrid Approach](#recommended-hybrid-approach)
+- [Practical Examples for Your Codebase](#practical-examples-for-your-codebase)
+  - [Example 1: Container Pattern (Use Mixin)](#example-1-container-pattern-use-mixin)
+  - [Example 2: Simple Centering (Use Utility)](#example-2-simple-centering-use-utility)
+  - [Example 3: Complex Responsive Container (Use Mixin)](#example-3-complex-responsive-container-use-mixin)
+  - [Example 4: Simple Spacing (Use Utility)](#example-4-simple-spacing-use-utility)
+- [Decision Tree](#decision-tree)
+- [Best Practices](#best-practices)
+  - [1. Create Utility-First Mixins](#1-create-utility-first-mixins)
+  - [2. Document Your Mixins](#2-document-your-mixins)
+  - [3. Keep Utilities for Common Patterns](#3-keep-utilities-for-common-patterns)
+  - [4. Component-Specific: Prefer Mixins](#4-component-specific-prefer-mixins)
+  - [5. Layout Utilities: Prefer Utilities](#5-layout-utilities-prefer-utilities)
+- [Recommended File Structure](#recommended-file-structure)
+- [When to Choose What: Quick Reference](#when-to-choose-what-quick-reference)
+- [The Verdict](#the-verdict)
+- [Example Refactoring](#example-refactoring)
+- [Conclusion](#conclusion)
+
+---
+
 ## Overview
 
 This document explores when to use utility classes, mixins, and `@extend` in your Sass codebase, providing guidance on choosing the right approach for maintainability and code clarity.

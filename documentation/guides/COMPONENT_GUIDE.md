@@ -1090,7 +1090,7 @@ class App {
 /**
  * Entry point for the application
  */
-import { createServices } from "./services/ServiceFactory.js";
+import { createServices } from "./services/ServicesFactory.js";
 import { Preloader } from "./components/Preloader.js";
 import { Navigation } from "./components/Navigation.js";
 import { $, setupHelpers } from "./utils/Helpers.js";
@@ -2081,7 +2081,7 @@ When a service is created as a **singleton** and shared across multiple componen
 ## Current Architecture
 
 ```js
-// ServiceFactory.js - Creates ONE instance
+// ServicesFactory.js - Creates ONE instance
 export function createServices() {
   const footnotes = new Footnotes({ smoothScroll });
   return { footnotes };
@@ -2108,7 +2108,7 @@ removeEventListeners() {
 ## Memory Reference Chain
 
 ```
-ServiceFactory.js
+ServicesFactory.js
   └─> footnotes instance (line 13)
       │
       └─> App.js
@@ -2189,7 +2189,7 @@ These are **per-page state** that gets cleaned up even though the instance persi
 ### ❌ **Will NOT be GC'd** (Shared instance):
 
 ```js
-// ServiceFactory.js
+// ServicesFactory.js
 const footnotes = new Footnotes(); // ❌ Instance persists
 
 // App.js
@@ -2216,7 +2216,7 @@ const footnotes = new Footnotes(); // But has per-page DOM listeners
 If Footnotes manages **page-specific state** (DOM listeners, NodeLists), consider creating it per-page:
 
 ```js
-// ServiceFactory.js
+// ServicesFactory.js
 export function createServices() {
   // Don't create footnotes here
   return { registry, router, smoothScroll, transitionManager };

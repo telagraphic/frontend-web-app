@@ -1,3 +1,38 @@
+# Clean Code Guide
+
+## Table of Contents
+
+- [Boolean Extraction: Making Conditions Obvious](#boolean-extraction-making-conditions-obvious)
+  - [What Does "Non-Obvious" Mean?](#what-does-non-obvious-mean)
+  - [Your Current Code](#your-current-code)
+  - [What Makes It Obvious?](#what-makes-it-obvious)
+  - [Complete Refactored Examples](#complete-refactored-examples)
+  - [Comparison: Before vs After](#comparison-before-vs-after)
+  - [Real-World Example: Understanding the Logic](#real-world-example-understanding-the-logic)
+  - [When to Extract to Boolean](#when-to-extract-to-boolean)
+  - [Best Practice Recommendation](#best-practice-recommendation)
+  - [Summary (Boolean Extraction)](#summary)
+- [Functions should return what it creates and computes](#functions-should-return-what-it-creates-and-computes)
+- [Code Changes](#code-changes)
+  - [Recommendation: Return page instances directly](#recommendation-return-page-instances-directly)
+  - [Suggested Refactoring](#suggested-refactoring)
+  - [Benefits](#benefits)
+- [Guard Clauses](#guard-clauses)
+  - [Pattern: Guard Clause / Idempotency Guard](#pattern-guard-clause--idempotency-guard)
+  - [State machine vs guard clause](#state-machine-vs-guard-clause)
+  - [When to upgrade to a state machine](#when-to-upgrade-to-a-state-machine)
+  - [Best practices](#best-practices)
+- [Naming Conventions](#naming-conventions)
+  - [Decision Tree for Naming](#decision-tree-for-naming)
+  - [Common Confusion Points](#common-confusion-points)
+  - [Summary](#summary-1)
+- [Dry Utilities](#dry-utilities)
+  - [Benefits Summary](#benefits-summary)
+  - [What Are "Magic Strings"?](#what-are-magic-strings)
+  - [Structure Overview](#structure-overview)
+
+---
+
 # Boolean Extraction: Making Conditions Obvious
 
 ## What Does "Non-Obvious" Mean?
