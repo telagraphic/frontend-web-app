@@ -1,0 +1,13 @@
+---
+description: JS module shape and Baseline syntax for this starter.
+globs: app/**/*.js,server/**/*.js
+alwaysApply: false
+---
+
+Follow [documentation/reference/JS.md](documentation/reference/JS.md). Syntax lookup: [write-js FEATURES.md](.cursor/skills/write-js/FEATURES.md).
+
+- `class` for lifecycle (`init` / `destroy`). Named functions for composition roots and helpers (`createServices`, `createLayout`, `loadImages`).
+- Default export a class. Named-export a helper. No `index.js` barrels. No `#` private fields.
+- Required syntax: `async` / `await`, `?.`, `??`, `for…of`, `static` fields, `{ signal }`, `{ cause }`.
+- A feature JS.md does not list: look up MDN Baseline now. Limited or flag-only goes in `experiments/`.
+- No `var`, CommonJS, jQuery, React, TypeScript, or `create()` / `setup()` as lifecycle.

@@ -130,7 +130,7 @@ Multiple managers coordinate specific domains:
 **Location:** `app/components/Component.js`
 
 All components inherit from a base `Component` class that provides:
-- Event management (via EventManager)
+- Event management (AbortSignal on destroy; see ADR 0010)
 - Element selection and caching
 - Lifecycle hooks (create, destroy)
 - Event emission/listening
@@ -340,6 +340,8 @@ GSAP timeline animates element
 ```
 
 ## Key Components
+
+This section describes the code as it is today. For the catalog of services and layout components, and the design the ADRs settled on, see [SERVICES.md](reference/SERVICES.md). For how motion is created and cleaned up, see [ANIMATIONS.md](reference/ANIMATIONS.md).
 
 ### Router (`app/router/Router.js`)
 - Handles navigation lifecycle

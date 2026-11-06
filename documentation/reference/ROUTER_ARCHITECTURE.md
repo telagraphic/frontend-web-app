@@ -215,6 +215,7 @@ See: `documentation/guides/PAGE_LIFECYCLE.md`
 
 ## Notes / future improvements
 
+- **Refactor plan**: see [ADR 0001](../adr/0001-router-enhances-static-documents.md) for the planned commit order, the document-load fallback, and the removal of the history/resolver cycle.
 - **Prefetch strategy**: current implementation is “hover/focus intent”. You could extend this with a Strategy pattern (hover vs viewport vs idle).
 - **Cache invalidation**: prefetch cache is TTL-based; add explicit invalidation if pages can change frequently.
 - **Abort/cancel**: `RouterPageManager` uses an AbortController for fetch; prefetch could optionally share a separate controller for best isolation.

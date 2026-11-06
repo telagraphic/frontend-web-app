@@ -67,5 +67,12 @@
       color: var(--color-white);
       margin: 0;
     }
+
+    &-counter {
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+      font-size: var(--step-0);
+      color: var(--color-white);
+    }
   }
 }

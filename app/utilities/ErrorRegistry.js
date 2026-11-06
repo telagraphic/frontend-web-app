@@ -9,6 +9,10 @@ export const ERROR_CODES = {
   CLASS_NOT_FOUND: 'CLASS_NOT_FOUND',
   NETWORK_ERROR: 'NETWORK_ERROR',
   VALIDATION_ERROR: 'VALIDATION_ERROR',
+  MISSING_DEPENDENCY: 'MISSING_DEPENDENCY',
+  SERVICE_INIT_FAILED: 'SERVICE_INIT_FAILED',
+  COMPONENT_INIT_FAILED: 'COMPONENT_INIT_FAILED',
+  PAGE_HOOK_FAILED: 'PAGE_HOOK_FAILED',
 };
 
 export const ERROR_MESSAGES = {
@@ -17,12 +21,17 @@ export const ERROR_MESSAGES = {
   [ERROR_CODES.CLASS_NOT_FOUND]: 'Class not found: {className}',
   [ERROR_CODES.NETWORK_ERROR]: 'Network error: {message}',
   [ERROR_CODES.VALIDATION_ERROR]: 'Validation error: {message}',
+  [ERROR_CODES.MISSING_DEPENDENCY]: '{owner} is missing dependency: {dependency}',
+  [ERROR_CODES.SERVICE_INIT_FAILED]: 'Service failed to init: {service}',
+  [ERROR_CODES.COMPONENT_INIT_FAILED]: 'Layout component failed to init: {component}',
+  [ERROR_CODES.PAGE_HOOK_FAILED]: 'Page {page} failed in {hook} hook',
 };
 
 /**
  * Create an error with a specific error code and context
  * @param {string} code - Error code from ERROR_CODES
  * @param {Object} context - Context object with details for error message
+ * @param {Error} [context.cause] - The original error, kept as `error.cause`
  * @returns {Error} Error object with code and context properties
  */
 export function createError(code, context = {}) {
@@ -38,7 +47,7 @@ export function createError(code, context = {}) {
     return context[key] !== undefined ? String(context[key]) : match;
   });
   
-  const error = new Error(message);
+  const error = new Error(message, context.cause ? { cause: context.cause } : undefined);
   error.code = code;
   error.context = context;
   return error;

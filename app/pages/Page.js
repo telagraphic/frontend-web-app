@@ -24,7 +24,6 @@ export default class Page {
     smoothScroll,
     animationsManager,
     transitionsManager,
-    footnotes,
   }) {
     this.selector = element;
     this.selectorChildren = {
@@ -33,7 +32,6 @@ export default class Page {
     };
 
     this.smoothScroll = smoothScroll;
-    this.footnotes = footnotes;
     this.animationsManager = animationsManager; // AnimationsManager is a utility class - doesn't need element/elements in constructor
     this.transitionsManager = transitionsManager;
     this._created = false;
@@ -82,7 +80,6 @@ export default class Page {
   }
 
   async createComponents() {
-    this.footnotes?.setup();
     return true;
   }
 
@@ -132,7 +129,6 @@ export default class Page {
   }
 
   destroyComponents() {
-    this.footnotes = null;
     this.smoothScroll = null;
     return true;
   }
@@ -252,10 +248,6 @@ export default class Page {
    * Remove page event listeners
    */
   removeEventListeners() {
-    // ✅ Safety check: footnotes might be null if already destroyed
-    if (this.footnotes) {
-      this.footnotes.remove();
-    }
     // SmoothScroll resize listener is automatically removed in smoothScroll.destroy()
   }
 }

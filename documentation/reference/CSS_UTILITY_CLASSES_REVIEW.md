@@ -1,3 +1,5 @@
+> Superseded by [STYLES.md](STYLES.md) (ADR 0023). There is no utility-class library. Do not follow this document.
+
 # Utility Classes Review & Design System Approach
 
 ## Table of Contents

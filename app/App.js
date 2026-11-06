@@ -38,7 +38,6 @@ class App {
     this.smoothScroll = this.services.smoothScroll;
     this.animationsService = this.services.animationsService;
     this.transitionsService = this.services.transitionsService;
-    this.footnotes = this.services.footnotes;
     this.pageRegistry = this.services.pageRegistry;
     this.pageLoader = this.services.pageLoader;
     this.pageManager = this.services.pageManager;

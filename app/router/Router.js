@@ -30,7 +30,6 @@ export class Router {
     routerResolver,
     smoothScroll,
     transitionsManager,
-    footnotes,
     navigation,
     prefetchManager,
   }) {
@@ -42,7 +41,6 @@ export class Router {
     this.routerResolver = routerResolver;
     this.smoothScroll = smoothScroll;
     this.transitionsManager = transitionsManager;
-    this.footnotes = footnotes;
     this.navigation = navigation;
     this.prefetchManager = prefetchManager;
     this.isNavigating = false; // Guard to prevent concurrent navigations

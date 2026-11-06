@@ -183,11 +183,9 @@ export class Navigation extends Component {
     const checkIntersection = () => {
       const menuButtonRect = this.menuButton.getBoundingClientRect();
       const pageNavigation = document.querySelector(".page-navigation");
-      const pageFootnotes = document.querySelector(".page-footnotes");
 
       let isIntersecting = false;
 
-      // Check overlap with page-navigation
       if (pageNavigation) {
         const navRect = pageNavigation.getBoundingClientRect();
         if (
@@ -195,19 +193,6 @@ export class Navigation extends Component {
           menuButtonRect.top <= navRect.bottom &&
           menuButtonRect.right >= navRect.left &&
           menuButtonRect.left <= navRect.right
-        ) {
-          isIntersecting = true;
-        }
-      }
-
-      // Check overlap with page-footnotes
-      if (!isIntersecting && pageFootnotes) {
-        const footnotesRect = pageFootnotes.getBoundingClientRect();
-        if (
-          menuButtonRect.bottom >= footnotesRect.top &&
-          menuButtonRect.top <= footnotesRect.bottom &&
-          menuButtonRect.right >= footnotesRect.left &&
-          menuButtonRect.left <= footnotesRect.right
         ) {
           isIntersecting = true;
         }
@@ -226,7 +211,7 @@ export class Navigation extends Component {
       }
     };
 
-    // Observe page-navigation and page-footnotes for changes
+    // Observe page-navigation for changes
     const observerOptions = {
       root: null, // viewport
       rootMargin: "0px",
@@ -243,14 +228,9 @@ export class Navigation extends Component {
     );
 
     const pageNavigation = document.querySelector(".page-navigation");
-    const pageFootnotes = document.querySelector(".page-footnotes");
 
     if (pageNavigation) {
       this.menuButtonObserver.observe(pageNavigation);
-    }
-
-    if (pageFootnotes) {
-      this.menuButtonObserver.observe(pageFootnotes);
     }
 
     // Also check on scroll and resize

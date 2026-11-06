@@ -1,0 +1,12 @@
+---
+description: Use Bun for install, scripts, tests, and bundles in this starter.
+globs: package.json,*.js,*.jsx,*.css,*.njk,*.vto
+alwaysApply: false
+---
+
+Use Bun, not npm, pnpm, yarn, Node, Vite, or webpack.
+
+- `bun install` / `bun run <script>` / `bun test` / `Bun.build`
+- Browser entry is `app/App.js`. CSS entry is `styles/styles.css`. Dev is `bun run dev` (`server/dev.js` once built).
+- Do not add React, Vue, Svelte, Tailwind, or Vite. Documents are rendered by the project renderer (Nunjucks, Vento, or JSX at build time).
+- Do not use Bun HTML imports as the app model. That path was measured and rejected (ADR 0020).

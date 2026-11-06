@@ -1,3 +1,5 @@
+> Superseded by [STYLES.md](STYLES.md) (ADR 0023). Do not follow this document.
+
 # Utility Classes vs Mixins vs Extends: Strategy Guide
 
 ## Table of Contents

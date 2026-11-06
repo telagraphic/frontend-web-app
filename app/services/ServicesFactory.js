@@ -1,5 +1,4 @@
 import { SiteConfig } from "../config/SiteConfig.js";
-import { Footnotes } from "../components/Footnotes.js";
 import { SmoothScroll } from "../components/SmoothScroll.js";
 import { Navigation } from "../components/Navigation.js";
 import { AnimationsService } from "./AnimationsService.js";
@@ -24,8 +23,7 @@ export function createServices() {
     transitionType: TRANSITION_TYPES.CUSTOM // Default to custom for backward compatibility
   });
   const smoothScroll = new SmoothScroll();
-  const footnotes = new Footnotes({ smoothScroll });
-  const routerPageLoader = new RouterPageLoader({ siteConfig, smoothScroll, animationsManager: animationsService, transitionsManager: transitionsService, footnotes });
+  const routerPageLoader = new RouterPageLoader({ siteConfig, smoothScroll, animationsManager: animationsService, transitionsManager: transitionsService });
   const registryService = new RegistryService({ siteConfig, routerPageLoader });
   const routerPageManager = new RouterPageManager({ siteConfig, routerPageLoader });
   const routerHistory = new RouterHistory({ siteConfig });
@@ -49,7 +47,7 @@ export function createServices() {
 
   // Create remaining services that depend on the wired services
   const navigation = new Navigation({ siteConfig, registryService, smoothScroll });
-  const router = new Router({ siteConfig, registryService, routerPageLoader, routerPageManager, routerHistory, routerResolver, smoothScroll, animationsService, transitionsService, footnotes, navigation, prefetchManager });
+  const router = new Router({ siteConfig, registryService, routerPageLoader, routerPageManager, routerHistory, routerResolver, smoothScroll, animationsService, transitionsService, navigation, prefetchManager });
 
   return {
     siteConfig,
@@ -57,7 +55,6 @@ export function createServices() {
     smoothScroll,
     animationsService,
     transitionsService,
-    footnotes,
     registryService,
     routerPageLoader,
     routerPageManager,

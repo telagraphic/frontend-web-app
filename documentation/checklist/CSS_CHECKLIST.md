@@ -1,3 +1,5 @@
+> Superseded by [STYLES.md](../reference/STYLES.md) (ADR 0023). Do not follow this document.
+
 # CSS Modern Features & Best Practices Checklist
 
 ## Overview

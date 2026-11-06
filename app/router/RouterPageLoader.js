@@ -8,14 +8,13 @@ import { createError, ERROR_CODES } from "../utilities/ErrorRegistry.js";
  * RouterPageLoader is responsible for loading the page class
  */
 export class RouterPageLoader {
-  constructor({ siteConfig, registryService, smoothScroll, animationsManager, transitionsManager, footnotes }) {
+  constructor({ siteConfig, registryService, smoothScroll, animationsManager, transitionsManager }) {
     this.pageConfig = setupPageConfig();
     this.siteConfig = siteConfig;
     this.registryService = registryService; // Can be undefined initially, set via setregistryService()
     this.smoothScroll = smoothScroll;
     this.animationsManager = animationsManager;
     this.transitionsManager = transitionsManager;
-    this.footnotes = footnotes;
     this.nextPageInstance = null;
     this.loadedPageClass = null;
     this.cachedPageClass = null;
@@ -105,7 +104,6 @@ export class RouterPageLoader {
       smoothScroll: this.smoothScroll,
       animationsManager: this.animationsManager,
       transitionsManager: this.transitionsManager,
-      footnotes: this.footnotes,
     });
     this.registryService.setCurrentPage(pageInstance);
     return pageInstance;

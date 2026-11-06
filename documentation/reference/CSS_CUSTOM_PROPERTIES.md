@@ -1,3 +1,5 @@
+> Superseded by [STYLES.md](STYLES.md) (ADR 0023). Do not follow this document.
+
 # CSS Custom Properties Guide
 
 A comprehensive guide to CSS custom properties (CSS variables), their runtime behavior, integration patterns, and modern web application usage.

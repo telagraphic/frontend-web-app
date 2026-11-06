@@ -60,7 +60,7 @@ export const createPageObjectFromSelectors = (selectorChildren) => {
       Array.isArray(selector)
     ) {
       elements[key] = selector;
-      return;
+      continue;
     }
 
     // Handle selector strings
@@ -114,7 +114,7 @@ export const createComponentPageObjectFromSelectors = (selector, selectorChildre
       Array.isArray(selector)
     ) {
       elements[key] = selector;
-      return;
+      continue;
     }
 
     // Handle selector strings

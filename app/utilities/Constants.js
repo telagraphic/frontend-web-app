@@ -17,7 +17,6 @@ export const SELECTORS = Object.freeze({
   // Main structure
   MAIN: "main",
   MAIN_WITH_TEMPLATE: "main[data-template]",
-  BODY: "body",
 
   // Preloader
   PRELOADER: ".preloader",
@@ -30,21 +29,10 @@ export const SELECTORS = Object.freeze({
   // Page transitions
   TRANSITION_OVERLAY: ".page-transition-overlay",
   TRANSITION_TEMPLATES: "#page-transition-overlay-templates",
-  TRANSITION_COPY: ".page-transition-overlay__copy",
-  TRANSITION_IMAGE: ".page-transition-overlay__image",
-
-
-  // Footnotes
-  FOOTNOTES: "ul.footnotes li",
-  SUPERSCRIPT_LINKS: ".page-content a.footnote-superscript-link",
-  SUPERSCRIPT_LINK: "a.footnote-superscript-link",
-  FOOTNOTE_LINK: "a.footnote-link",
-
 
   // Navigation
   NAV: "nav",
   NAV_LINKS: "nav a",
-  LINK: ".link",
   INTERNAL_LINK: "a.internal-link",
   NAV_TOGGLE: ".navigation__toggle",
   NAV_TITLE: ".navigation__title",
@@ -79,9 +67,6 @@ export const ATTRIBUTES = Object.freeze({
 
   // Standard attributes
   HREF: "href",
-  SRC: "src",
-  CLASS: "class",
-  ID: "id",
   TARGET: "target",
   TABINDEX: "tabindex",
 });
@@ -92,9 +77,6 @@ export const ATTRIBUTES = Object.freeze({
 export const EVENTS = Object.freeze({
   // Custom events
   PRELOADER_COMPLETE: "preloader-complete",
-  HARD_REFRESH: "hard-refresh",
-  PAGE_CHANGE: "page-change",
-  ROUTE_CHANGE: "route-change",
   HISTORY_NAVIGATION: "history-navigation",
   
   // DOM events
@@ -102,8 +84,6 @@ export const EVENTS = Object.freeze({
   POPSTATE: "popstate",
   RESIZE: "resize",
   DOM_CONTENT_LOADED: "DOMContentLoaded",
-  LOAD: "load",
-  ERROR: "error",
 });
 
 /**

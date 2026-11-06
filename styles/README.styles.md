@@ -1,3 +1,5 @@
+> The accepted design is [STYLES.md](../documentation/reference/STYLES.md) (ADR 0023): plain CSS bundled by Bun, no Sass. This file describes the running Sass pipeline.
+
 # Sass Compilation & Bundling Setup
 
 This document outlines the complete Sass compilation and bundling setup for this project.

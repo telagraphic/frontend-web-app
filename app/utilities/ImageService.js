@@ -3,6 +3,12 @@
  * Consolidates image loading functionality from Images.js and ImageLoader.js
  * Handles loading images from data-src to src, decoding, progress tracking, and preloading
  * Provides a single source of truth for image loading across the application
+ *
+ * When building a real site, review this file for refactoring.
+ * Replace it with loadImages() in app/utilities/images.js.
+ * Above-the-fold images use data-preload. Below-the-fold images use loading="lazy".
+ * See documentation/adr/0018-above-the-fold-images-are-waited-on.md
+ * and documentation/reference/IMAGES.md.
  */
 
 import { SELECTORS, ATTRIBUTES } from './Constants.js';

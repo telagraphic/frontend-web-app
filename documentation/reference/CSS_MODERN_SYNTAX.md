@@ -1,3 +1,5 @@
+> Superseded by [STYLES.md](STYLES.md) (ADR 0023). Do not follow this document.
+
 # Modern CSS Syntax Features Guide
 
 ## Overview
