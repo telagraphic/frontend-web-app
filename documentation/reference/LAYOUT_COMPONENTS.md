@@ -9,8 +9,8 @@ Terms: [GLOSSARY.md](../../GLOSSARY.md). Verbs: [METHOD_VERBS.md](METHOD_VERBS.m
 The base is `app/components/Navigation.js`. A project subclasses it. `createLayout()` imports the subclass.
 
 ```
-app/components/menus/OverlayMenu.js
-styles/components/overlay-menu.css    # imported from styles/styles.css
+app/components/menus/Menu.js
+styles/components/menu.css    # imported from styles/styles.css
 ```
 
 The partial uses these attributes. Class names are the layout's.
@@ -25,11 +25,11 @@ The partial uses these attributes. Class names are the layout's.
 ```
 
 ```js
-// app/components/menus/OverlayMenu.js
+// app/components/menus/Menu.js
 import Navigation from "../Navigation.js";
 import { gsap } from "../../animations/gsap/gsap.js";
 
-export default class OverlayMenu extends Navigation {
+export default class Menu extends Navigation {
   onInit() {
     this.animations.add(({ reducedMotion }) => {
       const duration = reducedMotion ? 0 : 0.6;

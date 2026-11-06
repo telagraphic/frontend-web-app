@@ -81,8 +81,8 @@ Back and forward run the same steps with `history: "traverse"`. They restore the
 ## The swap itself
 
 ```js
-// app/router/swapMain.js
-export function swapMain(currentMain, nextMain) {
+// app/router/RouterSwap.js
+export function swap(currentMain, nextMain) {
   for (const { name } of [...currentMain.attributes]) {
     if (name.startsWith("data-")) currentMain.removeAttribute(name);
   }

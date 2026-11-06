@@ -54,10 +54,10 @@ GSAP transitions and view transitions are **two families**, not two adapters of 
 - Setter wiring — constructors are the seam.
 - `ImageService` as a long-lived object — markup + `loadImages`.
 - A DI container around six services — the factory is readable.
-- `RouterPageManager` as a factory-constructed object — fetch, swap, and head updates are the router module's implementation.
+- `RouterPageManager` or `RouterSwap` as a factory-constructed object — fetch, swap, and head updates are the router module's implementation.
 
 **Deletion test.** If we deleted `AnimationsService` and every page imported GSAP, the complexity would reappear at every call site. That module earns its keep. If we deleted a pass-through `Manager` that only forwarded `init`, nothing would reappear. Do not add those.
 
 ## Testing through the interface
 
-Dependencies are **in-process** (happy-dom, fakes in constructors) or **browser** (Playwright for overlay and view transitions). There is no network port in the core. Do not `mock.module()` to reach past a constructor. If a test has to change when the implementation changes, it is testing past the interface. Page-swap tests call `router.navigate`; they do not construct `RouterPageManager`, `RouterHistory`, or `RouterResolver`.
+Dependencies are **in-process** (happy-dom, fakes in constructors) or **browser** (Playwright for overlay and view transitions). There is no network port in the core. Do not `mock.module()` to reach past a constructor. If a test has to change when the implementation changes, it is testing past the interface. Page-swap tests call `router.navigate`; they do not construct `RouterPageManager`, `RouterSwap`, `RouterHistory`, or `RouterResolver`.

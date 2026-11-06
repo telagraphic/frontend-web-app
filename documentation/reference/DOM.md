@@ -152,7 +152,7 @@ this.use(new Accordion({ element: "[data-accordion='terms']", animationsService 
 
 ```js
 // a subclass adds to its parent's map
-static elements = { ...OverlayMenu.elements, image: "[data-menu-image]" };
+static elements = { ...Menu.elements, image: "[data-menu-image]" };
 ```
 
 ```js

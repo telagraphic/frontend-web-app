@@ -12,8 +12,8 @@ Built by `createServices()` in `app/services/ServicesFactory.js`, the compositio
 | --- | --- | --- | --- | --- |
 | Route table | Lists every route with its page class, path, title, meta description, and optional `pageTransition`. Config the factory constructs and the router holds, not a returned service | `app/config/siteRoutes.js` (data) and `app/config/SiteConfig.js` (class) | Exists. The `class` field becomes `page`. Overlay fields follow ADR 0024 | ADR 0004, 0006, 0024 |
 | Router, page swap | Intercepts internal links, runs the order of each navigation, owns the current page, builds page classes, and dispatches `navigationstart` and `navigationend` | `app/router/Router.js` | Exists. Being refactored | ADR 0001, 0005, 0006 |
-| Document load navigation | Same interface as the page swap router, using browser document loads. Used instead of it when the setup chooses document load | Not created yet | To build | ADR 0002, 0006 |
-| Transitions service | Sequences hide/load/commit. Ships with GSAP transitions (`prepare` / `cover` / `reveal`) and with page-swap view transitions (`wrapCommit` → `document.startViewTransition`). Not included on document-load view transitions | `app/services/TransitionsService.js`, plug-ins in `app/transitions/` | Exists. To refactor. Paths: [PAGE_TRANSITIONS.md](PAGE_TRANSITIONS.md) | ADR 0005, 0012 |
+| Document load navigation | Same interface as the page swap router. GSAP document load only: cover, flag, then `location.assign`. View-transition document load and None do not ship it | `app/router/DocumentLoad.js` | To build. File list: [WIZARD.md](WIZARD.md) | ADR 0002, 0006 |
+| Transitions service | Sequences hide/load/commit. The factory imports one file as `transitionsService`. `GsapTransitions.js` is `prepare` / `cover` / `reveal` and ships on both GSAP paths. `ViewTransitions.js` is `wrapCommit` and ships on view transition + page swap only. Document-load view transitions and None ship neither | `app/services/GsapTransitions.js` or `app/services/ViewTransitions.js`; plug-ins in `app/transitions/` | To build. File list: [WIZARD.md](WIZARD.md). Paths: [PAGE_TRANSITIONS.md](PAGE_TRANSITIONS.md) | ADR 0005, 0012, 0002 |
 | Animations service | The site's only connection to GSAP. Registers plugins, connects smooth scroll to ScrollTrigger, creates animation scopes, runs `data-animation` types, and refreshes ScrollTrigger | `app/services/AnimationsService.js`, with GSAP code in `app/animations/gsap/` | Exists. To refactor. Usage: [ANIMATIONS.md](ANIMATIONS.md) | ADR 0009 |
 | Smooth scroll | Wraps Lenis. Never imports GSAP. Pauses with `stop()` and `start()`. `refresh()` after a page's init; window resize only when width changes. One preset name picks the feel | `app/components/SmoothScroll.js` | Exists. To refactor | ADR 0006, 0009, 0015, 0016 |
 
@@ -35,7 +35,8 @@ Built by the router itself, never by the factory or anything else (ADR 0006). In
 | Router history | Pushes and replaces history entries, and reports back and forward | `app/router/RouterHistory.js` |
 | Router resolver | Decides what a link is: a route to commit, the same document, external, or not found | `app/router/RouterResolver.js` |
 | Router page loader | Loads a route's page class through the page index | `app/router/RouterPageLoader.js` |
-| Router page manager | Fetches the next page's HTML and swaps the children of `<main>` (`swapMain`, `updateHead`). Does not apply theme or construct `ImageService` | `app/router/RouterPageManager.js` (or equivalent internal helpers) |
+| Router page manager | Fetches the next page's HTML. Does not apply theme or construct `ImageService` | `app/router/RouterPageManager.js` |
+| Router swap | Replaces the children of `<main>` and copies head fields (`swap`, `updateHead`) | `app/router/RouterSwap.js` |
 | Prefetch cache | Keeps recently fetched page HTML | `app/router/RouterPrefetchCache.js` |
 | Prefetch manager | Fetches the next page on hover and focus | `app/router/RouterPrefetchManager.js` |
 
@@ -54,7 +55,7 @@ Built by `createLayout(services)`, the composition root for layout components. E
 
 | Layout component | What it does | Lives in | Status |
 | --- | --- | --- | --- |
-| Menu | `Navigation` owns `open` and `close`. A subclass supplies markup and motion. Closes on `navigationstart`. Sets `aria-current="page"` by href | `app/components/Navigation.js`, starter subclass in `app/components/menus/` | Exists. To refactor. Boilerplate: [LAYOUT_COMPONENTS.md](LAYOUT_COMPONENTS.md). ADR 0006, 0017 |
+| Menu | `Navigation` owns `open` and `close`. The starter subclass is `Menu`. Closes on `navigationstart`. Sets `aria-current="page"` by href | `app/components/Navigation.js`, `app/components/menus/Menu.js` | Exists. To refactor. Boilerplate: [LAYOUT_COMPONENTS.md](LAYOUT_COMPONENTS.md). ADR 0006, 0017 |
 | Preloader | Covers the first document of a session. Later document loads do not paint it. Page `show` runs after it hides. While it is up, skip link, menu, footer, host, and `<main>` are `inert`. `maxWait` defaults to 4000. The counter is off unless `counter` is true | `app/components/Preloader.js` | Exists. Built by `App.js` today. ADR 0014 |
 
 `createLayout()` doesn't exist yet.
@@ -67,9 +68,9 @@ ADR 0006: `createLayout` attaches these. They hear `navigationstart` / `navigati
 | --- | --- |
 | Focus | After `navigationend` on a page swap, move focus to `main` unless something inside it already has focus. Abort with the layout signal. Skip the first boot. Do not steal restored focus on document load |
 
-Theme is CSS after `swapMain` copies `data-background` and `data-color`. Analytics is the first integration. Neither is a layout listener.
+Theme is CSS after RouterSwap copies `data-background` and `data-color`. Analytics is the first integration. Neither is a layout listener.
 
-A 404 is a route plus a view. The resolver's `not-found` outcome loads it. Do not add a 404 service, a font service, or a breakpoint service. Future APIs: [CANDIDATES.md](CANDIDATES.md). Speed checks: [PERFORMANCE.md](PERFORMANCE.md).
+Not-found is a route plus a view (ADR 0025). Unknown paths are a document load of that view with HTTP 404. Do not add a 404 service, a font service, or a breakpoint service. Future APIs: [CANDIDATES.md](CANDIDATES.md). Speed checks: [PERFORMANCE.md](PERFORMANCE.md).
 
 ## Lists the composition roots read
 

@@ -18,7 +18,7 @@ The wizard question named navigation is still page swap or document load (ADR 00
 - The panel carries `data-lenis-prevent` (ADR 0016) and `overscroll-behavior: contain`. The toggle has an accessible name and is at least `2.75rem` in both axes (or a 44px hit area that does not overlap another control).
 - GSAP in `onOpen`, `onClose`, and `onInit` runs inside the component's animation scope. Import GSAP from `app/animations/gsap/gsap.js`. Reduced motion uses duration `0`.
 - The starter overlay's title fade and toggle color are that subclass and its stylesheet. They are not methods on the base.
-- `createLayout()` imports one menu subclass. The base is not constructed on its own.
+- `createLayout()` imports one menu subclass. The starter subclass is `Menu` in `app/components/menus/Menu.js`. The base is not constructed on its own.
 
 ## Considered Options
 

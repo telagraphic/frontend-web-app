@@ -18,7 +18,7 @@ GitHub: parent [#5](https://github.com/telagraphic/frontend-web-app/issues/5). C
 | **5** | [#11](https://github.com/telagraphic/frontend-web-app/issues/11) | Animation scope, Lenis `stop`, `loadImages`, preloader session, menu API | 0009, 0016, 0018, 0014, 0017 | No leftover ScrollTriggers after a swap. Preloader `inert` covers chrome |
 | **6** | [#12](https://github.com/telagraphic/frontend-web-app/issues/12) | GSAP plug-in; destination `pageTransition`; empty host | 0012, 0024 | Default combination works |
 | **7** | [#13](https://github.com/telagraphic/frontend-web-app/issues/13) | Playwright on that combination | 0008 | Overlay, back/forward, `pageshow` |
-| **8** | [#14](https://github.com/telagraphic/frontend-web-app/issues/14) | Hono renderer; Home-only starter views | 0020, starter composition | `bun run dev` / `build`. Shea pages gone. Home is `views/pages/home.{ext}` |
+| **8** | [#14](https://github.com/telagraphic/frontend-web-app/issues/14) | Hono renderer; Home and not-found views | 0020, 0025, starter composition | `bun run dev` / `build`. Shea pages gone. Home is `views/pages/home.{ext}`. Unknown paths are HTTP 404 |
 | **9** | [#15](https://github.com/telagraphic/frontend-web-app/issues/15) | Document-load navigation; both view-transition paths; None | 0002 | Five combinations run via create flags |
 | **10** | [#16](https://github.com/telagraphic/frontend-web-app/issues/16) | `bun run create` + CI matrix | 0002 | Seven created-site jobs ([WIZARD.md](WIZARD.md)) |
 | **11** | [#17](https://github.com/telagraphic/frontend-web-app/issues/17) | Starlight from the markdown | 0003 | Site matches the code |

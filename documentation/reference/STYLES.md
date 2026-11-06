@@ -33,7 +33,9 @@ A project keeps reset, layer order, and base axioms. It replaces tokens, compone
 @import "./base/base.css" layer(base);
 @import "./base/typography.css" layer(base);
 @import "./components/navigation.css" layer(components);
+@import "./components/menu.css" layer(components);
 @import "./pages/home.css" layer(pages);
+@import "./pages/not-found.css" layer(pages);
 @import "./utilities/sr-only.css" layer(utilities);
 ```
 

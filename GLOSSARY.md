@@ -9,12 +9,16 @@ One public path the site serves, together with the page class that runs on it.
 _Avoid_: page (for a URL), URL entry
 
 **Route key**:
-The unique name of a route, such as `home`. Every document carries it as `<main data-route>`.
+The unique name of a route, such as `home` or `not-found`. Every document carries it as `<main data-route>`.
 _Avoid_: slug, route ID, page ID
 
 **Route table**:
 The list of every route the site serves, with its page class, public path, title, and optional overlay fields.
 _Avoid_: routes map, site settings
+
+**Not-found**:
+The route the server renders for an unknown path. Key `not-found`, path `/404`. HTTP 404 keeps the typed URL. Visiting `/404` is this route at 200.
+_Avoid_: 404 service, error page (as a class), catch-all router
 
 **Config**:
 A list a project edits to choose what a service runs. The route table, the page index, the animation index, the scroll presets, and the transition effect map are config.
@@ -67,8 +71,8 @@ A reaction `createLayout` attaches to navigation events, with no markup of its o
 _Avoid_: shell listener, document listener, global listener, service (for this)
 
 **Menu**:
-The layout component that opens and closes the site links. The base class is `Navigation`. A project replaces the markup and the motion. `open` and `close` stay the same.
-_Avoid_: hamburger, nav, navigation (when you mean page swap or document load)
+The layout component that opens and closes the site links. The base class is `Navigation`. The starter subclass is `Menu`. A project replaces the markup and the motion. `open` and `close` stay the same.
+_Avoid_: hamburger, nav, OverlayMenu, navigation (when you mean page swap or document load)
 
 **Boot**:
 The startup that runs once per document load: it sets up services and runs the first page's page class.

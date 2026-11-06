@@ -9,7 +9,7 @@ This codebase is classes **and** functions. Pick by lifetime, not by taste.
 | Shape | When | Export | Example |
 | --- | --- | --- | --- |
 | `class` | An object with `init` / `destroy` (and `show` / `hide` or `open` / `close`) | Default | Page class, layout component, service, GSAP transition, `App` |
-| Named function | Builds and returns, or has no lifetime | Named | `createServices`, `createLayout`, `loadImages`, `listenFocus`, `createTitleReveal`, `swapMain` |
+| Named function | Builds and returns, or has no lifetime | Named | `createServices`, `createLayout`, `loadImages`, `listenFocus`, `createTitleReveal`, `swap` |
 
 A class that only wraps one function is too shallow: write the function. A helper that grows `init` / `destroy` is a class (or it belongs inside one). Composition roots stay functions; they are allowed to be shallow (ADR 0006, ADR 0007).
 
@@ -22,8 +22,10 @@ export default class Home extends BasePage {
   }
 }
 
+import Menu from "../components/menus/Menu.js";
+
 export function createLayout({ router, smoothScroll }) {
-  const menu = new OverlayMenu({ router, smoothScroll });
+  const menu = new Menu({ router, smoothScroll });
   return {
     async init() { await menu.init(); },
     destroy() { menu.destroy(); },

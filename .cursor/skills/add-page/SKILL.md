@@ -10,7 +10,7 @@ description: >-
 
 Read [PAGE.md](../../../documentation/reference/PAGE.md) and copy that boilerplate. Terms are in [GLOSSARY.md](../../../GLOSSARY.md). CSS rules: [STYLES.md](../../../documentation/reference/STYLES.md).
 
-The starter already has Home at `/`. This skill adds another route.
+The starter already has Home at `/` and not-found at `/404`. This skill adds another route. Do not add a second 404.
 
 ## Do
 
@@ -26,7 +26,7 @@ The work is done when `bun run dev` serves the path, the document has one `main[
 
 ## Do not
 
-- Add `View.js`, `Introduction.js`, or `References.js`. Home is the only sample page class.
+- Add `View.js`, `Introduction.js`, or `References.js`. Home is the sample page class. Not-found uses `Page`.
 - Name the view `index.{ext}`. Home is `home.{ext}` at path `/`.
 - Call `create`, `setup`, or `super.create()`. Stages are `init`, `show`, `hide`, `destroy`.
 - Query outside `main[data-route]`. Layout components own the menu, preloader, and footer.

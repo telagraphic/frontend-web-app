@@ -6,7 +6,7 @@ status: accepted
 
 This repo is a starter for client sites. A setup wizard creates each client site from it. The wizard asks a question only when a function has two or more options, because each answer changes which code the client site contains. Today that is page transition, navigation, and renderer. Site name and origin are text fills. Motion (GSAP with `AnimationsService`), hosting (static pages served by Bun), lint/format/image tools, menu, smooth scroll, and integrations (none) each have a single option, so they are copied and listed as fixed.
 
-The command, the option tree, the copy/drop map, and the CI matrix are in [WIZARD.md](../reference/WIZARD.md).
+The command, the option tree, the copy/drop map, the file list, and the CI matrix are in [WIZARD.md](../reference/WIZARD.md).
 
 ## Options offered
 
@@ -36,7 +36,7 @@ Shared-element names are for view transitions only, set in CSS as `{role}-{route
 - `bun run create <dest>` runs `wizard/create.js` in the starter. With no `<dest>`, the wizard asks for the folder. Interactive prompts use `@clack/prompts`, a starter-only dependency. Flags `--transition`, `--navigation`, `--renderer`, `--name`, and `--origin` skip the option prompts so CI can run without a TTY. `--dest` is also accepted.
 - Refuse `.`, the starter root, a path inside the starter, and a non-empty destination. No overwrite. On failure after the copy starts, delete the destination.
 - The wizard copies the starter into `<dest>`. The starter repo is never rewritten. A published `bunx create-…` package can wait.
-- The copy skips `wizard/`, `node_modules/`, `dist/`, `.dev/`, and `.git`. It includes `experiments/`. Then unused modules for this combination are deleted. The wizard writes only these seams: `app/config/site.js`, `package.json` (name, renderer packages, no `@clack/prompts`, no `create` script), `server/renderer.js`, `.prettierrc`, `styles/styles.css` imports, the imports in `app/services/ServicesFactory.js`, the overlay host in the layout (GSAP only), and the GSAP document-load cover flag in `app/head.js`. No search-replace across the tree.
+- The copy skips `wizard/`, `node_modules/`, `dist/`, `.dev/`, and `.git`. It includes `experiments/`. Then unused modules for this combination are deleted. The wizard writes only these seams: `app/config/site.js`, `package.json` (name, renderer packages, no `@clack/prompts`, no `create` script), `server/renderer.js`, `.prettierrc`, `styles/styles.css` imports, the imports in `app/services/ServicesFactory.js`, the imports in `app/layout/createLayout.js`, the overlay host in the layout (GSAP only), and the GSAP document-load cover flag in `app/head.js`. No search-replace across the tree. A file is copied only when the chosen site needs all of it. Two options that need different bodies get two files.
 - The copy includes `.cursor/skills/`, `AGENTS.md`, `GLOSSARY.md`, `documentation/adr/`, and `documentation/reference/`. It omits `documentation/guides/`, `documentation/refactoring-reviews/`, and `APPLICATION_GUIDE.md`. Starter-only tests and the create-matrix CI workflow stay in the starter. A created site gets site-level lint, test, and build only.
 - `assertDocument()` requires `[data-transition-host]` only on the GSAP path (ADR 0020).
 - Prettier, ESLint, Stylelint, html-validate, and `scripts/process-image.js` ship on every site. The wizard does not ask about them. It only writes the renderer-specific Prettier file and, for JSX, the ESLint snippet (ADR 0020).

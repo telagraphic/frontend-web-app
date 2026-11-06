@@ -43,7 +43,7 @@ An SPA framework, Barba, Sass, a utility-class library, a runtime settings file.
 | --- | --- |
 | Focus after a page swap | Layout listener attached by `createLayout`. ADR 0006. |
 | Theme (`data-background`, `data-color`) | Copied onto `<main>` by page swap. CSS owns the paint. Not `BackgroundColors` in the router |
-| 404 | A route and a view, not a service. The resolver's `not-found` outcome loads it |
+| 404 | Locked: route key `not-found`, path `/404` (ADR 0025). Not a service |
 | `modulepreload` / `preconnect` | Layout `<head>`, [PERFORMANCE.md](PERFORMANCE.md) |
 | Analytics, accounts, search, payments | [add-integration](../../.cursor/skills/add-integration/SKILL.md) when the first one lands |
 

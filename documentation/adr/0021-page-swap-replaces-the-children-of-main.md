@@ -8,7 +8,7 @@ The page swap used two class names for unrelated jobs. The router took `section.
 
 ## Decisions
 
-- `<main id="main" data-route="{route key}" tabindex="-1">` is the only page swap hook. Every document has exactly one. `id` and `tabindex` stay on the live node. `swapMain` copies only `data-*` attributes and replaces children.
+- `<main id="main" data-route="{route key}" tabindex="-1">` is the only page swap hook. Every document has exactly one. `id` and `tabindex` stay on the live node. RouterSwap copies only `data-*` attributes and replaces children.
 - On a swap, the router replaces the children of the current `<main>` with the children of the fetched `<main>`. It removes the current `data-*` attributes from `<main>` and copies the fetched ones. Everything outside `<main>` stays: the menu, the preloader, `[data-transition-host]`, and the footer.
 - `data-background` and `data-color` on `<main>` are the page's theme. They travel with the other `data-*` attributes.
 - The router copies `<title>`, `meta[name="description"]`, and `link[rel="canonical"]` from the fetched document. That replaces setting them from the route record (ADR 0001, action 8), because the document already has the values `server/data.js` computed (ADR 0020).

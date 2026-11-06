@@ -15,7 +15,7 @@ Every layout produces this shell. `assertDocument()` fails without it.
 | `<html lang>` | Required. Starter is `en` |
 | Viewport | `width=device-width, initial-scale=1`. Never `user-scalable=no` or `maximum-scale` |
 | Skip link | First focusable in `<body>`: `<a class="skip-link" href="#main">Skip to content</a>` |
-| `<main id="main" data-route tabindex="-1">` | One landmark. `id` and `tabindex` stay on the live node; `swapMain` copies only `data-*` |
+| `<main id="main" data-route tabindex="-1">` | One landmark. `id` and `tabindex` stay on the live node; RouterSwap copies only `data-*` |
 | Title | Matches the page. Copied on page swap (ADR 0021) |
 | Overlay host | GSAP path only: `<div data-transition-host hidden aria-hidden="true">`. Not a landmark, never focusable |
 

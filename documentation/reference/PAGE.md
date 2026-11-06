@@ -2,20 +2,23 @@
 
 Copy this when adding a route with its own view, stylesheet, and page class. Terms: [GLOSSARY.md](../../GLOSSARY.md). Verbs: [METHOD_VERBS.md](METHOD_VERBS.md). Lifecycle: [ADR 0004](../adr/0004-boot-loads-page-classes-from-the-page-index.md), [ADR 0011](../adr/0011-base-lifecycle-holds-signal-and-scope.md). Markup: [TEMPLATES.md](TEMPLATES.md). CSS: [STYLES.md](STYLES.md). Motion: [ANIMATIONS.md](ANIMATIONS.md). Accessibility: [ACCESSIBILITY.md](ACCESSIBILITY.md).
 
-The starter ships one of these: Home, at `/`. Extra pages come from `.cursor/skills/add-page/SKILL.md`.
+The starter ships Home at `/` and not-found at `/404` (ADR 0025). Extra pages come from `.cursor/skills/add-page/SKILL.md`.
 
 Status: this page describes the accepted starter composition. The running site still has `views/pages/index.html`, the section views, `View.js`, `Introduction.js`, `References.js`, and leftover animation files.
 
 ## Files
 
-The starter page:
+Starter pages:
 
 ```
-app/config/siteRoutes.js              home: { path: "/", page: "Home", … }
-app/config/pages.js                   Home: () => import("../pages/Home.js")
+app/config/siteRoutes.js              home, not-found
+app/config/pages.js                   Home, Page
 app/pages/Home.js
+app/pages/Page.js                     not-found uses this; no NotFound.js
 views/pages/home.{ext}
+views/pages/not-found.{ext}
 styles/pages/home.css
+styles/pages/not-found.css
 ```
 
 An extra route, key `about`:
@@ -39,6 +42,12 @@ home: {
   title: "Home",
   description: "The site home.",
   page: "Home",
+},
+"not-found": {
+  path: "/404",
+  title: "Page not found",
+  description: "This URL is not a route.",
+  page: "Page",
 },
 about: {
   path: "/about",
@@ -100,7 +109,7 @@ export default function About(data) {
 }
 ```
 
-Home is `views/pages/home.{ext}`, route key `home`, path `/`. Do not name it `index`.
+Home is `views/pages/home.{ext}`, route key `home`, path `/`. Do not name it `index`. Not-found is `views/pages/not-found.{ext}`, route key `not-found`, path `/404` (ADR 0025).
 
 ## Page class
 
