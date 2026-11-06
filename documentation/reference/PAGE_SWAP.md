@@ -2,7 +2,7 @@
 
 A **page swap** is a same-document navigation. The router fetches the next route's document, replaces what is inside `<main>`, and keeps everything else on screen. The decisions are [ADR 0001](../adr/0001-router-enhances-static-documents.md), [ADR 0005](../adr/0005-router-runs-the-page-lifecycle.md), and [ADR 0021](../adr/0021-page-swap-replaces-the-children-of-main.md). Terms are in [GLOSSARY.md](../../GLOSSARY.md).
 
-Status: this page describes the accepted design. `RouterPageManager.js` still swaps `section.page-template` today.
+Status: implemented. `Router.navigate()` swaps the children of `<main>`, copies `data-*` and head fields, and runs the page lifecycle. Overlay `run({ leave, load, swap })` as a published plug-in is slice 6.
 
 ## What stays and what changes
 
@@ -80,6 +80,8 @@ Back and forward run the same steps with `history: "traverse"`. They restore the
 
 ## The swap itself
 
+`swap` updates the live `<main>` in place. It removes every `data-*` attribute on that node, copies `data-*` from the fetched `<main>`, and replaces the children. `id` and `tabindex` are not `data-*` attributes, so they stay on the node the skip link and focus already point at. `updateHead` copies the document title, the description meta, and the canonical link from the fetched document. When the fetched document has a tag the live head lacks, it is appended. When the live head has a tag the fetched document lacks, it is removed.
+
 ```js
 // app/router/RouterSwap.js
 export function swap(currentMain, nextMain) {
@@ -96,7 +98,10 @@ export function updateHead(nextDocument) {
   document.title = nextDocument.title;
   for (const selector of ['meta[name="description"]', 'link[rel="canonical"]']) {
     const next = nextDocument.head.querySelector(selector);
-    document.head.querySelector(selector)?.replaceWith(next ?? "");
+    const current = document.head.querySelector(selector);
+    if (next && current) current.replaceWith(next.cloneNode(true));
+    else if (next && !current) document.head.append(next.cloneNode(true));
+    else current?.remove();
   }
 }
 ```

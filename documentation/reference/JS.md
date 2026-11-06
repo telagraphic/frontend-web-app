@@ -13,6 +13,8 @@ This codebase is classes **and** functions. Pick by lifetime, not by taste.
 
 A class that only wraps one function is too shallow: write the function. A helper that grows `init` / `destroy` is a class (or it belongs inside one). Composition roots stay functions; they are allowed to be shallow (ADR 0006, ADR 0007).
 
+The first export is a page class. It listens with `this.signal`, so `destroy` aborts the listener without an `off` helper. The second is `createLayout`. It constructs the menu and returns `init` and `destroy` that forward to it. Boot calls those two methods. The function itself has no lifetime after it returns.
+
 ```js
 export default class Home extends BasePage {
   static elements = { title: "[data-home-title]" };
@@ -65,7 +67,7 @@ Look up a feature that is not in this table on MDN Baseline **now** ([FEATURES.m
 
 ## Shape
 
-Lifecycle objects share one shell (ADR 0011): `init` / `destroy`, abort signal, animation scope when they animate, `this.use(child)` when they own children. They do not implement `create` or `setup`.
+Lifecycle objects share one shell (ADR 0011): `init` / `destroy`, abort signal, animation scope when they animate, `this.use(child)` when they own children. They do not implement `create` or `setup`. The sample is the page-class form of that shell: `static elements` for the nodes, `onInit` for the work, and `this.animations.add` so the motion reverts with the page.
 
 ```js
 import BasePage from "./BasePage.js";

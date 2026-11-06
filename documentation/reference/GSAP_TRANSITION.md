@@ -6,18 +6,28 @@ Terms: [GLOSSARY.md](../../GLOSSARY.md). Paths: [PAGE_TRANSITIONS.md](PAGE_TRANS
 
 ## Files
 
+A plug-in is one folder: the class that injects markup and runs the tweens, and the stylesheet for that markup. The layout already has the empty host. The plug-in fills it per navigation and empties it when the reveal finishes.
+
 ```
 app/transitions/wipe/WipeTransition.js
 app/transitions/wipe/wipe.css           # imported from styles/styles.css
 ```
 
-The layout host is shared. Do not add markup there.
+The host stays empty in the layout. `prepare` writes into it, and `reveal` clears it. The `hidden` attribute keeps it out of the page until then. `aria-hidden="true"` keeps the overlay out of the accessibility tree while it is only a visual cover.
 
 ```html
 <div class="page-transition-overlay" data-transition-host hidden aria-hidden="true"></div>
 ```
 
 ## Class
+
+The factory constructs the plug-in with the host element and `animationsService`. The class does not fetch HTML or replace `<main>`. `TransitionsService` calls these methods around the router's commit.
+
+`init` opens an animation scope on the host so the cover and reveal tweens revert together. `destroy` reverts that scope, empties the host, and hides it.
+
+`markup({ to })` returns the HTML for this navigation. It reads `to.pageTransition` only. `copy`, `image`, and `alt` are strings the destination route supplied. `prepare` writes that HTML into the host, unhides the host, and waits for `loadImages` on an injected image so the cover does not rise over an empty frame.
+
+`cover` tweens the host from below the viewport (`yPercent: 100`) to covering it (`yPercent: 0`) and resolves on complete. `reveal` tweens it off the top (`yPercent: -100`), then hides the host and removes the injected nodes before resolving. Both durations are `0` when `reducedMotion` is set, so the promise still settles and the service can continue. The service awaits these promises. The plug-in does not dispatch `transitionstart` or `transitionend`. The service does that.
 
 ```js
 // app/transitions/wipe/WipeTransition.js
@@ -93,9 +103,11 @@ export default class WipeTransition {
 }
 ```
 
-`cover` and `reveal` return promises. `TransitionsService` awaits them. Do not dispatch `transitionstart` or `transitionend` here. The service does that, and nothing awaits those events.
+`cover` and `reveal` return promises so the service can await the visual. The event dispatch stays on the service because nothing in the plug-in waits on those events.
 
 ## Styles
+
+The wipe fills the host (`inset: 0` on an absolute box). The image covers that box. The copy sits centered on top of the image.
 
 ```css
 /* app/transitions/wipe/wipe.css */

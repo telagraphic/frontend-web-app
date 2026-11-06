@@ -41,9 +41,13 @@ The copy-paste class, styles, factory wiring, and route field are in [GSAP_TRANS
 
 The router owns hide, load, and commit. The service only orders them around cover and reveal.
 
+The layout includes one empty host. The plug-in fills it during `prepare` and clears it at the end of `reveal`.
+
 ```html
 <div class="page-transition-overlay" data-transition-host hidden aria-hidden="true"></div>
 ```
+
+`markup` reads the destination route and returns the overlay HTML. `prepare` writes it into the host before the tween. `cover` and `reveal` are the tweens. The full class, including `loadImages` and the animation scope, is in [GSAP_TRANSITION.md](GSAP_TRANSITION.md).
 
 ```js
 // WipeTransition.js — markup lives here, not in the layout
@@ -60,6 +64,8 @@ export default class WipeTransition {
   reveal() { /* gsap, resolve when gone; then host.replaceChildren() */ }
 }
 ```
+
+`run` is the sequence the service awaits. `prepare` finishes first, so the overlay image is decoded before anything moves. Load, the current page's `hide`, and `cover` then run together. `commit` swaps `<main>` while the cover is up. `reveal` runs after the new page is in the document.
 
 ```js
 // TransitionsService.run
@@ -79,6 +85,8 @@ Same host and plug-in. No page-swap router. The click calls `cover()`, writes `{
 
 Spec: [same-document view transitions](https://developer.mozilla.org/en-US/docs/Web/API/Document/startViewTransition). The callback **is** the DOM update. `TransitionsService` exists only to call it. There is no host and no GSAP cover.
 
+The CSS gives an element a name the browser can match across the two states of the document. `site-nav` stays on the menu, which does not swap. A name like `hero-section-3` is unique in the document so the hero can move from one page's hero to the next. The reduced-motion query turns those group animations off.
+
 ```css
 .nav { view-transition-name: site-nav; }
 .hero { view-transition-name: hero-section-3; } /* unique in the document */
@@ -87,6 +95,8 @@ Spec: [same-document view transitions](https://developer.mozilla.org/en-US/docs/
   ::view-transition-group(*) { animation: none; }
 }
 ```
+
+`wrapCommit` is the only method on this path. It runs `commit` inside `document.startViewTransition` and returns the `finished` promise, which settles when the browser's animation ends. When the API is missing, it runs `commit` directly and the navigation still completes.
 
 ```js
 // ViewTransition.js
@@ -97,6 +107,8 @@ export default class ViewTransition {
   }
 }
 ```
+
+`hide` finishes before the snapshot, so the browser photographs the settled page. `wrapCommit` is the DOM update the spec requires inside the callback. The new page is already loaded, because `startViewTransition` should not wait on a fetch.
 
 ```js
 // TransitionsService.run — this path
@@ -116,6 +128,8 @@ Rules that keep this spec-shaped:
 
 Spec: [cross-document view transitions](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using#cross-document_view_transitions). The browser performs the navigation. **Do not ship `TransitionsService` or the page-swap router.** Do not `preventDefault` on links.
 
+`@view-transition { navigation: auto }` opts the document into that browser navigation. The named elements are the same idea as the page-swap path: a stable name on something both documents share, such as the menu. The reduced-motion query turns the group animations off.
+
 ```css
 @view-transition {
   navigation: auto;
@@ -129,7 +143,7 @@ Spec: [cross-document view transitions](https://developer.mozilla.org/en-US/docs
 }
 ```
 
-Optional, only when a shared name must be chosen at click time:
+The listeners below are optional, and only when a shared name must be chosen at click time. `pageswap` fires on the outgoing document before its snapshot. `pagereveal` fires on the incoming document. Both can set the same `view-transition-name` on the elements that should move together. They live in the external head script. `TransitionsService` does not exist on this path.
 
 ```js
 // external head script, not TransitionsService

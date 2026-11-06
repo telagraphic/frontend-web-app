@@ -13,7 +13,7 @@ app/components/menus/Menu.js
 styles/components/menu.css    # imported from styles/styles.css
 ```
 
-The partial uses these attributes. Class names are the layout's.
+The partial uses these attributes. `Navigation` queries them, so a tutorial can change class names and inner artwork and leave the attributes in place. `data-navigation-status` is the open or closed state. The toggle's `aria-expanded` and `aria-controls` point at the panel. The panel sets `data-lenis-prevent` so smooth scroll does not capture wheel events inside the menu.
 
 ```html
 <nav data-navigation data-navigation-status="not-active">
@@ -23,6 +23,8 @@ The partial uses these attributes. Class names are the layout's.
   </div>
 </nav>
 ```
+
+The subclass supplies the motion. It does not reimplement open, close, focus, or scroll pause. `onInit` builds a paused timeline inside the animation scope the base already created. `onOpen` plays it. `onClose` reverses it. The base calls those hooks from `open` and `close`.
 
 ```js
 // app/components/menus/Menu.js
@@ -57,6 +59,8 @@ The timeline runs inside the component's animation scope and resolves before `pr
 
 ## Another layout component
 
+Any other layout component extends `Component`. The constructor receives `animationsService` and the root element and passes them to the base, which opens the signal and the animation scope before `onInit`. Motion is created inside `this.animations.add`. Under reduced motion the callback returns without a tween, and the element stays at its CSS rest state. `createLayout(services)` is where the class is constructed. A missing root throws `COMPONENT_INIT_FAILED` and boot continues (ADR 0007).
+
 ```js
 // app/components/SiteHeader.js
 import Component from "./Component.js";
@@ -76,8 +80,6 @@ export default class SiteHeader extends Component {
 }
 ```
 
-Add the class to the list in `createLayout(services)`. The root element is required. A missing root throws `COMPONENT_INIT_FAILED` and boot continues (ADR 0007).
-
-GSAP is imported from `app/animations/gsap/gsap.js`. Motion is created inside `this.animations.add`. `destroy` on the base reverts the scope.
+GSAP is imported from `app/animations/gsap/gsap.js`. `destroy` on the base reverts the scope, so the header tween is cleaned up with the layout.
 
 Styles follow [STYLES.md](STYLES.md). Add `@import "./components/{name}.css" layer(components);` to `styles/styles.css`. Page-specific artwork uses `body:has(main[data-route="…"])`.

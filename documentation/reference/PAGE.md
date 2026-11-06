@@ -4,7 +4,7 @@ Copy this when adding a route with its own view, stylesheet, and page class. Ter
 
 The starter ships Home at `/` and not-found at `/404` (ADR 0025). Extra pages come from `.cursor/skills/add-page/SKILL.md`.
 
-Status: this page describes the accepted starter composition. The running site still has `views/pages/index.html`, the section views, `View.js`, `Introduction.js`, `References.js`, and leftover animation files.
+Status: slice 8 ships Home and not-found. Extra pages come from the add-page skill.
 
 ## Files
 
@@ -34,6 +34,8 @@ styles/pages/about.css                imported from styles/styles.css
 Read the extension from `server/renderer.js`. A route that needs no custom behavior can set `page: "Page"` and skip the class file. Home keeps a class so a new site has one to copy.
 
 ## Route
+
+A route entry is the public URL plus the fields the document and the router need: `path`, `title`, `description`, and `page`. `page` names a key in the page index. The index holds one dynamic `import()` per class, so the bundler emits a separate chunk for each page class (ADR 0004). Several routes can share the `Page` key when they need no custom behavior.
 
 ```js
 // app/config/siteRoutes.js
@@ -68,7 +70,9 @@ About: () => import("../pages/About.js"),
 
 ## View
 
-The layout already wraps `{% block content %}` (or the engine's equivalent) in `<main data-route="{{ route.key }}">`. The page file is only the content.
+The layout already wraps `{% block content %}` (or the engine's equivalent) in `<main data-route="{{ route.key }}">`. The page file is only the content. The three files below are that same about page. Each one extends the document layout and fills the content block. `data-about-title` is the hook the page class selects. `data-animation="title"` is the declarative effect from the animation index.
+
+Nunjucks extends the layout with `{% extends %}` and fills `{% block content %}`.
 
 ```njk
 {# views/pages/about.njk #}
@@ -81,6 +85,8 @@ The layout already wraps `{% block content %}` (or the engine's equivalent) in `
 {% endblock %}
 ```
 
+Vento wraps the page body with `{{ layout }}`. The body becomes `{{ content }}` inside the layout.
+
 ```vto
 {{# views/pages/about.vto #}}
 {{ layout "layouts/page.vto" }}
@@ -90,6 +96,8 @@ The layout already wraps `{% block content %}` (or the engine's equivalent) in `
   </section>
 {{ /layout }}
 ```
+
+JSX is a function that receives the template data and returns the layout with the page content as `children`. Use `class`, not `className`. The function runs at build time.
 
 ```jsx
 // views/pages/about.jsx
@@ -113,6 +121,8 @@ Home is `views/pages/home.{ext}`, route key `home`, path `/`. Do not name it `in
 
 ## Page class
 
+The class is the route's behavior. It extends `BasePage`, lists the nodes it uses in `static elements`, and does its work in `onInit`. By the time `onInit` runs, the base has selected those nodes, opened an abort signal, and created the animation scope. Motion goes through `this.animations.add`. Listeners take `{ signal: this.signal }`.
+
 ```js
 // app/pages/About.js
 import BasePage from "./BasePage.js";
@@ -132,6 +142,8 @@ export default class About extends BasePage {
 The root is `main[data-route]` (ADR 0021). Look up elements only inside it (ADR 0022). Do not import GSAP to get a scope. Do not call `create`, `setup`, or `super.create()`.
 
 ## Styles
+
+Page rules live in `styles/pages/{key}.css`. The selector starts at `main[data-route="…"]`, so the rules apply while that route's attributes are on `<main>` and drop away after a swap replaces those attributes. One `@import` in `styles/styles.css` puts the file in the `pages` layer, which wins over components and loses to overrides.
 
 ```css
 /* styles/pages/about.css */

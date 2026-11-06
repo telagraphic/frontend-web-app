@@ -2,7 +2,7 @@
 
 How page classes and components find their elements, listen for events, and wait for the browser. The decisions are [ADR 0022](../adr/0022-classes-declare-their-elements.md) and [ADR 0010](../adr/0010-listeners-use-abort-signal.md). Terms are in [GLOSSARY.md](../../GLOSSARY.md).
 
-Status: this page describes the accepted design. `DOMHelpers.js`, `ArrayHelpers.js`, and `AsyncHelpers.js` are still the running versions.
+Status: slice 2 landed `dom.js`, `frames.js`, `static elements`, and `BaseLifecycle`.
 
 ## Helpers
 
@@ -18,6 +18,8 @@ Status: this page describes the accepted design. `DOMHelpers.js`, `ArrayHelpers.
 | `nextPaint()` | `frames.js` | A promise | Waiting two frames so styles and layout apply before measuring |
 
 Use GSAP for motion that follows scroll or media queries: ScrollTrigger and `gsap.matchMedia()` inside the animation scope. `whenVisible` is for work that is not animation, such as starting a video or loading an embed.
+
+The implementations below match that table. `select` walks the element map: a string becomes one element or `null`, and a one-item array becomes every match. Anything else is stored as given, which is how a caller passes an element it already holds. `delegate` listens on the root and runs the handler when `event.target` is inside an element matching the selector, including elements added after `init`. `getData` reads `dataset` and coerces the string: a missing key returns the fallback, `""` or `"true"` is `true`, `"false"` is `false`, a numeric string is a number, and a value that starts with `{` or `[` is parsed as JSON. `whenVisible` observes the element, calls back on the first intersection when `once` is true, and disconnects the observer when the signal aborts. `whenDOMReady` runs the callback immediately once the document is past `loading`.
 
 ```js
 // app/utilities/dom.js
@@ -92,7 +94,7 @@ A page class or component lists the elements it uses in `static elements`. `Base
 
 ### In a page class
 
-The root is `main[data-route]` (ADR 0021). Adding a page: [PAGE.md](PAGE.md).
+The root is `main[data-route]` (ADR 0021). `BaseLifecycle.init()` fills `this.elements` from `static elements` before `onInit`, so the hooks below read nodes that are already selected. Adding a page: [PAGE.md](PAGE.md).
 
 ```js
 // app/pages/Home.js
@@ -121,7 +123,7 @@ export default class Home extends BasePage {
 
 ### In a component
 
-The root is the `element` option. Two copies of one component never see each other's elements.
+The root is the `element` option passed to the constructor. `delegate` is used here because one listener on the accordion covers every trigger, including triggers rendered later. Two copies of one component never see each other's elements, because each `select` starts from that instance's root.
 
 ```js
 // app/components/Accordion.js
@@ -150,6 +152,8 @@ this.use(new Accordion({ element: "[data-accordion='terms']", animationsService 
 
 ### Extending and overriding
 
+A subclass spreads its parent's map and adds keys. One instance can pass `elements` in the constructor to replace a selector for that instance only. `BaseLifecycle` merges `static elements` with `options.elements`, and the option wins.
+
 ```js
 // a subclass adds to its parent's map
 static elements = { ...Menu.elements, image: "[data-menu-image]" };
@@ -162,7 +166,7 @@ new Accordion({ element: "[data-accordion]", elements: { triggers: [".faq-questi
 
 ### Elements created after init
 
-The map is a snapshot from `init()`. Use `this.$()` and `this.$$()` for anything created later. Both search inside the root.
+The map is a snapshot from `init()`. Nodes that appear later, such as the lines SplitText inserts, are not in `this.elements`. `this.$()` and `this.$$()` search for those inside the root. `$$` always returns an array, so the lines can be tweened as a list.
 
 ```js
 const split = SplitText.create(this.elements.title, { type: "lines" });
@@ -170,6 +174,8 @@ const lines = this.$$(".line");
 ```
 
 ### Settings in markup
+
+`getData` applies the coercion above, so a bare attribute is `true`, a numeric attribute is a number, and `"false"` is the boolean `false`. The third argument is the value used when the attribute is absent. `pauseOnHover` is the camelCase form of `data-pause-on-hover`.
 
 ```html
 <div data-marquee data-speed="1.5" data-reverse data-pause-on-hover="false"></div>

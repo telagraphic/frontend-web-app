@@ -8,6 +8,8 @@ CSS owns layout, color, type, rest states, and simple hover color. GSAP owns seq
 
 ## Files
 
+Motion is split across a gate, a scope, shared effects, and one service. Overlay animation is a transition plug-in, so it is not in this list.
+
 ```
 app/config/animations.js        animation index: data-animation type → effect
 app/animations/
@@ -26,7 +28,7 @@ The starter does not ship `Titles.js`, `BackgroundColors.js`, `FadeInAndOut.js`,
 
 ## Plugin gate
 
-Every file that uses GSAP imports from here, never from `"gsap"` directly.
+This module is the one place that imports GSAP. It registers ScrollTrigger, SplitText, and CustomEase, then re-exports `gsap` and those plugins. Every other file imports from here, so the plugins are registered before any tween runs and the bundle contains one copy of GSAP.
 
 ```js
 // app/animations/gsap/gsap.js
@@ -41,6 +43,14 @@ export { gsap, ScrollTrigger, SplitText, CustomEase };
 ```
 
 ## Animation scope
+
+An animation scope is the cleanup boundary for one owner: a page class, a layout component, or a transition plug-in. The constructor stores that owner's root. `init` opens `gsap.matchMedia` on the root. That media object is the recorder. Tweens, timelines, ScrollTriggers, and SplitText created while one of its callbacks runs are tied to it.
+
+`add(build)` runs `build` under two conditions. `motion` matches when the visitor has not asked for reduced motion. `reducedMotion` matches when they have. The build receives those flags as `context.conditions` and creates the full animation either way. The reduced path uses duration `0`, or `gsap.set` to the rest state, so the content is visible. If the preference changes, GSAP reverts the previous callback and runs the one that now matches.
+
+`track(handler)` is for motion that starts later, from a click or a router event. It returns a function that runs `handler` inside the same media, so tweens created on that call are recorded too. A handler passed straight to `addEventListener` would create tweens the scope cannot revert.
+
+`destroy` calls `revert()` on the media. That stops the recorded animations and clears inline styles GSAP wrote. The owner calls it from its own `destroy`, which is what stops a page swap from leaving the previous page's ScrollTriggers behind.
 
 ```js
 // app/animations/gsap/GsapAnimationScope.js
@@ -79,6 +89,8 @@ export default class GsapAnimationScope {
 ## AnimationsService
 
 The site's only connection to GSAP. Smooth scroll never imports GSAP. This service connects them when both exist.
+
+`init` hands Lenis the GSAP ticker and listens for Lenis `scroll` so ScrollTrigger measures the smoothed position. `lagSmoothing(0)` keeps ScrollTrigger in step with that ticker. `createScope(root)` builds a scope, inits it, and keeps it in a set. `addTypes(scope, root)` finds every `[data-animation]` inside the root and calls the effect named by that attribute, inside the scope, so declarative motion reverts with the owner. An unknown type warns and is skipped. `refresh` asks ScrollTrigger to remeasure after layout changes. `destroy` reverts every scope the service created, disconnects the ticker, and restores the default lag smoothing.
 
 ```js
 // app/services/AnimationsService.js
@@ -135,6 +147,10 @@ export class AnimationsService {
 
 ## Animation index and an effect
 
+The animation index maps a `data-animation` value to a `create*` function. `addTypes` looks up `element.dataset.animation` in this object and calls the function with the element and the scope's conditions. Adding a declarative type is a new key here, plus the effect it points at.
+
+An effect is one recipe. It receives the element and `{ reducedMotion }`. Under reduced motion it sets the element to its rest state and returns. Otherwise it builds the tween. ScrollTrigger in the tween waits until the element enters the viewport. The tween is created inside `scope.add`, so the scope reverts it. The comment at the top of the effect is the storyboard: when the element is hidden, when it moves, and where it rests. CSS hides the pre-animation state under `html.is-animating`. The effect does not hide the element itself.
+
 ```js
 // app/config/animations.js
 import { createTitleReveal } from "../animations/gsap/effects/titleReveal.js";
@@ -181,6 +197,8 @@ export function createTitleReveal(element, { reducedMotion } = {}) {
 
 Page classes never import GSAP to get a scope. `BasePage` creates one, runs the animation index, and reverts it on destroy.
 
+`init` creates the scope before `onInit`, so a page class can call `this.animations.add` immediately. `show` runs after the preloader has hidden. That is when `addTypes` starts declarative motion, then `onShow`, then a refresh of Lenis and ScrollTrigger so measurements match the revealed layout. `destroy` runs `onDestroy`, then reverts the scope. `use` inits a child component and keeps it on the page.
+
 ```js
 // app/pages/BasePage.js
 export default class BasePage {
@@ -225,7 +243,7 @@ export default class BasePage {
 <h1 data-animation="title">Section title</h1>
 ```
 
-**2. Page-specific motion.** A page class imports an effect, or GSAP, inside `add()`.
+**2. Page-specific motion.** A page class imports an effect, or GSAP, and calls it inside `add()`. The callback receives `{ reducedMotion }` from the scope. `createTitleReveal` is the shared recipe. The `gsap.from` on the cards belongs to this page only, and it is still recorded because it runs inside `add`.
 
 ```js
 // app/pages/Home.js
@@ -252,7 +270,7 @@ export default class Home extends BasePage {
 }
 ```
 
-**3. Layout component or custom element.** Same scope, owned by the component.
+**3. Layout component or custom element.** The component owns the scope. `init` creates it and builds a paused timeline. `open` and `close` play and reverse that timeline. `track` wraps the navigation listener so any tween that listener starts is recorded. `destroy` reverts the scope when the layout shuts down.
 
 ```js
 // app/components/Navigation.js
@@ -277,6 +295,8 @@ export class Navigation extends Component {
 Page classes and components find their elements through `static elements` ([DOM.md](DOM.md)).
 
 ## Router order, so nothing piles up
+
+One page swap, from the leaving page's `hide` through the next page's `show`. The router awaits each stage. The leaving scope is reverted in `destroy` before the next scope is created, so the two pages never animate at once.
 
 ```js
 // one page swap

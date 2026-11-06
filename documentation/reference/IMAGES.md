@@ -2,9 +2,57 @@
 
 How a page marks images, and the one function that waits for the above-the-fold set. Decisions: [ADR 0018](../adr/0018-above-the-fold-images-are-waited-on.md). The preloader's clock and counter: [ADR 0014](../adr/0014-preloader-runs-once-per-session.md).
 
-`loadImages(elements)` settles each element on load or error, then decodes it. A failure counts as finished. Below-the-fold images never go through it. The browser loads those.
+Below-the-fold images never go through that wait. The browser loads those. `LazyImageLoader` is removed. New markup uses the strategies below.
 
-`LazyImageLoader` is removed. `ImageService` remains until a real site replaces it with `loadImages()`. A note at the top of that file points here. New markup uses the strategies below.
+## How `loadImages` waits
+
+`loadImages` lives in `app/utilities/images.js`. It is a function, not a boot service. The preloader, the page-swap router, and a GSAP plug-in each call it with the elements they need to have finished before the cover lifts.
+
+Each element settles on its own. If `complete` is already true, the response is in and the function moves on to decode. Otherwise it listens once for `load` or `error`. An error settles the same way a load does, so a missing file does not hold the cover. After a load, `decode()` runs when the element has that method, and a decode failure also settles. Decoding finishes the bitmap before the cover lifts, so the first painted frame is whole.
+
+The elements are waited on together. `maxWait` defaults to 4000 milliseconds and races that wait. When the timer wins, `loadImages` resolves and the caller continues. Images still in flight finish on their own. `{ maxWait: null }` waits with no timer. The preloader uses that per image so a counter can advance, then races fonts and images against its own `maxWait`. The router calls `loadImages` on `[data-preload]` inside the new `<main>` with the default timer. A plug-in calls it on the overlay image it just injected. An empty list resolves immediately.
+
+```js
+// app/utilities/images.js
+function loadOne(element) {
+  return new Promise((resolve) => {
+    const finish = () => {
+      if (typeof element.decode === "function") {
+        element.decode().then(resolve, resolve);
+        return;
+      }
+      resolve();
+    };
+
+    if (element.complete) {
+      finish();
+      return;
+    }
+
+    element.addEventListener("load", finish, { once: true });
+    element.addEventListener("error", () => resolve(), { once: true });
+  });
+}
+
+export function loadImages(elements, { maxWait = 4000 } = {}) {
+  const images = [...(elements ?? [])].filter(Boolean);
+  if (images.length === 0) return Promise.resolve();
+
+  const settle = Promise.all(images.map(loadOne));
+  if (maxWait == null) return settle;
+
+  return Promise.race([
+    settle,
+    new Promise((resolve) => setTimeout(resolve, maxWait)),
+  ]);
+}
+```
+
+## `ImageService`
+
+`ImageService` in `app/utilities/ImageService.js` is the previous loader. A note at the top of that file points here. It stays in the tree until a site has no `data-src` left.
+
+It took an element whose URL lived in `data-src`, loaded and decoded that URL on an image that was not in the document, then assigned `src` so the visible element painted from the HTTP cache. It counted progress for a preloader and remembered in-flight URLs on that instance. Each caller constructed its own instance, so those memories never met. The browser's HTTP cache is the shared cache. Boot does not construct `ImageService`. The waits above are `loadImages`.
 
 ## Sequence
 
@@ -68,7 +116,7 @@ There is no image file in `app/config`. `maxWait` and `counter` are the preloade
 >
 ```
 
-**Transition image.** The URL lives on the destination route's `pageTransition.image` (ADR 0024). The plug-in injects the element in `prepare()`, then calls `loadImages` on it before cover. It is not marked `data-preload`, because that attribute belongs to the page, not the cover. Do not idle-preload every route's overlay image.
+**Transition image.** The URL lives on the destination route's `pageTransition.image` (ADR 0024). The plug-in injects the element in `prepare()`, then calls `loadImages` on it before cover. That call is the same helper as the preloader and the router: wait until this one image settles or `maxWait` elapses, then start the cover. The image is not marked `data-preload`, because that attribute belongs to the page, not the cover. Do not idle-preload every route's overlay image.
 
 ```js
 await loadImages([image]);

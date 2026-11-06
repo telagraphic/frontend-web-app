@@ -2,7 +2,7 @@
 
 How the starter turns the route table and `views/` into HTML documents, in dev and in production. A project uses one **renderer**: Nunjucks, Vento, or JSX. The setup wizard picks it (ADR 0002). The pipeline is [ADR 0020](../adr/0020-pages-render-through-one-renderer-and-hono.md). Terms are in [GLOSSARY.md](../../GLOSSARY.md).
 
-Status: this page describes the pipeline ADR 0020 decides. The code is not built yet. `server.js` and `scripts/generate-static-pages.js` are still the running versions.
+Status: slice 8 landed the Hono renderer, Nunjucks views, and Home / not-found documents. Slice 10 added Vento and JSX kits under `wizard/renderers/`. Slice 11 added Starlight in `docs/`. `bun run dev` is `server/dev.js`. `bun run build` is `server/build.js`. `bun run docs:dev` is the documentation site.
 
 ## How it flows
 
@@ -145,7 +145,11 @@ Titles, canonical URLs, and current-link state are computed in `server/data.js`,
 
 ## The same page in each engine
 
+Each engine below is the same three files: the document layout, the menu partial, and an about page. The layout is the shell `assertDocument` checks. The partial loops `navigation` and prints `aria-current` from data the server already computed. The page supplies only the content inside `<main>`. `data-animation="title"` is the declarative effect. The syntax is the only thing that changes.
+
 ### Nunjucks
+
+A page `{% extends %}` the layout and fills `{% block content %}`. `{% include %}` pulls a partial into the layout. `{{ }}` prints a value. The layout below is the full document. The partial is the menu. The page is only the about content.
 
 ```njk
 {# views/layouts/page.njk #}
@@ -202,6 +206,8 @@ Titles, canonical URLs, and current-link state are computed in `server/data.js`,
 
 ### Vento
 
+`{{ layout }}` wraps the page body, which the layout prints as `{{ content }}`. `{{ include }}` pulls in a partial. `{{ for }}` and `{{ if }}` are the loop and the branch. The three files are the layout, the menu, and the about page, same as Nunjucks.
+
 ```vto
 {{# views/layouts/page.vto #}}
 <!doctype html>
@@ -254,7 +260,7 @@ Titles, canonical URLs, and current-link state are computed in `server/data.js`,
 
 ### JSX
 
-JSX runs only on the server, through Hono JSX. Set `"jsxImportSource": "hono/jsx"` in `tsconfig.json`. Use `class`, not `className`.
+JSX runs only on the server, through Hono JSX. Set `"jsxImportSource": "hono/jsx"` in `tsconfig.json`. Use `class`, not `className`. `Layout`, `Menu`, and the page are functions. The page passes the template data into `Layout` and puts its content in `children`, which the layout renders inside `<main>`. The live-reload script renders only when `assets.liveReload` is set, which is dev.
 
 ```jsx
 // views/layouts/page.jsx
@@ -348,12 +354,16 @@ An experiment is a dev-only page for trying out motion before it becomes site co
 | `experiment.js` | A `create{Name}(element, { reducedMotion })` function shaped like an effect, plus the call that runs it |
 | `NOTES.md` | What was tried, what was kept, and where it was published |
 
+This sample is markup only. It uses `layouts/experiment`, a bare document, so the trial is not wrapped in the menu and the preloader. `data-experiment` is the node the script below queries.
+
 ```vto
 {{# experiments/split-title/index.vto #}}
 {{ layout "layouts/experiment.vto" }}
   <h1 class="split-title" data-experiment>Split title</h1>
 {{ /layout }}
 ```
+
+`createSplitTitle` has the same shape as a published effect: the element, and `{ reducedMotion }`. Under reduced motion it shows the element and returns. Otherwise it splits the heading into characters and staggers them in. The call at the bottom runs it immediately, because an experiment has no page class to call `add()`. The reduced-motion flag is read from `matchMedia` at that call.
 
 ```js
 // experiments/split-title/experiment.js
@@ -374,7 +384,7 @@ When the exploration is done, the `gsap-experiment` skill publishes it as an eff
 
 ## The renderer adapter
 
-Each renderer is one file. Adding a fourth engine means writing this file and its `views/`.
+Each renderer is one file. Adding a fourth engine means writing this file and its `views/`. `createRenderer` returns the three things the server uses: the file `extension`, `invalidate` so dev can drop a cached compile, and `render(route, data)`, which runs `pages/{route.key}` plus that extension and throws `RenderError` with the template path when the engine fails. `server/renderer.js` is the one line the wizard writes. It re-exports whichever `createRenderer` the site chose, so the rest of the server never imports Nunjucks, Vento, or JSX directly.
 
 ```js
 // server/renderers/vento.js
@@ -425,6 +435,9 @@ export { createRenderer } from "./renderers/vento.js";
 | `bun run test` | `bun test` | Before a commit; CI |
 | `bun run process:image` | `scripts/process-image.js` | When adding images |
 | `bun run create <dest>` | `wizard/create.js`: copy the starter and write the chosen options | Starter only. A client site does not have this. [WIZARD.md](WIZARD.md) |
+| `bun run docs:dev` | Starlight in `docs/`, reading the repo markdown | Starter only. Internal reference site |
+| `bun run docs:build` | `astro build` in `docs/` | Starter only. CI |
+| `bun run docs:preview` | Serves the Starlight build | Starter only |
 
 ## Formatting and linting by engine
 
@@ -436,7 +449,7 @@ Prettier formats every file type. A plugin covers each string engine. Template s
 | Vento | Prettier with `prettier-plugin-jinja-template` | `lint:html` render | html-validate |
 | JSX | Prettier, built in | ESLint and the `lint:html` render | html-validate |
 
-The wizard writes the `.prettierrc` for the chosen renderer.
+The wizard writes the `.prettierrc` for the chosen renderer. Nunjucks needs only the plugin. Vento needs the plugin plus an override that parses `*.vto` as a Jinja-family template. The html-validate config is the same for every engine, because lint runs on rendered HTML. The ESLint block is added only for JSX, so the linter parses `views/**/*.jsx`.
 
 ```json
 // .prettierrc for Nunjucks
@@ -455,7 +468,11 @@ The wizard writes the `.prettierrc` for the chosen renderer.
 // .htmlvalidate.json for every renderer
 {
   "extends": ["html-validate:recommended"],
-  "rules": { "doctype-style": "off", "void-style": "off" }
+  "rules": {
+    "doctype-style": "off",
+    "void-style": "off",
+    "attribute-empty-style": "off"
+  }
 }
 ```
 

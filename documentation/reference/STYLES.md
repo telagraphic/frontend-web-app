@@ -2,7 +2,7 @@
 
 How CSS is authored, layered, bundled, and targeted. The decisions are [ADR 0023](../adr/0023-css-is-layered-files-bundled-by-bun.md). Page selectors follow [ADR 0021](../adr/0021-page-swap-replaces-the-children-of-main.md) and [PAGE_SWAP.md](PAGE_SWAP.md). Motion that is not layout lives in [ANIMATIONS.md](ANIMATIONS.md). Adding a file or a modern feature: [write-css](../../.cursor/skills/write-css/SKILL.md). Terms are in [GLOSSARY.md](../../GLOSSARY.md).
 
-Status: this page describes the accepted design. The running styles are still Sass, include `_utilities.scss`, `body[data-page]`, duplicate type scales, and no focus or reduced-motion axioms.
+Status: slice 8 ships Home and not-found page styles. Layout-component artwork in `components/` is still the previous site's until a project replaces it.
 
 ## Files
 
@@ -23,6 +23,8 @@ There is no compiled Sass output. `styles/styles.css` is the entry Bun bundles. 
 A project keeps reset, layer order, and base axioms. It replaces tokens, component artwork, and page files.
 
 ## Layers
+
+`styles.css` is the bundle entry. The `@layer` line names the order. Each `@import` assigns that file to one layer. A rule in a later layer beats the same selector in an earlier layer.
 
 ```css
 /* styles/styles.css */
@@ -264,7 +266,7 @@ Do not add these until a second caller needs them.
 
 ## Axioms
 
-These live in `base` and apply everywhere.
+These rules live in `base` and apply on every page: the document font, body color, heading rhythm, a measure on flow text, the focus ring, the skip link, scroll-margin on `main`, and a reduced-motion floor that shortens CSS animation and transitions.
 
 ```css
 html {
@@ -342,6 +344,8 @@ The reduced-motion rule is the CSS floor. Sequenced motion still goes through th
 
 Do not put a CSS `transition` on a property GSAP tweens. Do not set `will-change` as a rest style; GSAP sets it while it animates.
 
+A title that GSAP will fade in starts visible in CSS, so it is readable when neither class is on `html`. `styles/base/base.css` sets `visibility: hidden` on `[data-animation]` while `html` has `is-loading` or `is-animating`. The head script adds `is-loading` before first paint when the preloader will play, and the preloader removes it when the cover lifts. The example below is that same hide, written on one title instead of every `[data-animation]`. There is no inline style to clean up.
+
 ```css
 .hero-title {
   opacity: 1;
@@ -378,17 +382,4 @@ On publish ([PUBLISH.md](../../.cursor/skills/gsap-experiment/PUBLISH.md)):
 4. Replace raw pixel width queries with rem queries.
 5. Add `@import "./components/{kebab-name}.css" layer(components);` to `styles/styles.css`.
 
-## What the running files still do
-
-| File | What changes on rewrite |
-| --- | --- |
-| `styles/styles.scss` | Becomes `styles/styles.css` with `@import … layer()` |
-| `utilities/_utilities.scss` | Deleted except `.sr-only` |
-| `utilities/_mixins.scss` | Deleted |
-| `tokens/_tokens.scss` | `tokens/tokens.css`: one type scale, semantic color aliases, no `--bp-*` |
-| `base/_base.scss` | `base/base.css`: axioms; drop the duplicate `box-sizing` already in the reset |
-| `base/_typography.scss` | Keep `@font-face`; drop `--step-*` |
-| `components/_navigation.scss`, `_footer.scss` | `body:has(main[data-route])`; full BEM names |
-| `components/_page-transitions.scss` | Move with the GSAP transition; drop global `.is-visible` |
-| `components/_hero.scss`, `_page.scss`, `pages/*` | Example artwork; not required starter CSS |
-| `pages/_home.scss` | Replace `992px` with `width >= 56.25rem` |
+Shea artwork still lives in `components/hero.css`, `components/page.css`, and `pages/`. Those files leave with the client pages in slice 8.
