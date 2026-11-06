@@ -23,7 +23,7 @@ Building the Starlight app still starts after both navigation options, page swap
   | Decisions | Every ADR |
 
 - `WIZARD.md` is the living options catalog. Do not add a third options file.
-- History files (`documentation/guides/`, `documentation/refactoring-reviews/`, `APPLICATION_GUIDE.md`, `ARCHITECTURE.md`, superseded CSS notes, stale reference, SEO/CSP checklists) are not pages. Useful facts are already in the accepted set. Those files are deleted from the starter, not published.
+- History files (`documentation/guides/`, `documentation/refactoring-reviews/`, `APPLICATION_GUIDE.md`, `ARCHITECTURE.md`, superseded CSS notes, stale reference, SEO/CSP checklists) are not pages. They are deleted from the starter (slice 0), not published.
 - A change that adds, removes, or changes an option or a convention updates the markdown in the same change. The site picks it up.
 
 ## Considered Options

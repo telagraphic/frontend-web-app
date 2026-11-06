@@ -11,13 +11,14 @@ description: >-
 
 Read ADR 0008. Terms: [GLOSSARY.md](../../../GLOSSARY.md).
 
-Write the real steps when `bun test` and Playwright run in this repo. Until then, do not add a suite that mocks modules a constructor could receive.
-
 ## Do
 
-- **Unit.** `bun test` with happy-dom. Pass fakes through constructors. Assert a public method, a dispatched event, the DOM, or an error code.
-- **Wiring.** `createServices()` builds the real graph. Fail on `MISSING_DEPENDENCY`.
-- **Browser.** Playwright for overlay timing, view transitions, back/forward, `pageshow`, and screenshots of settled states. Run on each of the five setup combinations (ADR 0002).
+1. Pick the layer. **Unit:** `bun test` with happy-dom, fakes through constructors. **Wiring:** `createServices()` builds the real graph. **Browser:** Playwright in `tests/browser/*.browser.js` for overlay timing, back/forward, `pageshow`, and settled screenshots.
+2. Put unit and wiring tests in `tests/unit` and `tests/wiring`. Create a happy-dom `Window`, assign `window` / `document` / `HTMLElement` on `globalThis`, then dynamically `import()` app modules. Do not assign happy-dom's `Event` or `CustomEvent` onto `globalThis` (native `EventTarget` rejects them).
+3. Assert a public method (`init`, `destroy`, `navigate`), a dispatched event, the DOM, or an error code (`MISSING_DEPENDENCY`, `SERVICE_INIT_FAILED`, `COMPONENT_INIT_FAILED`).
+4. For wiring, call `createServices()` and assert the four returned services are defined. Fail if a constructor would accept `undefined` for a required dependency.
+5. Browser tests use `playwright.config.js`. `bun run test:browser` starts `PORT=3458 bun server/dev.js`. Wait for a DOM state or event (`main[data-route]`, `[data-transition-host][hidden]`, `waitForFunction` for the cover). Register the cover wait before the click. Skip the preloader with `sessionStorage preloader-played` except when the test is the preloader or `pageshow`. Unknown paths are a document-load 404; `/404` is a table route and can page-swap to Home.
+6. Screenshots are settled frames only: `reducedMotion: "reduce"` and `toHaveScreenshot({ animations: "disabled" })` after the host is hidden. Do not screenshot a mid-cover frame.
 
 The work is done when the test fails on the bug and passes on the fix, through something a caller can see.
 
@@ -25,6 +26,8 @@ The work is done when the test fails on the bug and passes on the fix, through s
 
 - `mock.module()` to replace a constructor argument.
 - Test private methods or the order of internal calls.
+- Construct `RouterPageManager`, `RouterSwap`, `RouterHistory`, or `RouterResolver` from a test. Call `router.navigate`.
 - Wait with timeouts instead of an event or a DOM state.
 - Snapshot markup. Screenshot comparisons of settled frames are fine.
 - Assert GSAP tween values.
+- Put Playwright specs where `bun test` will load them. Specs live in `tests/browser/*.browser.js` so Bun does not treat them as unit tests. `bun run test` runs unit and wiring; `bun run test:browser` runs Playwright.

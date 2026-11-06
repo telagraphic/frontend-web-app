@@ -1,0 +1,8 @@
+{% extends "layouts/page.njk" %}
+{% block content %}
+  <section class="not-found">
+    <h1 class="not-found__title">{{ route.title }}</h1>
+    <p class="not-found__body">{{ route.description }}</p>
+    <p><a class="internal-link" href="/">Home</a></p>
+  </section>
+{% endblock %}

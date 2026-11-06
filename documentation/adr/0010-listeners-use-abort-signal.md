@@ -21,4 +21,4 @@ status: accepted
 
 - Navigation, Preloader, and SmoothScroll stop calling `addListenerAndRegister` / `on` / `emit` / `removeAllListeners`.
 - Boot listens for preloader completion with `preloader.addEventListener("preloader-complete", handler, { signal })`.
-- `documentation/guides/COMPONENT_GUIDE.md` and the EventManager sections of the design-patterns guide describe the old wrapper and need rewriting.
+- Listeners use `{ signal }` (this ADR). The old EventManager guides are deleted.

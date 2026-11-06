@@ -40,4 +40,4 @@ The styles already use `@layer`, custom properties, and BEM. They also ship a Ta
 - `navigation.css` and `footer.css` move from `[data-page]` to `body:has(main[data-route])`.
 - `--font-size-*` is the type scale. `--step-*` is removed.
 - Experiment publish copies `styles.css` to `styles/components/{kebab-name}.css` and adds one `@import` line. No Sass conversion.
-- `documentation/reference/CSS_CUSTOM_PROPERTIES.md`, `CSS_MODERN_SYNTAX.md`, `CSS_UTILITY_CLASSES_REVIEW.md`, `CSS_UTILITY_MIXIN_STRATEGY.md`, and `documentation/checklist/CSS_CHECKLIST.md` stay superseded by STYLES.md.
+- Superseded CSS notes and checklists are deleted. [STYLES.md](../reference/STYLES.md) is the CSS source of truth.

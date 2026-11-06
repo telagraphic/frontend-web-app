@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "ventojs": "^2.4.2"
+  },
+  "devDependencies": {
+    "prettier-plugin-jinja-template": "^2.2.0"
+  },
+  "dropDependencies": ["nunjucks"],
+  "dropDevDependencies": ["prettier-plugin-nunjucks"]
+}

@@ -1,343 +1,261 @@
-import { nextPaint } from "../utilities/AsyncHelpers.js";
-import { RouteValidationResult } from "./RouterValidation.js";
+import { $ } from "../utilities/dom.js";
+import { RouterHistory } from "./RouterHistory.js";
+import { RouterResolver } from "./RouterResolver.js";
+import { RouterPageLoader } from "./RouterPageLoader.js";
+import { RouterPageManager } from "./RouterPageManager.js";
+import { RouterPrefetchCache } from "./RouterPrefetchCache.js";
+import { RouterPrefetchManager } from "./RouterPrefetchManager.js";
+import { swap, updateHead } from "./RouterSwap.js";
+import { loadImages } from "../utilities/images.js";
+import { SELECTORS, ATTRIBUTES, EVENTS } from "../utilities/Constants.js";
 import {
-  SELECTORS,
-  ATTRIBUTES,
-  EVENTS,
-  VALUES,
-} from "../utilities/Constants.js";
-import { createError, ERROR_CODES, isErrorCode } from "../utilities/ErrorRegistry.js";
+  createError,
+  ERROR_CODES,
+  requireDependency,
+} from "../utilities/ErrorRegistry.js";
 
-/**
- * Move Resolver,PageRegistry, PageContentManager to this class.
- * Will handle the page lifecycle and navigation.
- *
- * 1. Validate route
- * 2. Hide current page
- * 3. Update page markup
- * 4. Load page class
- * 5. Create page instance
- * 6. Update navigation
- * 7. Show page
- */
-export class Router {
+export class Router extends EventTarget {
   constructor({
-    siteConfig,
-    registryService,
-    routerPageLoader,
-    routerPageManager,
-    routerHistory,
-    routerResolver,
+    routes,
+    pages,
+    animationsService,
+    transitionsService,
     smoothScroll,
-    transitionsManager,
-    navigation,
-    prefetchManager,
   }) {
-    this.siteConfig = siteConfig;
-    this.registryService = registryService;
-    this.routerPageLoader = routerPageLoader;
-    this.routerPageManager = routerPageManager;
-    this.routerHistory = routerHistory;
-    this.routerResolver = routerResolver;
+    super();
+    requireDependency("Router", {
+      routes,
+      pages,
+      animationsService,
+      transitionsService,
+      smoothScroll,
+    });
+    this.routes = routes;
+    this.pages = pages;
+    this.animationsService = animationsService;
+    this.transitionsService = transitionsService;
     this.smoothScroll = smoothScroll;
-    this.transitionsManager = transitionsManager;
-    this.navigation = navigation;
-    this.prefetchManager = prefetchManager;
-    this.isNavigating = false; // Guard to prevent concurrent navigations
+    this.currentPage = null;
+    this.controller = null;
+
+    this.routerResolver = new RouterResolver({ routes });
+    this.routerHistory = new RouterHistory({
+      onPop: (url) => this.navigate(url, { history: "traverse" }),
+    });
+    this.routerPageLoader = new RouterPageLoader({
+      routes,
+      pages,
+      smoothScroll,
+      animationsService,
+    });
+    this.prefetchCache = new RouterPrefetchCache({});
+    this.routerPageManager = new RouterPageManager({
+      prefetchCache: this.prefetchCache,
+    });
+    this.prefetchManager = new RouterPrefetchManager({
+      routerResolver: this.routerResolver,
+      routerPageManager: this.routerPageManager,
+      prefetchCache: this.prefetchCache,
+    });
   }
 
-  async start() {
-    this.setupLinkListeners();
-    this.setupEventListeners();
-    await this.routerResolver.create();
-    await this.routerPageLoader.create();
-    this.routerHistory.create();
-
-    // Optional: enable hover/focus prefetch
+  async init() {
+    this.listenLinks();
+    this.routerHistory.init();
     this.prefetchManager?.init?.();
+    await this.showFirstPage();
   }
 
-  /**
-   * Find the internal link anchor element from a click event
-   * @param {MouseEvent} event - The click event
-   * @returns {HTMLAnchorElement|null} The anchor element or null
-   * @private
-   */
-  findInternalLinkAnchor(event) {
-    return event.target.closest(SELECTORS.INTERNAL_LINK);
+  async destroy() {
+    this.controller?.abort();
+    await this.currentPage?.destroy?.();
+    this.currentPage = null;
   }
 
-  /**
-   * Determine if a link click should be handled by the router
-   * @param {HTMLAnchorElement|null} anchor - The anchor element
-   * @param {MouseEvent} event - The click event
-   * @returns {boolean} True if the click should be handled
-   * @private
-   */
-  shouldHandleLinkClick(anchor, event) {
-    // Not an internal link
-    if (!anchor) {
+  currentKey() {
+    return $(SELECTORS.MAIN)?.getAttribute(ATTRIBUTES.DATA_ROUTE) ?? null;
+  }
+
+  async showFirstPage() {
+    const route = this.currentKey();
+    const pageClass = route
+      ? await this.routerPageLoader.loadPage(route).catch(() => null)
+      : null;
+    const fallbackClass = pageClass
+      ? null
+      : await this.routerPageLoader.loadPage("home");
+    const resolvedClass = pageClass ?? fallbackClass;
+
+    if (!resolvedClass) {
+      throw createError(ERROR_CODES.PAGE_NOT_FOUND, {
+        page: "home (fallback)",
+      });
+    }
+
+    this.currentPage = this.routerPageLoader.initializePage(resolvedClass);
+    await this.currentPage.init();
+    await whenPreloaderDone();
+    await this.currentPage.show({
+      family: "page-swap",
+      from: null,
+      to: route ?? "home",
+      path: location.pathname,
+      history: "replace",
+      signal: this.controller?.signal,
+    });
+  }
+
+  shouldIntercept(anchor, event) {
+    if (!anchor) return false;
+    if (event.button !== 0) return false;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
       return false;
     }
-    
-    // Opens in new tab/window
-    if (anchor.getAttribute(ATTRIBUTES.TARGET) === VALUES.TARGET_BLANK) {
-      return false;
-    }
-    
-    // Modifier keys pressed (Cmd/Ctrl for new tab)
-    if (event.metaKey || event.ctrlKey) {
-      return false;
-    }
-    
-    // Middle mouse button (opens in new tab)
-    if (event.button === 1) {
-      return false;
-    }
-    
+    if (anchor.hasAttribute("download")) return false;
+    const target = anchor.getAttribute(ATTRIBUTES.TARGET);
+    if (target && target !== "_self") return false;
     return true;
   }
 
-  /**
-   * Extract and validate the href from an anchor element
-   * @param {HTMLAnchorElement} anchor - The anchor element
-   * @returns {string|null} href - The href value or null if invalid
-   * @private
-   */
-  getValidatedHref(anchor) {
-    const href = anchor.getAttribute(ATTRIBUTES.HREF);
-    
-    if (!href) {
-      console.warn("Internal link has no href attribute:", anchor);
-      return null;
-    }
-    
-    return href;
-  }
-
-  /**
-   * Handle navigation menu state after a link click
-   * Closes the menu if it's currently open
-   * @private
-   */
-  handleNavigationMenuAfterClick() {
-    if (this.navigation.getNavigationStatus() === "active") {
-      setTimeout(() => {
-        this.navigation.hideNavigation();
-      }, VALUES.ROUTER_TIMEOUT);
-    }
-  }
-
-  /**
-   * Handle click events on internal navigation links
-   * @param {MouseEvent} event - The click event
-   * @private
-   */
   handleLinkClick(event) {
-    const anchor = this.findInternalLinkAnchor(event);
-    
-    if (!this.shouldHandleLinkClick(anchor, event)) {
+    const anchor = event.target.closest?.(SELECTORS.INTERNAL_LINK);
+    if (!this.shouldIntercept(anchor, event)) return;
+
+    const url = new URL(anchor.href, location.href);
+    if (url.hash && url.pathname === location.pathname) return;
+
+    const resolved = this.routerResolver.resolve(url);
+    if (resolved.kind === "same-document") {
+      event.preventDefault();
       return;
     }
-    
-    // CRITICAL: Prevent default IMMEDIATELY to stop browser navigation
-    // Must be called synchronously, before any async operations
+    if (resolved.kind !== "commit") return;
+
     event.preventDefault();
-    event.stopImmediatePropagation(); // Stop ALL other handlers from running
-    
-    // Guard against concurrent navigations
-    if (this.isNavigating) {
-      return;
-    }
-    
-    const href = this.getValidatedHref(anchor);
-    if (!href) {
-      return;
-    }
-    
-    this.updatePage(href);
-    this.handleNavigationMenuAfterClick();
+    this.navigate(url, { history: "push" });
   }
 
-  /**
-   * Event delegation for navigation links
-   * Sets up a single click listener on document that handles all internal link clicks
-   */
-  setupLinkListeners() {
-    // Use capture phase to run BEFORE other handlers (including Navigation component)
+  listenLinks() {
     document.addEventListener(
       EVENTS.CLICK,
       (event) => this.handleLinkClick(event),
-      { capture: true } // CRITICAL: Use capture phase to run before Navigation handlers
+      { capture: true },
     );
   }
 
-  /**
-   * Use the Orchestrator pattern to handle the page navigation lifecycle
-   * TODO: Use try catch to catch each async step for the page navigation lifecycle
-   * @param {*} href
-   */
-  async updatePage(href) {
-    // Guard against concurrent navigations
-    if (this.isNavigating) {
+  async navigate(url, { history: historyMode = "push" } = {}) {
+    const parsed = url instanceof URL ? url : new URL(url, location.href);
+    const fromPath =
+      historyMode === "traverse"
+        ? (this.routes[this.currentKey()]?.path ?? "")
+        : location.pathname;
+    const resolved = this.routerResolver.resolve(parsed, {
+      currentPath: fromPath,
+    });
+    if (resolved.kind === "not-found") {
+      location.assign(parsed.pathname);
       return;
     }
+    if (resolved.kind !== "commit") return;
 
-    this.isNavigating = true;
-    this.smoothScroll?.lock?.();
-    const transitionOverlay = document.querySelector(SELECTORS.TRANSITION_OVERLAY);
-    if (transitionOverlay) {
-      transitionOverlay.style.pointerEvents = "all";
-    }
-    let didShow = false;
-    try {
-      const routeInfo = await this.beforePageUpdate(href);
+    this.controller?.abort();
+    this.controller = new AbortController();
+    const { signal } = this.controller;
 
-      if (!routeInfo || !routeInfo.isValid) {
-        return;
-      }
+    const fromKey = this.currentKey();
+    const context = {
+      family: "page-swap",
+      from: fromKey ? { key: fromKey, ...this.routes[fromKey] } : null,
+      to: { key: resolved.key, ...resolved.record },
+      path: resolved.path,
+      history: historyMode,
+      signal,
+    };
 
-      const nextPageInstance = await this.startPageUpdate(routeInfo);
-
-      if (!nextPageInstance) {
-        return;
-      }
-
-      await this.afterPageUpdate(nextPageInstance, routeInfo);
-      didShow = true;
-    } catch (error) {
-      if (isErrorCode(error, ERROR_CODES.PAGE_NOT_FOUND)) {
-        console.error('Page loading failed:', error.message);
-      } else if (isErrorCode(error, ERROR_CODES.NETWORK_ERROR)) {
-        console.error('Network error:', error.message);
-      } else {
-        console.error(`Error updating page:`, error);
-      }
-      this.routerResolver.redirectToHome();
-    } finally {
-      this.isNavigating = false;
-      // `Page.show()` performs the normal unlock.
-      // If navigation fails before show, ensure we don't stay locked.
-      if (!didShow) {
-        this.smoothScroll?.unlock?.();
-      }
-      if (transitionOverlay) {
-        transitionOverlay.style.pointerEvents = "";
-      }
-    }
-  }
-
-  /**
-   * Validate the route and start the page navigation
-   * @param {string} href - The route to validate
-   * @returns {RouteValidationResult}
-   */
-  async beforePageUpdate(href) {
-    const routeInfo = this.routerResolver.validateRoute(
-      href,
-      window.location.pathname
+    this.dispatchEvent(
+      new CustomEvent(EVENTS.NAVIGATION_START, { detail: context }),
     );
 
-    if (!routeInfo.isValid) {
-      return this.routerResolver.handleInvalidRoute(routeInfo);
+    if (historyMode !== "traverse") {
+      this.routerHistory.saveScroll(this.smoothScroll);
     }
+    this.smoothScroll?.stop();
 
-    return routeInfo;
-  }
-
-  /**
-   * Start the page navigation
-   * @param {RouteValidationResult} routeInfo - The route information
-   * @returns {Promise<void>}
-   */
-  async startPageUpdate(routeInfo, addToHistory = true) {
-    const currentPage = this.registryService.getCurrentPage();
-    if (currentPage) {
-      await currentPage.hide(routeInfo.route);
-    }
-
-    await this.routerPageManager.updatePage(routeInfo.route);
-
-    // add to afterPageNavigation?
-    if (addToHistory) {
-      this.routerHistory.updateHistory(routeInfo.route); // Update the browser history
-    }
-
-    await nextPaint();
-    const nextPageInstance = await this.routerPageLoader.getPage(routeInfo.route);
-
-    if (!nextPageInstance) {
-      throw createError(ERROR_CODES.PAGE_NOT_FOUND, { page: routeInfo.route });
-    }
-
-    return nextPageInstance;
-  }
-
-  /**
-   * After the page navigation
-   * @param {Page} nextPageInstance - The next page instance
-   * @param {RouteValidationResult} routeInfo - The route information
-   * @returns {Promise<void>}
-   */
-  async afterPageUpdate(nextPageInstance, routeInfo) {
-    await nextPageInstance.create();
-    await nextPageInstance.show();
-    await nextPaint();
-  }
-
-  async handleHistoryNavigation({ route, pathname, state }) {
-    this.smoothScroll?.lock?.();
-    const transitionOverlay = document.querySelector(SELECTORS.TRANSITION_OVERLAY);
-    if (transitionOverlay) {
-      transitionOverlay.style.pointerEvents = "all";
-    }
-    let didShow = false;
     try {
-      // For history navigation (back/forward), trust the route from history state
-      // Normalize route - empty string means home
-      const normalizedRoute = route === "" ? "home" : route;
+      const next = await this.transitionsService.run(
+        {
+          hideCurrent: () =>
+            this.currentPage
+              ? this.currentPage.hide(context)
+              : Promise.resolve(),
+          loadNext: () =>
+            this.routerPageManager.load(resolved.path, { signal }),
+          commit: (documentResult) => this.commit(documentResult, context),
+        },
+        context,
+      );
 
-      // Create a valid RouteValidationResult directly from the route
-      const routeInfo = RouteValidationResult.valid(normalizedRoute);
-
-      // Get the next page instance
-      const nextPageInstance = await this.startPageUpdate(routeInfo, false);
-
-      if (!nextPageInstance) {
+      if (signal.aborted) return;
+      if (!next) {
+        location.assign(resolved.path);
         return;
       }
 
-      // ✅ CRITICAL: Show the next page (this was missing!)
-      await this.afterPageUpdate(nextPageInstance, routeInfo);
-      didShow = true;
-    } catch (error) {
-      if (isErrorCode(error, ERROR_CODES.PAGE_NOT_FOUND)) {
-        console.error('Page loading failed during history navigation:', error.message);
-      } else if (isErrorCode(error, ERROR_CODES.NETWORK_ERROR)) {
-        console.error('Network error during history navigation:', error.message);
+      await this.currentPage?.show(context);
+      this.smoothScroll?.start();
+      if (historyMode === "traverse") {
+        this.routerHistory.restoreScroll(this.smoothScroll);
       } else {
-        console.error(`Error handling history navigation:`, error);
+        this.smoothScroll?.scrollTo(0, { immediate: true });
       }
-      this.routerResolver.redirectToHome();
-    } finally {
-      // `Page.show()` performs the normal unlock.
-      // If navigation fails before show, ensure we don't stay locked.
-      if (!didShow) {
-        this.smoothScroll?.unlock?.();
-      }
-      if (transitionOverlay) {
-        transitionOverlay.style.pointerEvents = "";
-      }
+
+      this.dispatchEvent(
+        new CustomEvent(EVENTS.NAVIGATION_END, { detail: context }),
+      );
+    } catch (error) {
+      if (error.name === "AbortError" || signal.aborted) return;
+      console.error(error);
+      location.assign(resolved.path);
     }
   }
 
-  /**
-   * Setup global event listeners
-   * @returns {void}
-   */
-  setupEventListeners() {
-    window.addEventListener(EVENTS.HISTORY_NAVIGATION, (event) => {
-      this.handleHistoryNavigation(event.detail);
-    });
+  async commit(next, context) {
+    if (context.signal?.aborted) return;
+
+    await this.currentPage?.destroy?.();
+    this.currentPage = null;
+    if (context.signal?.aborted) return;
+
+    const currentMain = $(SELECTORS.MAIN);
+    swap(currentMain, next.main);
+    updateHead(next.document);
+    this.animationsService?.checkLeaks();
+
+    if (context.history === "push") this.routerHistory.push(context.path);
+    else if (context.history === "replace") {
+      this.routerHistory.replace(context.path);
+    }
+
+    const page = await this.routerPageLoader.getPage(context.to.key);
+    this.currentPage = page;
+    await page.init();
+    if (context.signal?.aborted) return;
+
+    await loadImages(currentMain.querySelectorAll("[data-preload]"));
+    this.smoothScroll?.refresh();
   }
+}
+
+function whenPreloaderDone() {
+  if (!document.documentElement.classList.contains("is-loading")) {
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    document.addEventListener(EVENTS.PRELOADER_COMPLETE, resolve, {
+      once: true,
+    });
+    if (!document.documentElement.classList.contains("is-loading")) {
+      resolve();
+    }
+  });
 }

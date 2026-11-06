@@ -35,4 +35,4 @@ status: accepted
 
 - `Page.js`, `Component.js`, `Navigation.js`, `Preloader.js`, and `PreloaderAnimation.js` move to `static elements` and the new helpers.
 - ADR 0011's "Component adds selector → element" now lives in `BaseLifecycle`, shared by pages and components.
-- `documentation/reference/JS_UTILITIES.md` describes the old helpers and needs rewriting.
+- DOM helpers are [DOM.md](../reference/DOM.md). The old utilities guide is deleted.

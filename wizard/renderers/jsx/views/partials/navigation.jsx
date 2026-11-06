@@ -1,0 +1,41 @@
+export function Menu({ navigation, site }) {
+  return (
+    <nav class="navigation" data-navigation data-navigation-status="not-active">
+      <div class="navigation__header">
+        <h2 class="navigation__title">{site.name}</h2>
+        <button
+          class="navigation__toggle"
+          type="button"
+          data-navigation-toggle
+          aria-expanded="false"
+          aria-controls="menu-panel"
+          aria-label="Menu"
+        >
+          <span class="navigation__toggle-bar"></span>
+          <span class="navigation__toggle-bar"></span>
+          <span class="navigation__toggle-bar"></span>
+        </button>
+      </div>
+      <div
+        id="menu-panel"
+        class="navigation__overlay"
+        data-navigation-panel
+        data-lenis-prevent
+      >
+        <ul class="navigation__menu">
+          {navigation.map((item) => (
+            <li class="navigation__item" key={item.path}>
+              <a
+                class="navigation__link internal-link"
+                href={item.path}
+                aria-current={item.current}
+              >
+                <span class="navigation__text">{item.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  );
+}

@@ -1,21 +1,18 @@
 import { ATTRIBUTES, SELECTORS, VALUES } from "../utilities/Constants.js";
 
-/**
- * RouterPrefetchManager
- *
- * Prefetches page HTML on user intent (hover/focus) and stores it in RouterPrefetchCache.
- *
- * Uses event delegation to handle dynamic links.
- */
 export class RouterPrefetchManager {
-  constructor({ routerResolver, routerPageManager, prefetchCache, hoverDelayMs }) {
+  constructor({
+    routerResolver,
+    routerPageManager,
+    prefetchCache,
+    hoverDelayMs,
+  }) {
     this.routerResolver = routerResolver;
     this.routerPageManager = routerPageManager;
     this.prefetchCache = prefetchCache;
     this.hoverDelayMs = hoverDelayMs ?? VALUES.PREFETCH_HOVER_DELAY_MS;
-
-    /** @type {Map<HTMLAnchorElement, number>} */
-    this._hoverTimers = new Map();
+    this.hoverTimers = new Map();
+    this.prefetchController = null;
   }
 
   init() {
@@ -23,12 +20,10 @@ export class RouterPrefetchManager {
   }
 
   setupListeners() {
-    // Use bubbling events for delegation (mouseenter doesn't bubble).
     document.addEventListener("mouseover", (event) => {
       const link = event.target?.closest?.(SELECTORS.INTERNAL_LINK);
       if (!link) return;
 
-      // Ignore internal mouseover movements within the same link.
       const from = event.relatedTarget;
       if (from && link.contains(from)) return;
 
@@ -45,7 +40,6 @@ export class RouterPrefetchManager {
       this.cancelPrefetch(link);
     });
 
-    // Keyboard intent: focus prefetches too (accessibility-friendly).
     document.addEventListener("focusin", (event) => {
       const link = event.target?.closest?.(SELECTORS.INTERNAL_LINK);
       if (!link) return;
@@ -66,61 +60,59 @@ export class RouterPrefetchManager {
     this.cancelPrefetch(link);
 
     const timerId = window.setTimeout(() => {
-      this._hoverTimers.delete(link);
+      this.hoverTimers.delete(link);
       this.prefetch(href);
     }, this.hoverDelayMs);
 
-    this._hoverTimers.set(link, timerId);
+    this.hoverTimers.set(link, timerId);
   }
 
   cancelPrefetch(link) {
-    const timerId = this._hoverTimers.get(link);
+    const timerId = this.hoverTimers.get(link);
     if (timerId) {
       window.clearTimeout(timerId);
-      this._hoverTimers.delete(link);
+      this.hoverTimers.delete(link);
     }
   }
 
   async prefetch(href) {
-    const routeInfo = this.routerResolver.validateRoute(
-      href,
-      window.location.pathname,
-    );
-    if (!routeInfo?.isValid) return;
+    const resolved = this.routerResolver.resolve(href);
+    if (resolved.kind !== "commit" && resolved.kind !== "same-document") {
+      return;
+    }
 
-    const route = routeInfo.route;
-    if (!route) return;
+    const path = resolved.path;
+    if (this.prefetchCache?.has(path)) return;
 
-    // Already cached
-    if (this.prefetchCache?.has(route)) return;
+    this.prefetchController?.abort();
+    this.prefetchController = new AbortController();
 
     try {
-      // Use PageManager's request method (no DOM update).
-      const html = await this.routerPageManager.requestPage(route, {
+      const html = await this.routerPageManager.requestPage(path, {
+        signal: this.prefetchController.signal,
         useCache: false,
       });
       if (!html) return;
 
       const metadata = this.extractMetadata(html);
-      this.prefetchCache?.set(route, html, metadata);
+      this.prefetchCache?.set(path, html, metadata);
     } catch {
-      // Prefetch is best-effort: no hard failures.
+      // Prefetch is best-effort.
     }
   }
 
   extractMetadata(html) {
     try {
       const doc = new DOMParser().parseFromString(html, "text/html");
-      const main = doc.querySelector("main[data-template]");
+      const main = doc.querySelector(SELECTORS.MAIN);
       if (!main) return {};
       return {
-        template: main.getAttribute("data-template") ?? null,
-        backgroundColor: main.getAttribute("data-background") ?? null,
-        color: main.getAttribute("data-color") ?? null,
+        route: main.getAttribute(ATTRIBUTES.DATA_ROUTE) ?? null,
+        backgroundColor: main.getAttribute(ATTRIBUTES.DATA_BACKGROUND) ?? null,
+        color: main.getAttribute(ATTRIBUTES.DATA_COLOR) ?? null,
       };
     } catch {
       return {};
     }
   }
 }
-

@@ -1,0 +1,17 @@
+[data-navigation] {
+  view-transition-name: chrome-nav;
+}
+
+main[data-route="home"] .home__title {
+  view-transition-name: title-home;
+}
+
+main[data-route="not-found"] .not-found__title {
+  view-transition-name: title-not-found;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) {
+    animation: none;
+  }
+}

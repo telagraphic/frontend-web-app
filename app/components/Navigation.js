@@ -1,277 +1,110 @@
 import Component from "./Component.js";
-import { $, $$ } from "../utilities/DOMHelpers.js";
-import { SELECTORS, VALUES } from "../utilities/Constants.js";
+import { $ } from "../utilities/dom.js";
+import { SELECTORS, EVENTS, ATTRIBUTES } from "../utilities/Constants.js";
 
-/**
- * Navigation component is responsible for updating the navigation links when the page changes, hide links, change colors depending on the page, etc...
- */
-export class Navigation extends Component {
-  constructor({ siteConfig, pageRegistry, smoothScroll }) {
+export default class Navigation extends Component {
+  static elements = {
+    toggle: SELECTORS.NAV_TOGGLE,
+    panel: SELECTORS.NAV_PANEL,
+    links: [SELECTORS.INTERNAL_LINK],
+  };
+
+  constructor({ router, smoothScroll, animationsService }) {
     super({
       element: SELECTORS.NAV,
-      elements: {
-        links: SELECTORS.NAV_LINKS,
-      },
-      navigation: ".navigation",
-      menuButton: ".navigation__toggle",
-      title: ".navigation__title",
+      animationsService,
     });
-
-    this.siteConfig = siteConfig;
-    this.pageRegistry = pageRegistry;
+    this.router = router;
     this.smoothScroll = smoothScroll;
+    this.stoppedScroll = false;
+    this.skipScrollStart = false;
   }
 
-  /**
-   * Initialize Navigation component
-   */
-  create() {
-    super.create();
-    this.navigation = $(SELECTORS.NAV);
-    this.menuButton = $(SELECTORS.NAV_TOGGLE);
-    this.menuLinks = $$(SELECTORS.NAV_LINKS);
-    this.title = $(SELECTORS.NAV_TITLE);
-    this.setupNavigation();
-    this.addEventListeners();
-    this.setupLinkListeners();
-    this.setupMenuButtonStyles();
-    this.setupTitleObserver();
-  }
-
-  setupNavigation() {
-    if (!this.menuButton) return;
-    this.menuButtonClickHandler = () => {
-      if (!this.navigation) return;
-      if (
-        this.navigation.getAttribute("data-navigation-status") === "not-active"
-      ) {
-        this.navigation.setAttribute("data-navigation-status", "active");
-        this.smoothScroll.stop();
-      } else {
-        this.navigation.setAttribute("data-navigation-status", "not-active");
-        this.smoothScroll.start();
-      }
-    };
-    this.addListenerAndRegister(this.menuButton, "click", this.menuButtonClickHandler);
-  }
-
-  hideNavigation() {
-    this.navigation.setAttribute("data-navigation-status", "not-active");
-  }
-
-  showNavigation() {
-    this.navigation.setAttribute("data-navigation-status", "active");
-  }
-
-  getNavigationStatus() {
-    return this.navigation.getAttribute("data-navigation-status");
-  }
-
-  setupLinkListeners() {
-    // Note: This handler is now blocked by Router's stopImmediatePropagation()
-    // Menu closing is handled in Router.afterPageUpdate() instead
-    // Keeping this code for reference, but it won't execute for internal links
-    this.menuLinkHandlers = [];
-    for (const link of this.menuLinks) {
-      const handler = (event) => {
-        const isMenuActive =
-          this.navigation.getAttribute("data-navigation-status") === "active";
-        if (isMenuActive) {
-          setTimeout(() => {
-            this.hideNavigation();
-          }, VALUES.NAV_TIMEOUT);
-        }
-      };
-      this.menuLinkHandlers.push({ link, handler });
-      this.addListenerAndRegister(link, "click", handler);
-    }
-  }
-
-  /**
-   * Listen for esc key press to close navigation
-   *
-   */
-  addEventListeners() {
-    if (!this.navigation) return;
-    
-    // Escape key handler
-    this.escapeKeyHandler = (e) => {
-      if (e.key === "Escape" || e.code === "Escape") {
-        if (
-          this.navigation.getAttribute("data-navigation-status") === "active"
-        ) {
-          this.navigation.setAttribute("data-navigation-status", "not-active");
-        }
-      }
-    };
-    this.addListenerAndRegister(document, "keydown", this.escapeKeyHandler);
-
-    // M key handler
-    this.mKeyHandler = (e) => {
-      if (e.key === "M" || e.code === "KeyM") {
-        if (this.menuButton) {
-          this.menuButton.click();
-        }
-      }
-    };
-    this.addListenerAndRegister(document, "keydown", this.mKeyHandler);
-  }
-
-
-  setupTitleObserver() {
-    if (!this.title) return;
-
-    // Scroll threshold in pixels - fade out after scrolling this amount
-    const scrollThreshold = VALUES.NAV_SCROLL_THRESHOLD;
-    
-    // Track current fade state to avoid unnecessary animations
-    this.titleIsFadedOut = false;
-    this.titleFadeTimeline = null;
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY || window.pageYOffset;
-
-      if (scrollY > scrollThreshold && !this.titleIsFadedOut) {
-        // Fade out title
-        this.titleIsFadedOut = true;
-        
-        if (this.titleFadeTimeline) {
-          this.titleFadeTimeline.kill();
-        }
-
-        this.titleFadeTimeline = gsap.to(this.title, {
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.inOut",
-        });
-      } else if (scrollY <= scrollThreshold && this.titleIsFadedOut) {
-        // Fade in title
-        this.titleIsFadedOut = false;
-        
-        if (this.titleFadeTimeline) {
-          this.titleFadeTimeline.kill();
-        }
-
-        this.titleFadeTimeline = gsap.to(this.title, {
-          opacity: 1,
-          duration: 0.5,
-          ease: "power2.inOut",
-        });
-      }
-    };
-
-    // Store reference for cleanup
-    this.titleScrollHandler = handleScroll;
-
-    // Add scroll listener with passive flag for better performance
-    this.addListenerAndRegister(window, "scroll", this.titleScrollHandler, { passive: true });
-
-    // Initial check in case page is already scrolled
-    handleScroll();
-  }
-
-  setupMenuButtonStyles() {
-    if (!this.menuButton) return;
-
-    const defaultColor = "#191919";
-    const intersectingColor = "#FFFFFF";
-    
-    // Only define intersecting color - CSS handles defaults
-    const intersectingToggleBarColor = "#FFFFFF";
-
-    // Check if menuButton overlaps with target elements
-    const checkIntersection = () => {
-      const menuButtonRect = this.menuButton.getBoundingClientRect();
-      const pageNavigation = document.querySelector(".page-navigation");
-
-      let isIntersecting = false;
-
-      if (pageNavigation) {
-        const navRect = pageNavigation.getBoundingClientRect();
-        if (
-          menuButtonRect.bottom >= navRect.top &&
-          menuButtonRect.top <= navRect.bottom &&
-          menuButtonRect.right >= navRect.left &&
-          menuButtonRect.left <= navRect.right
-        ) {
-          isIntersecting = true;
-        }
-      }
-
-      // Update button text color
-      this.menuButton.style.color = isIntersecting ? intersectingColor : defaultColor;
-      
-      // Only override CSS variable when intersecting
-      // When not intersecting, remove the variable to let CSS defaults take over
-      if (isIntersecting) {
-        this.menuButton.style.setProperty('--toggle-bar-color', intersectingToggleBarColor);
-      } else {
-        // Remove the inline style to allow CSS cascade to work
-        this.menuButton.style.removeProperty('--toggle-bar-color');
-      }
-    };
-
-    // Observe page-navigation for changes
-    const observerOptions = {
-      root: null, // viewport
-      rootMargin: "0px",
-      threshold: 0,
-    };
-
-    const observerCallback = () => {
-      checkIntersection();
-    };
-
-    this.menuButtonObserver = new IntersectionObserver(
-      observerCallback,
-      observerOptions
+  onInit() {
+    this.toggle = this.elements.toggle;
+    this.panel = this.elements.panel;
+    this.links = this.elements.links;
+    this.listenToggle();
+    this.listenKeys();
+    this.router?.addEventListener(
+      EVENTS.NAVIGATION_START,
+      () => {
+        this.skipScrollStart = true;
+        this.close();
+        this.skipScrollStart = false;
+      },
+      { signal: this.signal },
     );
-
-    const pageNavigation = document.querySelector(".page-navigation");
-
-    if (pageNavigation) {
-      this.menuButtonObserver.observe(pageNavigation);
-    }
-
-    // Also check on scroll and resize
-    this.handleScroll = () => checkIntersection();
-    this.handleResize = () => checkIntersection();
-
-    this.addListenerAndRegister(window, "scroll", this.handleScroll, { passive: true });
-    this.addListenerAndRegister(window, "resize", this.handleResize, { passive: true });
-
-    // Initial check
-    checkIntersection();
+    this.router?.addEventListener(
+      EVENTS.NAVIGATION_END,
+      (event) => this.markCurrent(event.detail?.path),
+      { signal: this.signal },
+    );
+    this.markCurrent(location.pathname);
   }
 
-  /**
-   * Clean up navigation component
-   * Remove event listeners and clear references
-   */
-  destroy() {
-    // Clean up IntersectionObserver
-    if (this.menuButtonObserver) {
-      this.menuButtonObserver.disconnect();
-      this.menuButtonObserver = null;
+  getStatus() {
+    return this.root.getAttribute("data-navigation-status");
+  }
+
+  open() {
+    if (this.getStatus() === "active") return;
+    this.root.setAttribute("data-navigation-status", "active");
+    this.toggle?.setAttribute("aria-expanded", "true");
+    this.links?.[0]?.focus();
+    $(SELECTORS.MAIN)?.setAttribute("inert", "");
+    this.smoothScroll?.stop();
+    this.stoppedScroll = true;
+    this.onOpen?.();
+  }
+
+  close() {
+    if (this.getStatus() !== "active") return;
+    this.root.setAttribute("data-navigation-status", "not-active");
+    this.toggle?.setAttribute("aria-expanded", "false");
+    this.toggle?.focus();
+    $(SELECTORS.MAIN)?.removeAttribute("inert");
+    this.onClose?.();
+    if (this.stoppedScroll && !this.skipScrollStart) {
+      this.smoothScroll?.start();
     }
+    this.stoppedScroll = false;
+  }
 
-    // Clean up title fade timeline
-    if (this.titleFadeTimeline) {
-      this.titleFadeTimeline.kill();
-      this.titleFadeTimeline = null;
+  markCurrent(path) {
+    const current = path ?? location.pathname;
+    for (const link of this.links ?? []) {
+      const href = link.getAttribute(ATTRIBUTES.HREF);
+      if (!href) continue;
+      const url = new URL(href, location.href);
+      if (url.pathname === current) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
     }
+  }
 
-    // Remove all Component event listeners (includes scroll/resize handlers registered via addListenerAndRegister)
-    this.removeAllListeners();
+  listenToggle() {
+    this.toggle?.addEventListener(
+      "click",
+      () => {
+        if (this.getStatus() === "active") this.close();
+        else this.open();
+      },
+      { signal: this.signal },
+    );
+  }
 
-    // Clear references for memory cleanup
-    this.titleScrollHandler = null;
-    this.handleScroll = null;
-    this.handleResize = null;
-
-    // Clear references
-    this.element = null;
-    this.elements = null;
-    this.currentPage = null;
+  listenKeys() {
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape" || event.code === "Escape") {
+          if (this.getStatus() === "active") this.close();
+        }
+      },
+      { signal: this.signal },
+    );
   }
 }

@@ -1,0 +1,4 @@
+/* @view-transition — Limited (no Firefox). Unsupported browsers ignore this and document-load. */
+@view-transition {
+  navigation: auto;
+}

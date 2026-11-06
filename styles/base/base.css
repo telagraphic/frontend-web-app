@@ -1,0 +1,94 @@
+html {
+  font-family: var(--font-family-sans);
+  font-size: 100%;
+  line-height: var(--line-height-body);
+}
+
+html.is-loading {
+  overflow: hidden;
+}
+
+html.is-loading [data-preload],
+html.is-loading [data-animation],
+html.is-animating [data-animation] {
+  visibility: hidden;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+p,
+li,
+figcaption,
+blockquote {
+  max-inline-size: var(--measure);
+}
+
+:focus-visible {
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  z-index: var(--z-preloader);
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+}
+
+.skip-link:focus {
+  clip: auto;
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  white-space: normal;
+  inset-inline-start: var(--space-4);
+  inset-block-start: var(--space-4);
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  padding: var(--space-2) var(--space-4);
+}
+
+main {
+  scroll-margin-block-start: 5rem;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  scroll-margin-block-start: 5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

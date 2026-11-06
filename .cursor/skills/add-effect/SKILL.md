@@ -12,7 +12,7 @@ description: >-
 
 Read [ANIMATIONS.md](../../../documentation/reference/ANIMATIONS.md). Terms: [GLOSSARY.md](../../../GLOSSARY.md). Decisions: ADR 0009, ADR 0015.
 
-Write the real steps when `app/animations/gsap/effects/` and `app/config/animations.js` exist. Prefer publishing from [gsap-experiment](../gsap-experiment/SKILL.md) when the motion is still being tried.
+Prefer publishing from [gsap-experiment](../gsap-experiment/SKILL.md) when the motion is still being tried.
 
 ## Do
 

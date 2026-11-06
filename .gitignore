@@ -4,6 +4,9 @@
 
 /images
 /dist
+.dev
+docs/dist
+docs/.astro
 
 ##########################
 # config/config.js
@@ -40,6 +43,10 @@ coverage
 .lock-wscript
 build/Release
 /node_modules
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # Local Netlify folder
 .netlify

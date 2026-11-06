@@ -10,10 +10,10 @@ Built by `createServices()` in `app/services/ServicesFactory.js`, the compositio
 
 | Service | What it does | Lives in | Status | Decided in |
 | --- | --- | --- | --- | --- |
-| Route table | Lists every route with its page class, path, title, meta description, and optional `pageTransition`. Config the factory constructs and the router holds, not a returned service | `app/config/siteRoutes.js` (data) and `app/config/SiteConfig.js` (class) | Exists. The `class` field becomes `page`. Overlay fields follow ADR 0024 | ADR 0004, 0006, 0024 |
-| Router, page swap | Intercepts internal links, runs the order of each navigation, owns the current page, builds page classes, and dispatches `navigationstart` and `navigationend` | `app/router/Router.js` | Exists. Being refactored | ADR 0001, 0005, 0006 |
-| Document load navigation | Same interface as the page swap router. GSAP document load only: cover, flag, then `location.assign`. View-transition document load and None do not ship it | `app/router/DocumentLoad.js` | To build. File list: [WIZARD.md](WIZARD.md) | ADR 0002, 0006 |
-| Transitions service | Sequences hide/load/commit. The factory imports one file as `transitionsService`. `GsapTransitions.js` is `prepare` / `cover` / `reveal` and ships on both GSAP paths. `ViewTransitions.js` is `wrapCommit` and ships on view transition + page swap only. Document-load view transitions and None ship neither | `app/services/GsapTransitions.js` or `app/services/ViewTransitions.js`; plug-ins in `app/transitions/` | To build. File list: [WIZARD.md](WIZARD.md). Paths: [PAGE_TRANSITIONS.md](PAGE_TRANSITIONS.md) | ADR 0005, 0012, 0002 |
+| Route table | Lists every route with its page class, path, title, meta description, and optional `pageTransition`. Config the factory constructs and the router holds, not a returned service | `app/config/siteRoutes.js` | Exists. Field is `page`. Overlay fields follow ADR 0024 | ADR 0004, 0006, 0024 |
+| Router, page swap | Intercepts internal links, runs the order of each navigation, owns the current page, builds page classes, and dispatches `navigationstart` and `navigationend` | `app/router/Router.js` | Exists. Builds its own parts. `init` shows the first page | ADR 0001, 0005, 0006 |
+| Document load navigation | Same interface as the page swap router. GSAP document load only: cover, flag, then `location.assign`. View-transition document load and None do not ship it | `app/router/DocumentLoad.js` | Exists. Created with `--transition gsap --navigation document-load` | ADR 0002, 0006 |
+| Transitions service | Sequences hide/load/commit. The factory imports one file as `transitionsService`. `GsapTransitions.js` is `prepare` / `cover` / `reveal` and ships on both GSAP paths. `ViewTransitions.js` is `wrapCommit` and ships on view transition + page swap only. Document-load view transitions and None ship neither | `app/services/GsapTransitions.js` or `app/services/ViewTransitions.js`; plug-ins in `app/transitions/` | Exists. Starter factory imports `GsapTransitions`. File list: [WIZARD.md](WIZARD.md) | ADR 0005, 0012, 0002 |
 | Animations service | The site's only connection to GSAP. Registers plugins, connects smooth scroll to ScrollTrigger, creates animation scopes, runs `data-animation` types, and refreshes ScrollTrigger | `app/services/AnimationsService.js`, with GSAP code in `app/animations/gsap/` | Exists. To refactor. Usage: [ANIMATIONS.md](ANIMATIONS.md) | ADR 0009 |
 | Smooth scroll | Wraps Lenis. Never imports GSAP. Pauses with `stop()` and `start()`. `refresh()` after a page's init; window resize only when width changes. One preset name picks the feel | `app/components/SmoothScroll.js` | Exists. To refactor | ADR 0006, 0009, 0015, 0016 |
 
@@ -23,8 +23,8 @@ Not services. Each lifecycle object creates its own.
 
 | Helper | What it does | Lives in | Status |
 | --- | --- | --- | --- |
-| Base lifecycle | Shared `init` / `destroy` shell: abort signal, animation scope, `this.use(child)`. `BasePage` and `Component` extend it | `app/pages/BaseLifecycle.js` (or next to `Component`) | To build (ADR 0011) |
-| Animation scope | Records everything one lifecycle object animates, and reverts all of it on `destroy()`. Created through `animationsService.createScope(root)` | `app/animations/gsap/GsapAnimationScope.js` | To build (ADR 0009) |
+| Base lifecycle | Shared `init` / `destroy` shell: abort signal, animation scope, `this.use(child)`. `BasePage` and `Component` extend it | `app/pages/BaseLifecycle.js` | Exists (ADR 0011) |
+| Animation scope | Records everything one lifecycle object animates, and reverts all of it on `destroy()`. Created through `animationsService.createScope(root)` | `app/animations/gsap/GsapAnimationScope.js` | Exists on BaseLifecycle. `createScope` waits for slice 5 (ADR 0009) |
 
 ### Router parts
 
@@ -56,9 +56,7 @@ Built by `createLayout(services)`, the composition root for layout components. E
 | Layout component | What it does | Lives in | Status |
 | --- | --- | --- | --- |
 | Menu | `Navigation` owns `open` and `close`. The starter subclass is `Menu`. Closes on `navigationstart`. Sets `aria-current="page"` by href | `app/components/Navigation.js`, `app/components/menus/Menu.js` | Exists. To refactor. Boilerplate: [LAYOUT_COMPONENTS.md](LAYOUT_COMPONENTS.md). ADR 0006, 0017 |
-| Preloader | Covers the first document of a session. Later document loads do not paint it. Page `show` runs after it hides. While it is up, skip link, menu, footer, host, and `<main>` are `inert`. `maxWait` defaults to 4000. The counter is off unless `counter` is true | `app/components/Preloader.js` | Exists. Built by `App.js` today. ADR 0014 |
-
-`createLayout()` doesn't exist yet.
+| Preloader | Covers the first document of a session. Later document loads do not paint it. Page `show` runs after it hides. While it is up, skip link, menu, footer, host, and `<main>` are `inert`. `maxWait` defaults to 4000. The counter is off unless `counter` is true | `app/components/Preloader.js` | Exists. Built by `createLayout()`. ADR 0014 |
 
 ### Layout listeners, not services
 
@@ -77,10 +75,11 @@ Not-found is a route plus a view (ADR 0025). Unknown paths are a document load o
 | List | What it holds | Lives in | Status |
 | --- | --- | --- | --- |
 | Route table | Every route the site serves | `app/config/siteRoutes.js` | Exists |
-| Page index | One `import()` per page class | `app/config/pages.js` | To build (ADR 0004, 0015) |
-| Animation index | Each `data-animation` type and its effect | `app/config/animations.js` | To build (ADR 0009, 0015) |
-| Scroll presets | `default`, `heavy`, and `expo`. The factory passes one name | `app/config/scrollPresets.js` | To build (ADR 0015) |
-| Layout list | The project's layout components | Inside `createLayout()` | To build (ADR 0007) |
+| Page index | One `import()` per page class | `app/config/pages.js` | Exists. Home and Page |
+| Animation index | Each `data-animation` type and its effect | `app/config/animations.js` | Exists. Wired in slice 5 |
+| Scroll presets | `default`, `heavy`, and `expo`. The factory passes one name | `app/config/scrollPresets.js` | Exists |
+| Origin | Site name and canonical origin | `app/config/site.js` | Exists |
+| Layout list | The project's layout components | `app/layout/createLayout.js` | Exists |
 
 ## Removed
 

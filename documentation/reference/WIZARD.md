@@ -4,7 +4,7 @@ How a client site is created from this starter. Decisions: [ADR 0002](../adr/000
 
 `bun run create <dest>` runs `wizard/create.js`. The starter is never rewritten. A created site has no `wizard/` folder and no `create` script.
 
-Status: accepted design. `wizard/create.js` is not built yet.
+Status: slice 11 landed the Starlight app in `docs/`. Create still matches the slice 10 matrix. The docs site is starter-only.
 
 ## Prompts
 
@@ -33,7 +33,7 @@ Create writes files and stops. It prints `cd <dest> && bun install && bun run de
 
 ## Copy, drop, write
 
-Copy the starter into `<dest>`. Skip `wizard/`, `node_modules/`, `dist/`, `.dev/`, and `.git`. Copy `experiments/`. Then delete unused modules for this combination. Write only these seams:
+Copy the starter into `<dest>`. Skip `wizard/`, `docs/`, `node_modules/`, `dist/`, `.dev/`, `.git`, and `.github/`. Copy `experiments/`. Then delete unused modules for this combination. Write only these seams:
 
 | File | What the wizard writes |
 | --- | --- |
@@ -49,7 +49,7 @@ Copy the starter into `<dest>`. Skip `wizard/`, `node_modules/`, `dist/`, `.dev/
 
 `assertDocument()` requires `[data-transition-host]` only when the layout has that host. That host is a `div` with `hidden` and `aria-hidden="true"`, never a landmark. Skip link and `main#main` are always required ([ACCESSIBILITY.md](ACCESSIBILITY.md)).
 
-Docs on the copy: `.cursor/skills/`, `AGENTS.md`, `GLOSSARY.md`, `documentation/adr/`, `documentation/reference/`. Not copied: `documentation/guides/`, `documentation/refactoring-reviews/`, `APPLICATION_GUIDE.md`. Starter-only tests and the create-matrix CI workflow stay in the starter. A created site keeps site-level lint, test, and build.
+Docs on the copy: `.cursor/skills/`, `AGENTS.md`, `GLOSSARY.md`, `documentation/adr/`, `documentation/reference/`. History guides and checklists are gone from the starter (slice 0). Starter-only tests, the create-matrix CI workflow, and the Starlight app in `docs/` stay in the starter. A created site keeps site-level lint, test, and build.
 
 ## Modules per combination
 

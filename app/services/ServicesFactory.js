@@ -1,67 +1,37 @@
-import { SiteConfig } from "../config/SiteConfig.js";
+import { siteRoutes } from "../config/siteRoutes.js";
+import { pages } from "../config/pages.js";
+import { scrollPresets } from "../config/scrollPresets.js";
+import { transitions } from "../config/transitions.js";
 import { SmoothScroll } from "../components/SmoothScroll.js";
-import { Navigation } from "../components/Navigation.js";
 import { AnimationsService } from "./AnimationsService.js";
-import { TransitionsService } from "./TransitionsService.js";
-import { RegistryService } from "./RegistryService.js";
+import { GsapTransitions } from "./GsapTransitions.js";
 import { Router } from "../router/Router.js";
-import { RouterHistory } from "../router/RouterHistory.js";
-import { RouterResolver } from "../router/RouterResolver.js";
-import { RouterPageLoader } from "../router/RouterPageLoader.js";
-import { RouterPageManager } from "../router/RouterPageManager.js";
-import { RouterPrefetchCache } from "../router/RouterPrefetchCache.js";
-import { RouterPrefetchManager } from "../router/RouterPrefetchManager.js";
-import { TRANSITION_TYPES } from "../utilities/Constants.js";
-
+import FadeTransition from "../transitions/fade/FadeTransition.js";
+import { createError, ERROR_CODES } from "../utilities/ErrorRegistry.js";
 
 export function createServices() {
-  // Phase 1: Create all services (circular dependencies can be undefined initially)
-  const siteConfig = new SiteConfig();
-  const animationsService = new AnimationsService();
-  const transitionsService = new TransitionsService({ 
-    siteConfig,
-    transitionType: TRANSITION_TYPES.CUSTOM // Default to custom for backward compatibility
+  for (const [key, route] of Object.entries(siteRoutes)) {
+    if (!pages[route.page]) {
+      throw createError(ERROR_CODES.CLASS_NOT_FOUND, {
+        className: `${route.page} (route: ${key})`,
+      });
+    }
+  }
+
+  const smoothScroll = new SmoothScroll(scrollPresets.default);
+  const animationsService = new AnimationsService({ smoothScroll });
+  const transitionsService = new GsapTransitions({
+    animationsService,
+    defaultTransition: FadeTransition,
+    transitions,
   });
-  const smoothScroll = new SmoothScroll();
-  const routerPageLoader = new RouterPageLoader({ siteConfig, smoothScroll, animationsManager: animationsService, transitionsManager: transitionsService });
-  const registryService = new RegistryService({ siteConfig, routerPageLoader });
-  const routerPageManager = new RouterPageManager({ siteConfig, routerPageLoader });
-  const routerHistory = new RouterHistory({ siteConfig });
-  const routerResolver = new RouterResolver({ siteConfig, routerHistory });
-
-  // Prefetch (cache-aside): hover/focus prefetch of page HTML
-  const prefetchCache = new RouterPrefetchCache({});
-  const prefetchManager = new RouterPrefetchManager({
-    routerResolver,
-    routerPageManager,
-    prefetchCache,
-  });
-
-  // Phase 2: Wire circular dependencies using setters
-  routerPageLoader.setRegistryService(registryService);
-  registryService.setRouterPageLoader(routerPageLoader);
-  routerHistory.setRouterResolver(routerResolver);
-  routerResolver.setRouterHistory(routerHistory);
-  routerPageManager.setRouterResolver(routerResolver);
-  routerPageManager.setPrefetchCache(prefetchCache);
-
-  // Create remaining services that depend on the wired services
-  const navigation = new Navigation({ siteConfig, registryService, smoothScroll });
-  const router = new Router({ siteConfig, registryService, routerPageLoader, routerPageManager, routerHistory, routerResolver, smoothScroll, animationsService, transitionsService, navigation, prefetchManager });
-
-  return {
-    siteConfig,
-    router, 
-    smoothScroll,
+  const router = new Router({
+    routes: siteRoutes,
+    pages,
     animationsService,
     transitionsService,
-    registryService,
-    routerPageLoader,
-    routerPageManager,
-    routerHistory,
-    routerResolver,
-    navigation,
-    prefetchCache,
-    prefetchManager,
-  };
+    smoothScroll,
+  });
+
+  return { router, animationsService, transitionsService, smoothScroll };
 }

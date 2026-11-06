@@ -30,4 +30,4 @@ Page classes currently run the overlay, scrolling, and smooth scroll from inside
 - Page classes that override `create()`, which is all four today, move that code into hooks or components. Home's follower code becomes a component.
 - `show()` no longer always scrolls to the top, so the router can restore the scroll position on back and forward (ADR 0001, action 10).
 - On the first visit, boot calls `show` only after the preloader has hidden (ADR 0014). `onShow` and `data-animation` entrance motion start then, not while the preloader is covering the page.
-- `documentation/reference/PAGE_LIFECYCLE.md` describes the old hooks and needs rewriting.
+- Page lifecycle is [PAGE.md](../reference/PAGE.md). The old eight-hook guide is deleted.

@@ -1,94 +1,91 @@
-/**
- *  Entry point for the application
- */
-
 import { createServices } from "./services/ServicesFactory.js";
-import { Preloader } from "./components/Preloader.js";
-import { liveReload, setupPageConfig } from "./config/Environment.js";
-import { SELECTORS, EVENTS } from "./utilities/Constants.js";
-import { $ } from "./utilities/DOMHelpers.js";
+import { createLayout } from "./layout/createLayout.js";
+import { pages } from "./config/pages.js";
+import { siteRoutes } from "./config/siteRoutes.js";
+import { $ } from "./utilities/dom.js";
+import { SELECTORS, ATTRIBUTES, EVENTS } from "./utilities/Constants.js";
+import { createError, ERROR_CODES } from "./utilities/ErrorRegistry.js";
 
 class App {
-  constructor() {
-    this.pageConfig = setupPageConfig();
-    this.preloaderVisible = false;
-  }
-
-  /**
-   * Initialize the application state
-   */
   async init() {
-    this.createServices();
-    await this.transitionsService.init();
-    await this.services.router.start(); // Calls pageLoader.create() to initialize the first page
-    this.currentPage = this.services.registryService.getCurrentPage();
-    this.createNavigation();
-    this.createPreloader();
-    liveReload();
-  }
-
-  /**
-   * Create the services for the application
-   */
-  createServices() {
     this.services = createServices();
-    this.siteConfig = this.services.siteConfig;
-    this.router = this.services.router;
-    this.navigation = this.services.navigation;
-    this.smoothScroll = this.services.smoothScroll;
-    this.animationsService = this.services.animationsService;
-    this.transitionsService = this.services.transitionsService;
-    this.pageRegistry = this.services.pageRegistry;
-    this.pageLoader = this.services.pageLoader;
-    this.pageManager = this.services.pageManager;
-    this.routerHistory = this.services.routerHistory;
-    this.routerResolver = this.services.routerResolver;
-  }
+    const { router, animationsService, transitionsService, smoothScroll } =
+      this.services;
 
-  /**
-   * Create the navigation component
-   */
-  createNavigation() {
-    this.navigation.create();
-  }
-
-  /**
-   * Display preloader on first page visit only
-   */
-  createPreloader() {
-    // Don't create preloader if it's already been shown or if one already exists
-    if (this.preloaderVisible || this.preloader) return;    
-    const preloaderElement = $(SELECTORS.PRELOADER);
-    if (!preloaderElement) return;
-    
-    this.preloader = new Preloader();
-    this.smoothScroll?.lock?.();
-    this.preloader.create();
-
-    this.preloaderHandler = ({ message }) => {
-      this.smoothScroll?.unlock?.();
-      this.currentPage.smoothScroll.create(); // TODO: turn on smooth scroll on initial page load, or listen for this event in Page.listeners and keep it encapsulated
-      this.currentPage.smoothScroll.scrollTo(0, { immediate: true });
-      this.preloader.destroy();
-      this.preloader = null;
-      this.preloaderVisible = true;
-      
+    try {
+      await smoothScroll.init();
+      await animationsService.init();
+      await transitionsService?.init?.();
+    } catch (error) {
+      throw createError(ERROR_CODES.SERVICE_INIT_FAILED, {
+        service: error.context?.service ?? "boot",
+        cause: error,
+      });
     }
 
-    this.preloader.on(EVENTS.PRELOADER_COMPLETE, this.preloaderHandler);
+    this.layout = createLayout(this.services);
+    await this.layout.init();
+
+    try {
+      if (router) await router.init();
+      else await showStandalonePage({ animationsService, smoothScroll });
+    } catch (error) {
+      await this.layout?.preloader?.destroy?.();
+      throw createError(ERROR_CODES.SERVICE_INIT_FAILED, {
+        service: router ? "Router" : "Page",
+        cause: error,
+      });
+    }
+
+    restoreDevScroll(smoothScroll);
+  }
+}
+
+async function showStandalonePage({ animationsService, smoothScroll }) {
+  const key = $(SELECTORS.MAIN)?.getAttribute(ATTRIBUTES.DATA_ROUTE) ?? "home";
+  const load = pages[siteRoutes[key]?.page];
+  if (!load) {
+    throw createError(ERROR_CODES.PAGE_NOT_FOUND, { page: key });
+  }
+  const pageModule = await load();
+  const Page = pageModule.default;
+  const page = new Page({ animationsService, smoothScroll });
+  await page.init();
+  await whenPreloaderDone();
+  await page.show({
+    family: "document-load",
+    from: null,
+    to: key,
+    path: location.pathname,
+    history: "replace",
+  });
+}
+
+function whenPreloaderDone() {
+  if (!document.documentElement.classList.contains("is-loading")) {
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    document.addEventListener(EVENTS.PRELOADER_COMPLETE, resolve, {
+      once: true,
+    });
+    if (!document.documentElement.classList.contains("is-loading")) {
+      resolve();
+    }
+  });
+}
+
+function restoreDevScroll(smoothScroll) {
+  try {
+    const raw = sessionStorage.getItem("dev-scroll");
+    if (raw == null) return;
+    sessionStorage.removeItem("dev-scroll");
+    const y = Number(raw);
+    if (Number.isFinite(y)) smoothScroll?.scrollTo(y, { immediate: true });
+  } catch {
+    /* sessionStorage can throw in private mode */
   }
 }
 
 const app = new App();
 app.init();
-
-
-/*
-* Enable Hot Module Reloading for development environment
-* import.meta.hot.accept() accepts updates for the module where it's called.
-* Calling it in Environment.js only accepts updates for Environment.js.
-* Calling it in App.js accepts updates for App.js and its dependency graph.
-*/
-if (import.meta.hot) {
-  import.meta.hot.accept();
-}

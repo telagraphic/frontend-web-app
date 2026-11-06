@@ -1,0 +1,9 @@
+export function Footer({ site }) {
+  return (
+    <footer class="footer">
+      <div class="footer__content">
+        <p class="footer__text">{site.name}</p>
+      </div>
+    </footer>
+  );
+}

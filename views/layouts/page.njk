@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ meta.title }}</title>
+    <meta name="description" content="{{ meta.description }}" />
+    <link rel="canonical" href="{{ meta.canonical }}" />
+    <script src="{{ assets.head }}"></script>
+    <link rel="stylesheet" href="{{ assets.css }}" />
+    <script type="module" src="{{ assets.js }}"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    {% include "partials/preloader.njk" %}
+    {% include "partials/navigation.njk" %}
+    <div
+      class="page-transition-overlay"
+      data-transition-host
+      hidden
+      aria-hidden="true"
+    ></div>
+    <main id="main" data-route="{{ route.key }}" tabindex="-1">
+      {% block content %}
+      {% endblock %}
+    </main>
+    {% include "partials/footer.njk" %}
+    {% if assets.liveReload %}
+      <script type="module" src="{{ assets.liveReload }}"></script>
+    {% endif %}
+  </body>
+</html>

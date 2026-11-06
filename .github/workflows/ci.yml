@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  starter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bun run lint
+      - run: bun run format:check
+      - run: bun test
+      - run: bun run build
+      - run: bun install --cwd docs
+      - run: bun run docs:build
+      - run: bunx playwright install --with-deps chromium
+      - run: bun run test:browser
+
+  created:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: gsap-page-swap-nunjucks
+            transition: gsap
+            navigation: page-swap
+            renderer: nunjucks
+            playwright: true
+          - name: gsap-document-load-nunjucks
+            transition: gsap
+            navigation: document-load
+            renderer: nunjucks
+            playwright: true
+          - name: view-page-swap-nunjucks
+            transition: view
+            navigation: page-swap
+            renderer: nunjucks
+            playwright: true
+          - name: view-document-load-nunjucks
+            transition: view
+            navigation: document-load
+            renderer: nunjucks
+            playwright: true
+          - name: none-document-load-nunjucks
+            transition: none
+            navigation: document-load
+            renderer: nunjucks
+            playwright: true
+          - name: gsap-page-swap-vento
+            transition: gsap
+            navigation: page-swap
+            renderer: vento
+            playwright: false
+          - name: gsap-page-swap-jsx
+            transition: gsap
+            navigation: page-swap
+            renderer: jsx
+            playwright: false
+    name: created ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - name: Create site
+        run: >
+          bun run create "$RUNNER_TEMP/site"
+          --transition ${{ matrix.transition }}
+          --navigation ${{ matrix.navigation }}
+          --renderer ${{ matrix.renderer }}
+          --name ci
+          --origin https://example.com
+      - name: Install, lint, test, build
+        working-directory: ${{ runner.temp }}/site
+        run: |
+          bun install
+          bun run lint
+          bun run format:check
+          bun test
+          bun run build
+      - name: Playwright
+        if: ${{ matrix.playwright }}
+        working-directory: ${{ runner.temp }}/site
+        run: |
+          bunx playwright install --with-deps chromium
+          bun run test:browser

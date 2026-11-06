@@ -11,7 +11,7 @@
  * and documentation/reference/IMAGES.md.
  */
 
-import { SELECTORS, ATTRIBUTES } from './Constants.js';
+import { SELECTORS, ATTRIBUTES } from "./Constants.js";
 
 /**
  * ImageService class - Unified image loading with progress tracking and preloading
@@ -29,22 +29,22 @@ export class ImageService {
    * @returns {HTMLImageElement[]} Array of image elements
    */
   normalizeImages(images, container = document) {
-    if (typeof images === 'string') {
+    if (typeof images === "string") {
       return Array.from(container.querySelectorAll(images));
     }
-    
+
     if (images instanceof NodeList) {
       return Array.from(images);
     }
-    
+
     if (Array.isArray(images)) {
       return images;
     }
-    
+
     if (images) {
       return [images];
     }
-    
+
     // Default: find all images with data-src
     return Array.from(container.querySelectorAll(SELECTORS.LAZY_IMAGES));
   }
@@ -55,7 +55,7 @@ export class ImageService {
    * @returns {HTMLImageElement[]} Filtered array
    */
   excludePreloaderImages(images) {
-    return images.filter(img => !img.closest(SELECTORS.PRELOADER));
+    return images.filter((img) => !img.closest(SELECTORS.PRELOADER));
   }
 
   /**
@@ -91,8 +91,12 @@ export class ImageService {
       return Promise.resolve();
     }
     return Promise.race([
-      new Promise(resolve => element.addEventListener('load', resolve, { once: true })),
-      new Promise(resolve => element.addEventListener('error', resolve, { once: true }))
+      new Promise((resolve) =>
+        element.addEventListener("load", resolve, { once: true }),
+      ),
+      new Promise((resolve) =>
+        element.addEventListener("error", resolve, { once: true }),
+      ),
     ]);
   }
 
@@ -106,7 +110,7 @@ export class ImageService {
     if (!element.decode) {
       return element; // decode() not supported, return as-is
     }
-    
+
     try {
       await element.decode();
       return element;
@@ -136,11 +140,11 @@ export class ImageService {
     if (this.isImagePreloaded(url)) {
       return Promise.resolve(null); // Already loaded
     }
-    
+
     if (this.loadingPromises.has(url)) {
       return this.loadingPromises.get(url); // Return existing promise
     }
-    
+
     return null; // Not preloaded and not loading
   }
 
@@ -153,7 +157,7 @@ export class ImageService {
     if (this.isImageLoaded(element)) {
       return element;
     }
-    
+
     return this.waitForElementLoad(element).then(() => element);
   }
 
@@ -167,13 +171,20 @@ export class ImageService {
    * @param {Function} params.onProgress - Progress callback: (loaded, total, percentage) => void
    * @param {Function} params.onImageLoad - Per-image callback: (element, index) => void
    */
-  handleImageProgress({ loaded, total, element, index, onProgress, onImageLoad }) {
+  handleImageProgress({
+    loaded,
+    total,
+    element,
+    index,
+    onProgress,
+    onImageLoad,
+  }) {
     const percentage = Math.round((loaded / total) * 100);
-    
+
     if (onProgress) {
       onProgress(loaded, total, percentage);
     }
-    
+
     if (onImageLoad) {
       onImageLoad(element, index);
     }
@@ -188,7 +199,7 @@ export class ImageService {
    */
   createProgressTracker(total, onProgress, onImageLoad) {
     let loadedCount = 0;
-    
+
     return (element, index) => {
       loadedCount++;
       this.handleImageProgress({
@@ -197,7 +208,7 @@ export class ImageService {
         element,
         index,
         onProgress,
-        onImageLoad
+        onImageLoad,
       });
     };
   }
@@ -210,12 +221,15 @@ export class ImageService {
    */
   async decodeImageOffDOM(img, src) {
     if (!img.decode) return;
-    
+
     try {
       await img.decode();
     } catch (error) {
       // Decode failed, but image is loaded - continue anyway
-      console.warn(`Image decode failed for ${src}, continuing with load:`, error);
+      console.warn(
+        `Image decode failed for ${src}, continuing with load:`,
+        error,
+      );
     }
   }
 
@@ -232,13 +246,13 @@ export class ImageService {
       // Load and decode image off-DOM
       const tempImg = await this.loadImageOffDOM(dataSrc);
       await this.decodeImageOffDOM(tempImg, dataSrc);
-      
+
       // Image is now loaded and decoded - set src on DOM element (will be instant since cached)
       element.src = dataSrc;
-      
+
       // Wait for DOM element's load event (should fire immediately since cached)
       await this.waitForElementLoad(element);
-      
+
       onLoad?.(element);
       return element;
     } catch (error) {
@@ -261,25 +275,27 @@ export class ImageService {
     return new Promise((resolve) => {
       const controller = new AbortController();
       const { signal } = controller;
-      
+
       const handleLoad = async () => {
         controller.abort(); // Cleanup listeners
-        
-        const decodedElement = useDecode ? await this.decodeImage(element) : element;
+
+        const decodedElement = useDecode
+          ? await this.decodeImage(element)
+          : element;
         onLoad?.(decodedElement);
         resolve(decodedElement);
       };
-      
+
       const handleError = () => {
         controller.abort(); // Cleanup listeners
         // Count failed images to prevent hanging
         onLoad?.(element);
         resolve(null);
       };
-      
-      element.addEventListener('load', handleLoad, { signal });
-      element.addEventListener('error', handleError, { signal });
-      
+
+      element.addEventListener("load", handleLoad, { signal });
+      element.addEventListener("error", handleError, { signal });
+
       // Start loading
       if (!element.src) {
         element.src = dataSrc;
@@ -308,7 +324,9 @@ export class ImageService {
    * @returns {Promise<HTMLImageElement>} Resolves with decoded element
    */
   async handleImageReady(element, useDecode, onLoad) {
-    const decodedElement = useDecode ? await this.decodeImage(element) : element;
+    const decodedElement = useDecode
+      ? await this.decodeImage(element)
+      : element;
     onLoad?.(decodedElement);
     return decodedElement;
   }
@@ -322,11 +340,11 @@ export class ImageService {
    */
   prepareImages(images, container, excludePreloader) {
     let imageElements = this.normalizeImages(images, container);
-    
+
     if (excludePreloader) {
       imageElements = this.excludePreloaderImages(imageElements);
     }
-    
+
     return imageElements;
   }
 
@@ -341,17 +359,17 @@ export class ImageService {
    * @param {Function} [params.onLoad] - Callback when image loads
    * @returns {Promise<HTMLImageElement|null>} Resolves when loaded
    */
-  async loadSingleImage({ element, index, useDecode = true, onLoad }) {
+  async loadSingleImage({ element, useDecode = true, onLoad }) {
     // Handle already-loaded images (cached)
     if (this.isImageLoaded(element)) {
       return this.handleImageReady(element, useDecode, onLoad);
     }
-    
+
     const dataSrc = element.getAttribute(ATTRIBUTES.DATA_SRC);
     if (!dataSrc) {
       return this.handleImageReady(element, false, onLoad);
     }
-    
+
     // Get appropriate loader strategy
     const loader = this.getImageLoader(useDecode, element);
     return loader({ element, dataSrc, useDecode, onLoad });
@@ -366,12 +384,12 @@ export class ImageService {
    * @param {Function} [params.onLoad] - Callback when image loads
    * @returns {Promise<HTMLImageElement|null>} Resolves when loaded
    */
-  async loadImage({ element, index, useDecode = true, onLoad }) {
+  async loadImage({ element, useDecode = true, onLoad }) {
     // Handle already-loaded images (cached)
     if (this.isImageLoaded(element)) {
       return this.handleImageReady(element, useDecode, onLoad);
     }
-    
+
     const dataSrc = element.getAttribute(ATTRIBUTES.DATA_SRC);
     if (!dataSrc) {
       return this.handleImageReady(element, false, onLoad);
@@ -379,7 +397,7 @@ export class ImageService {
 
     // Track URL for preloading
     const url = dataSrc;
-    
+
     // Check if already preloaded
     if (this.isImagePreloaded(url)) {
       // Image is cached, just set src and wait for load event
@@ -401,7 +419,7 @@ export class ImageService {
 
     // Get appropriate loader strategy
     const loader = this.getImageLoader(useDecode, element);
-    
+
     // Create loading promise and track it
     const loadPromise = loader({ element, dataSrc, useDecode, onLoad })
       .then((result) => {
@@ -416,15 +434,15 @@ export class ImageService {
         this.loadingPromises.delete(url);
         throw error;
       });
-    
+
     this.loadingPromises.set(url, loadPromise);
-    
+
     return loadPromise;
   }
 
   /**
    * Preload multiple images with support for progress tracking and decoding
-   * 
+   *
    * @param {Object} options - Configuration options
    * @param {HTMLElement[]|NodeList|string} options.images - Array of image elements, NodeList, or CSS selector
    * @param {HTMLElement|Document} options.container - Container to search in (default: document)
@@ -433,11 +451,11 @@ export class ImageService {
    * @param {boolean} options.excludePreloader - Exclude images inside .preloader (default: false)
    * @param {boolean} options.useDecode - Use decode() for layout-ready images (default: true)
    * @returns {Promise<{loaded: number, total: number, images: HTMLElement[]}>} Resolves when all images are loaded
-   * 
+   *
    * @example
    * // Router use case - simple wait
    * await imageService.preloadImages({ images: 'img[data-src]' });
-   * 
+   *
    * @example
    * // Preloader use case - with progress tracking
    * await imageService.preloadImages({
@@ -457,38 +475,42 @@ export class ImageService {
     useDecode = true,
   } = {}) {
     // Prepare and filter images
-    const imageElements = this.prepareImages(images, container, excludePreloader);
-    
+    const imageElements = this.prepareImages(
+      images,
+      container,
+      excludePreloader,
+    );
+
     if (imageElements.length === 0) {
       return { loaded: 0, total: 0, images: [] };
     }
-    
+
     // Create progress tracker
     const trackProgress = this.createProgressTracker(
       imageElements.length,
       onProgress,
-      onImageLoad
+      onImageLoad,
     );
-    
+
     // Load all images
     const imagePromises = imageElements.map((element, index) => {
       return this.loadImage({
         element,
         index,
         useDecode,
-        onLoad: (img) => trackProgress(img, index)
+        onLoad: (img) => trackProgress(img, index),
       });
     });
-    
+
     const results = await Promise.all(imagePromises);
-    
+
     // Count successful loads (non-null results)
-    const loadedCount = results.filter(result => result !== null).length;
-    
+    const loadedCount = results.filter((result) => result !== null).length;
+
     return {
       loaded: loadedCount,
       total: imageElements.length,
-      images: imageElements
+      images: imageElements,
     };
   }
 

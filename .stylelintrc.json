@@ -1,1 +1,29 @@
-{ "extends": ["stylelint-config-standard"] }
+{
+  "extends": ["stylelint-config-standard"],
+  "ignoreFiles": ["styles/reset/normalize.css"],
+  "rules": {
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "keyframes-name-pattern": null,
+    "import-notation": "string",
+    "property-no-deprecated": null,
+    "property-no-vendor-prefix": null,
+    "value-no-vendor-prefix": null,
+    "selector-no-vendor-prefix": null,
+    "media-feature-range-notation": null,
+    "color-function-notation": null,
+    "color-function-alias-notation": null,
+    "alpha-value-notation": null,
+    "hue-degree-notation": null,
+    "font-family-name-quotes": null,
+    "declaration-empty-line-before": null,
+    "rule-empty-line-before": null,
+    "comment-empty-line-before": null,
+    "at-rule-empty-line-before": null,
+    "custom-property-empty-line-before": null,
+    "no-descending-specificity": null,
+    "no-duplicate-selectors": null,
+    "declaration-property-value-no-unknown": null,
+    "declaration-block-no-duplicate-properties": null
+  }
+}

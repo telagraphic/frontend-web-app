@@ -15,30 +15,26 @@
  */
 export const SELECTORS = Object.freeze({
   // Main structure
-  MAIN: "main",
-  MAIN_WITH_TEMPLATE: "main[data-template]",
+  MAIN: "main[data-route]",
 
   // Preloader
   PRELOADER: ".preloader",
-  PRELOADER_TITLE: ".preloader h1",
+  PRELOADER_TITLE: ".preloader-transition-title",
   PRELOADER_COUNTER: ".preloader-counter",
   PRELOADER_COPY: ".preloader-transition-copy h1",
   PRELOADER_COPY_CONTAINER: ".preloader-transition-copy",
   PRELOADER_IMAGE: "img[data-src].preloader-transition-image__img",
 
   // Page transitions
-  TRANSITION_OVERLAY: ".page-transition-overlay",
-  TRANSITION_TEMPLATES: "#page-transition-overlay-templates",
+  TRANSITION_HOST: "[data-transition-host]",
 
   // Navigation
-  NAV: "nav",
-  NAV_LINKS: "nav a",
+  NAV: "[data-navigation]",
+  NAV_LINKS: "[data-navigation] a",
   INTERNAL_LINK: "a.internal-link",
-  NAV_TOGGLE: ".navigation__toggle",
+  NAV_TOGGLE: "[data-navigation-toggle]",
+  NAV_PANEL: "[data-navigation-panel]",
   NAV_TITLE: ".navigation__title",
-
-  // Page content
-  PAGE_CONTENT: "section.page-template",
 
   // Images
   LAZY_IMAGES: "img[data-src]",
@@ -46,7 +42,7 @@ export const SELECTORS = Object.freeze({
   // Animations
   ANIMATIONS_ATTRIBUTE: "[data-animation]",
   TITLE_ANIMATIONS: '[data-animation="title"]',
-  
+
   // HTML elements
   TEMPLATE: "template",
   IMG: "img",
@@ -57,13 +53,13 @@ export const SELECTORS = Object.freeze({
  */
 export const ATTRIBUTES = Object.freeze({
   // Data attributes
-  DATA_TEMPLATE: "data-template",
-  DATA_PAGE: "data-page",
+  DATA_ROUTE: "data-route",
   DATA_SRC: "data-src",
   DATA_BACKGROUND: "data-background",
   DATA_COLOR: "data-color",
   DATA_ID: "data-id",
   DATA_ANIMATION: "data-animation",
+  DATA_PRELOAD: "data-preload",
 
   // Standard attributes
   HREF: "href",
@@ -77,8 +73,12 @@ export const ATTRIBUTES = Object.freeze({
 export const EVENTS = Object.freeze({
   // Custom events
   PRELOADER_COMPLETE: "preloader-complete",
-  HISTORY_NAVIGATION: "history-navigation",
-  
+  NAVIGATION_START: "navigationstart",
+  NAVIGATION_END: "navigationend",
+  TRANSITION_START: "transitionstart",
+  TRANSITION_COVERED: "transitioncovered",
+  TRANSITION_END: "transitionend",
+
   // DOM events
   CLICK: "click",
   POPSTATE: "popstate",
@@ -102,14 +102,6 @@ export const VALUES = Object.freeze({
  * Background image URLs
  */
 export const BACKGROUND_IMAGES = Object.freeze({
-  PRELOADER_COPY: "https://shea-memorandum-site.b-cdn.net/images/fbi-report-dancing-israelis-3.jpg",
-});
-
-/**
- * Transition types
- * Defines available transition strategy types
- */
-export const TRANSITION_TYPES = Object.freeze({
-  GENERIC: 'generic',
-  CUSTOM: 'custom',
+  PRELOADER_COPY:
+    "https://shea-memorandum-site.b-cdn.net/images/fbi-report-dancing-israelis-3.jpg",
 });

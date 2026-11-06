@@ -1,157 +1,169 @@
 import Component from "./Component.js";
-import { returnImagesArray, normalizeToArray } from "../utilities/ArrayHelpers.js";
-import { ImageService } from "../utilities/ImageService.js";
-import { PreloaderAnimation } from "../animations/PreloaderAnimation.js";
-import { SELECTORS, EVENTS, BACKGROUND_IMAGES } from "../utilities/Constants.js";
+import { $$, $ } from "../utilities/dom.js";
+import { loadImages } from "../utilities/images.js";
+import { gsap } from "../animations/gsap/gsap.js";
+import { SELECTORS, EVENTS } from "../utilities/Constants.js";
 
-/**
- * Preloader element is displayed until all images are loaded and ready to be displayed
- */
+const INERT_TARGETS = [
+  ".skip-link",
+  "[data-navigation]",
+  "footer",
+  SELECTORS.TRANSITION_HOST,
+  SELECTORS.MAIN,
+];
 
-export class Preloader extends Component {
-  constructor() {
+export default class Preloader extends Component {
+  static elements = {
+    title: SELECTORS.PRELOADER_TITLE,
+    counter: SELECTORS.PRELOADER_COUNTER,
+    copy: SELECTORS.PRELOADER_COPY,
+  };
+
+  constructor({ maxWait = 4000, counter = false, animationsService } = {}) {
     super({
       element: SELECTORS.PRELOADER,
-      elements: {
-        title: SELECTORS.PRELOADER_TITLE,
-        counter: SELECTORS.PRELOADER_COUNTER,
-        copy: SELECTORS.PRELOADER_COPY,
-        copyContainer: SELECTORS.PRELOADER_COPY_CONTAINER,
-        image: SELECTORS.PRELOADER_IMAGE,
-        images: SELECTORS.LAZY_IMAGES,
-      },
+      animationsService,
     });
-    this.imageLoader = new ImageService();
-    this.preloaderAnimation = new PreloaderAnimation();
+    this.maxWait = maxWait;
+    this.counterEnabled = counter;
   }
 
-  /**
-   * Initialize Preloader component
-   */
-  create() {
-    super.create();
-    this.images = returnImagesArray(this.elements.images);
-    this.images = this.images.filter(image => !image.closest(SELECTORS.PRELOADER)); // Dont use Preloader images for page Images
-    this.imagesLoaded = 0;
-    this.percentage = null;
-    this.animationStarted = false;  // state for tracking when images are loaded and the animation can start
-    this.backgroundImageUrl = BACKGROUND_IMAGES.PRELOADER_COPY;
-    this.backgroundImageLoaded = false;
-    this.createLoader();
-  }
+  onInit() {
+    window.addEventListener(
+      "pageshow",
+      (event) => {
+        if (event.persisted) this.skipPersisted();
+      },
+      { signal: this.signal },
+    );
 
-  /**
-   * Wait for images to load and then update the DOM with the path
-   */
-  async createLoader() {
-
-    // If no images to load, wait for background image and complete
-    if (this.images.length === 0) {
-      await this.startPreloaderAnimation();
+    if (!document.documentElement.classList.contains("is-loading")) {
+      this.dispatchComplete();
       return;
     }
 
-    // Preload page images using ImageService
-    const pageImagesPromise = this.imageLoader.preloadImages({
-      images: this.images,
-      excludePreloader: false,
-      useDecode: true,
-      onProgress: (imagesLoaded, total, percentage) => {
-        this.imagesLoaded = imagesLoaded;
-        this.percentage = percentage;
-       
-        // Update the counter element if it exists
-        if (this.elements.counter) {
-          this.elements.counter.innerHTML = `${percentage}%`;
-        }
+    this.setInert(true);
+    if (this.counterEnabled && this.elements.counter) {
+      this.elements.counter.hidden = false;
+    }
+
+    this.run();
+  }
+
+  async run() {
+    await this.waitForAssets();
+    await this.playHide();
+    this.finish();
+  }
+
+  async waitForAssets() {
+    const images = $$("[data-preload]");
+    const total = images.length + 1;
+    let settled = 0;
+
+    const updateCounter = () => {
+      if (!this.counterEnabled || !this.elements.counter) return;
+      const percent = Math.round((settled / total) * 100);
+      this.elements.counter.textContent = `${percent}%`;
+    };
+
+    const fonts = (document.fonts?.ready ?? Promise.resolve()).then(() => {
+      settled += 1;
+      updateCounter();
+    });
+
+    const imageWaits = images.map((image) =>
+      loadImages([image], { maxWait: null }).then(() => {
+        settled += 1;
+        updateCounter();
+      }),
+    );
+
+    const assets = Promise.all([fonts, ...imageWaits]);
+    const timeout = new Promise((resolve) => {
+      setTimeout(resolve, this.maxWait);
+    });
+    await Promise.race([assets, timeout]);
+
+    if (this.counterEnabled && this.elements.counter) {
+      this.elements.counter.textContent = "100%";
+    }
+  }
+
+  playHide() {
+    const copy = this.elements.copy;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    return new Promise((resolve) => {
+      if (!this.animations) {
+        resolve();
+        return;
       }
-    }).catch((error) => {
-      console.error('Error preloading images:', error);
-      // Return empty result to prevent hanging
-      return { loaded: 0, total: 0, images: [] };
-    });
+      this.animations.add(({ reducedMotion: reduced }) => {
+        if (reduced || reducedMotion) {
+          gsap.set(this.root, { autoAlpha: 0 });
+          resolve();
+          return;
+        }
 
-    // Wait for images to complete
-    const pageImagesResult = await pageImagesPromise;
-
-    // Check if all images loaded and the animation hasn't started yet
-    if (pageImagesResult && pageImagesResult.loaded === pageImagesResult.total && !this.animationStarted) {
-      await this.startPreloaderAnimation();
-    }
-  }
-  
-
-  /**
-   * Play the preloader animation
-   * Delegates to PreloaderAnimation class for animation logic
-   */
-  async startPreloaderAnimation() {
-    // Guard: prevent multiple calls
-    if (this.animationStarted) {
-      return;
-    }
-    
-    // Validate elements exist before starting animation
-    if (!this.element) {
-      console.warn('Preloader: element not found, cannot start animation');
-      return;
-    }
-    
-    if (!this.elements || !this.elements.copy) {
-      console.warn('Preloader: copy elements not found, cannot start animation');
-      return;
-    }
-    
-    // Normalize elements to array (handles Array, NodeList, single element, or null/undefined)
-    const copyElements = normalizeToArray(this.elements.copy);
-    
-    if (copyElements.length === 0) {
-      console.warn('Preloader: no copy elements to animate');
-      return;
-    }
-    
-    // Set flag AFTER validation passes
-    this.animationStarted = true;
-
-    await this.preloaderAnimation.create({
-      preloaderElement: this.element,
-      copyElements: copyElements,
-      onComplete: () => {
-        this.emit(EVENTS.PRELOADER_COMPLETE, { message: "Preloader completed" });
-      },
+        const timeline = gsap.timeline({ onComplete: resolve });
+        if (copy) {
+          timeline.to(copy, {
+            y: "-100%",
+            autoAlpha: 0,
+            duration: 0.75,
+            ease: "power2.inOut",
+          });
+        }
+        timeline.to(
+          this.root,
+          {
+            autoAlpha: 0,
+            duration: 0.5,
+            ease: "power2.inOut",
+          },
+          copy ? "-=0.3" : 0,
+        );
+      });
     });
   }
 
-  /**
-   * Hide the preloader element
-   */
+  finish() {
+    this.setInert(false);
+    document.documentElement.classList.remove("is-loading");
+    this.dispatchComplete();
+  }
+
+  skipPersisted() {
+    this.setInert(false);
+    document.documentElement.classList.remove("is-loading", "is-covering");
+    if (this.root) this.root.style.display = "none";
+    const host = $(SELECTORS.TRANSITION_HOST);
+    if (host) {
+      host.hidden = true;
+      host.replaceChildren();
+      host.style.pointerEvents = "";
+    }
+    this.dispatchComplete();
+  }
+
+  setInert(on) {
+    for (const selector of INERT_TARGETS) {
+      const element = $(selector);
+      if (!element) continue;
+      if (on) element.setAttribute("inert", "");
+      else element.removeAttribute("inert");
+    }
+  }
+
+  dispatchComplete() {
+    document.dispatchEvent(new CustomEvent(EVENTS.PRELOADER_COMPLETE));
+    this.dispatchEvent(new CustomEvent(EVENTS.PRELOADER_COMPLETE));
+  }
+
   hide() {
-    this.element.style.opacity = 0;
-  }
-
-  /**
-   * Remove the preloader element and clean up event listeners
-   */
-  destroy() {
-    // Clean up animation before destroying the preloader
-    if (this.preloaderAnimation) {
-      this.preloaderAnimation.remove();
-    }
-
-    // Remove DOM element
-    if (this.element) {
-      this.element.remove();
-    }
-    
-    // Remove all event listeners (prevents memory leaks)
-    // This removes any listeners registered via this.on() or this.once()
-    this.removeAllListeners(EVENTS.PRELOADER_COMPLETE);
-
-    // Clear references
-    this.element = null;
-    this.elements = null;
-    this.images = null;
-    this.preloaderAnimation = null;
+    if (this.root) this.root.style.opacity = 0;
   }
 }
-

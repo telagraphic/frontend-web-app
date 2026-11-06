@@ -75,4 +75,3 @@ export class RouterPrefetchCache {
     else this.cache.clear();
   }
 }
-
