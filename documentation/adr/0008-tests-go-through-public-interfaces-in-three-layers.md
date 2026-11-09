@@ -4,7 +4,7 @@ status: accepted
 
 # Tests go through public interfaces, in three layers
 
-The starter has no tests yet. Once the refactors in ADRs 0004 to 0007 land, every class gets its dependencies through its constructor, so tests can pass in fakes without replacing modules. We will test in three layers, and every test checks behavior through something a caller can see: a public method (`init`, `destroy`, `navigate`), a dispatched event, the resulting DOM, an error code, or a screenshot.
+Every class gets its dependencies through its constructor, so tests pass in fakes without replacing modules. Tests check behavior through something a caller can see: a public method (`init`, `destroy`, `navigate`), a dispatched event, the resulting DOM, an error code, or a screenshot. The suite lives in `tests/`. How to add one: [TESTS.md](../reference/TESTS.md).
 
 ## Decisions
 
@@ -21,4 +21,4 @@ The starter has no tests yet. Once the refactors in ADRs 0004 to 0007 land, ever
 ## Consequences
 
 - Visual tests capture settled states, such as a page after its reveal, with animations disabled while the screenshot is taken. Mid-transition frames vary from run to run, so they're checked by timing and DOM state instead.
-- Most of today's classes can't be tested in isolation until the refactors land, so the suite is built after them.
+- `bun test` runs unit and wiring. `bun run test:browser` runs Playwright. The files and the layer for each kind of addition are in [TESTS.md](../reference/TESTS.md).

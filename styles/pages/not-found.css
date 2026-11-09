@@ -1,9 +1,12 @@
 main[data-route="not-found"] .not-found {
-  padding-block: var(--space-12);
   padding-inline: var(--space-6);
   max-inline-size: var(--measure);
 }
 
 main[data-route="not-found"] .not-found__title {
   font-size: var(--font-size-3);
+}
+
+main[data-route="not-found"] .not-found__body {
+  margin-block-start: var(--space-4);
 }

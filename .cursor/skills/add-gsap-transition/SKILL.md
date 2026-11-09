@@ -19,6 +19,7 @@ Read [GSAP_TRANSITION.md](../../../documentation/reference/GSAP_TRANSITION.md) a
 - `destroy` reverts the animation scope and clears the host.
 - Wire the default class in `createServices()`. A second effect goes in `app/config/transitions.js` (name → `import()`) and is selected by the destination route's `pageTransition.effect` (ADR 0024).
 - Put `copy`, `image`, and `alt` as strings on `pageTransition` in `siteRoutes.js`. `markup()` reads `navigationContext.to`. Do not add `<template>` overlay markup.
+- Follow [write-test](../write-test/SKILL.md) for the `run()` sequence. Do not assert tween values.
 
 ## Do not
 

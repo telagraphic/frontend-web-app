@@ -1,9 +1,13 @@
 import { serveStatic } from "hono/bun";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
+import { resolve, sep } from "node:path";
 import { createApp } from "./app.js";
 import { buildAssets } from "./assets.js";
 import { liveReloadEvents, sendEvent } from "./live-reload/events.js";
 import { watchProject } from "./live-reload/watch.js";
+import { codebasePage } from "./developer/codebase.js";
+import { docsUrl } from "./developer/docsUrl.js";
+import { developerDocument, developerFontFile } from "./developer/theme.js";
 
 const port = Number(process.env.PORT) || 3000;
 const assetDir = ".dev/assets";
@@ -31,7 +35,7 @@ watchProject({
       ({ app, renderer } = createDevApp(assets));
       await sendEvent("reload");
     } catch (error) {
-      await sendEvent("error", error.message ?? String(error));
+      await sendEvent("build-error", error.message ?? String(error));
     }
   },
   async onViews() {
@@ -51,7 +55,7 @@ watchProject({
       ({ app, renderer } = createDevApp(assets));
       await sendEvent("css");
     } catch (error) {
-      await sendEvent("error", error.message ?? String(error));
+      await sendEvent("build-error", error.message ?? String(error));
     }
   },
   async onConfig() {
@@ -62,6 +66,7 @@ watchProject({
 
 Bun.serve({
   port,
+  idleTimeout: 0,
   fetch: (request, server) => app.fetch(request, server),
 });
 
@@ -79,6 +84,7 @@ function createDevApp(currentAssets) {
   });
 
   addExperiments(devApp, currentAssets, created.renderer);
+  addDeveloper(devApp);
 
   devApp.use("/assets/*", serveStatic({ root: "./.dev" }));
   devApp.use("/*", serveStatic({ root: "./public" }));
@@ -86,20 +92,134 @@ function createDevApp(currentAssets) {
   return created;
 }
 
-function addExperiments(devApp, currentAssets, renderer) {
-  if (!existsSync("experiments")) return;
+const setupsRoot = resolve("..", "setups");
+const reportRoot = resolve("playwright-report");
 
+function addDeveloper(devApp) {
+  devApp.get("/admin/fonts/:family/:file", (c) => {
+    const file = developerFontFile(c.req.param("family"), c.req.param("file"));
+    if (!file) return c.notFound();
+    return new Response(Bun.file(file), {
+      headers: { "Content-Type": "font/woff2" },
+    });
+  });
+
+  devApp.get("/admin", (c) => {
+    c.set("skipCsp", true);
+    return c.html(developerPage());
+  });
+  devApp.get("/admin/codebase", (c) => {
+    c.set("skipCsp", true);
+    return c.html(codebasePage(docsUrl));
+  });
+
+  devApp.get("/playwright-report", (c) => c.redirect("/playwright-report/"));
+  devApp.get("/playwright-report/", (c) =>
+    serveInside(c, reportRoot, "", missingReport),
+  );
+  devApp.get("/playwright-report/*", (c) =>
+    serveInside(
+      c,
+      reportRoot,
+      c.req.path.slice("/playwright-report/".length),
+      missingReport,
+    ),
+  );
+
+  devApp.get("/admin/setups", (c) => c.redirect("/admin/setups/"));
+  devApp.get("/admin/setups/", (c) =>
+    serveInside(c, setupsRoot, "", missingSetups),
+  );
+  devApp.get("/admin/setups/*", (c) =>
+    serveInside(
+      c,
+      setupsRoot,
+      c.req.path.slice("/admin/setups/".length),
+      missingSetups,
+    ),
+  );
+}
+
+function serveInside(c, root, rel, missing) {
+  c.set("skipCsp", true);
+  const file = fileInside(root, rel === "" ? "index.html" : rel);
+  if (!file) return c.html(missing(), 404);
+  try {
+    const stat = statSync(file);
+    if (stat.isDirectory()) {
+      const index = fileInside(root, `${rel.replace(/\/$/, "")}/index.html`);
+      if (!index) return c.html(missing(), 404);
+      return new Response(Bun.file(index));
+    }
+  } catch {
+    return c.html(missing(), 404);
+  }
+  return new Response(Bun.file(file));
+}
+
+function fileInside(root, rel) {
+  if (!existsSync(root)) return null;
+  const full = resolve(root, rel);
+  const base = resolve(root);
+  if (full !== base && !full.startsWith(`${base}${sep}`)) return null;
+  if (!existsSync(full)) return null;
+  return full;
+}
+
+function developerPage() {
+  return developerDocument(
+    "Developer",
+    `<h1>Developer</h1>
+    <ul>
+      <li><a href="/experiments">Experiments</a></li>
+      <li><a href="/playwright-report/">Playwright report</a></li>
+      <li><a href="/admin/setups/">Wizard setups</a></li>
+      <li><a href="/admin/codebase">Codebase</a></li>
+      <li><a href="${docsUrl}">Docs</a></li>
+    </ul>
+    <p>Docs need <code>bun run docs:dev</code>. Wizard setups appear after the create script writes <code>../setups</code>.</p>`,
+  );
+}
+
+function missingReport() {
+  return developerDocument(
+    "Playwright report",
+    `<h1>Playwright report</h1>
+    <p>Run <code>bun run test:browser</code> in this project. The report is written to <code>playwright-report/</code>.</p>
+    <p><a href="/admin">Developer</a></p>`,
+  );
+}
+
+function missingSetups() {
+  return developerDocument(
+    "Wizard setups",
+    `<h1>Wizard setups</h1>
+    <p>No setups yet. The create script writes <code>../setups/index.html</code> and one folder per <code>wizard-</code> branch.</p>
+    <p><a href="/admin">Developer</a></p>`,
+  );
+}
+
+function addExperiments(devApp, currentAssets, renderer) {
   devApp.get("/experiments", (c) => {
-    const names = readdirSync("experiments", { withFileTypes: true })
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => entry.name);
+    const names = existsSync("experiments")
+      ? readdirSync("experiments", { withFileTypes: true })
+          .filter((entry) => entry.isDirectory())
+          .map((entry) => entry.name)
+      : [];
     const items = names
       .map((name) => `<li><a href="/experiments/${name}">${name}</a></li>`)
       .join("");
+    const empty = names.length === 0 ? "<p>No experiments yet.</p>" : "";
+    c.set("skipCsp", true);
     return c.html(
-      `<!doctype html><html lang="en"><head><meta charset="utf-8" /><title>Experiments</title></head><body><h1>Experiments</h1><ul>${items}</ul></body></html>`,
+      developerDocument(
+        "Experiments",
+        `<h1>Experiments</h1>${empty}<ul>${items}</ul>`,
+      ),
     );
   });
+
+  if (!existsSync("experiments")) return;
 
   devApp.get("/experiments/:name", async (c) => {
     const name = c.req.param("name");

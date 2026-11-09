@@ -20,4 +20,12 @@ describe("loadImages", () => {
     image.dispatchEvent(new happy.Event("error"));
     await pending;
   });
+
+  test("resolves when maxWait elapses before the image loads", async () => {
+    const image = document.createElement("img");
+    Object.defineProperty(image, "complete", { value: false });
+    const started = performance.now();
+    await loadImages([image], { maxWait: 20 });
+    expect(performance.now() - started).toBeLessThan(1000);
+  });
 });

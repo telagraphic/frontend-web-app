@@ -150,6 +150,8 @@ this.use(new Accordion({ element: "[data-accordion='faq']", animationsService })
 this.use(new Accordion({ element: "[data-accordion='terms']", animationsService }));
 ```
 
+Loading that class on init, on idle, or when the region nears the viewport is [PAGE_COMPONENTS.md](PAGE_COMPONENTS.md).
+
 ### Extending and overriding
 
 A subclass spreads its parent's map and adds keys. One instance can pass `elements` in the constructor to replace a selector for that instance only. `BaseLifecycle` merges `static elements` with `options.elements`, and the option wins.

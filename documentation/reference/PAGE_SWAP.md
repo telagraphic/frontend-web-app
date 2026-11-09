@@ -36,7 +36,7 @@ Status: implemented. `Router.navigate()` swaps the children of `<main>`, copies 
 | Skip link | Stays; first focusable in `<body>` |
 | `<title>`, `meta[name="description"]`, `link[rel="canonical"]` | Copied from the fetched document |
 | Everything outside `<main>` | Unchanged; layout components keep running |
-| `<script>` tags inside the fetched `<main>` | Inserted but never run; page behavior goes in the page class |
+| `<script>` tags inside the fetched `<main>` | Inserted but never run; the page class loads a page component ([PAGE_COMPONENTS.md](PAGE_COMPONENTS.md)) |
 
 ## One page swap, in order
 
@@ -127,19 +127,19 @@ Every view puts its content inside the layout's `<main>`. The layout sets `data-
 {# views/pages/about.njk #}
 {% extends "layouts/page.njk" %}
 {% block content %}
-  <section class="page-content">
-    <h1 data-animation="title">{{ route.title }}</h1>
+  <section class="about">
+    <h1 class="about__title" data-about-title data-animation="title">{{ route.title }}</h1>
   </section>
 {% endblock %}
 ```
 
-The `section.page-content` wrapper is ordinary markup. The router does not look for it.
+The root class is the route key. The router does not look for it. Names: [PAGE.md](PAGE.md).
 
 ## Styling per page
 
 | You want to style | Selector |
 | --- | --- |
-| A page's own content | `main[data-route="about"] .page-content` |
+| A page's own content | `main[data-route="about"] .about` |
 | A layout component on one page | `body:has(main[data-route="home"]) .footer` |
 | A layout component on a group of pages | `body:has(main[data-route^="section-"]) .footer` |
 
@@ -163,5 +163,5 @@ Both navigation options use the same documents (ADR 0020).
 | --- | --- |
 | The router falls back to a document load on every click | The fetched document has no `main[data-route]`, or the fetch failed |
 | The footer keeps the previous page's style | The CSS still targets `body[data-page]`, which no longer changes |
-| A script in the page markup does nothing after a swap | Scripts in `<main>` are not run; move the code to the page class |
+| A script in the page markup does nothing after a swap | Scripts in `<main>` are not run; the page class loads a page component ([PAGE_COMPONENTS.md](PAGE_COMPONENTS.md)) |
 | `this.elements` keys are `null` after a swap | The selector is outside `<main>`; layout components select their own elements |

@@ -22,15 +22,10 @@ A skill page and the `.cursor/skills/` file stay in sync. Changing the conventio
 | `check-performance` | Audit markup, CSS, JS, and network | [PERFORMANCE.md](../reference/PERFORMANCE.md) |
 | `write-js` | ESM, class vs function, modern syntax Baseline gate | [JS.md](../reference/JS.md), `FEATURES.md` beside the skill |
 | `add-module` | Pick kind, directory, and class boilerplate | [JS.md](../reference/JS.md) |
-
-**Written when that code exists**
-
-| Skill | Task | Written with |
-| --- | --- | --- |
-| `add-service` | New service in `createServices()`, constructor deps, `init` / `destroy` | ADR 0006 / 0007 |
-| `add-view-transition` | Names in CSS, `wrapCommit` or `@view-transition`, no host | ADR 0012 |
-| `add-effect` | `create*` effect, `data-animation` type, animation index line | ADR 0009 |
-| `write-test` | Unit / wiring / Playwright through a public interface | ADR 0008 |
+| `add-service` | New service in `createServices()`, constructor deps, `init` / `destroy` | [SERVICES.md](../reference/SERVICES.md) |
+| `add-view-transition` | Names in CSS, `wrapCommit` or `@view-transition`, no host | [PAGE_TRANSITIONS.md](../reference/PAGE_TRANSITIONS.md) |
+| `add-effect` | `create*` effect, `data-animation` type, animation index line | [ANIMATIONS.md](../reference/ANIMATIONS.md) |
+| `write-test` | Pick unit, wiring, or browser for the thing just added | [TESTS.md](../reference/TESTS.md) |
 
 **Named, written at first use**
 
@@ -41,4 +36,4 @@ A skill page and the `.cursor/skills/` file stay in sync. Changing the conventio
 
 No skill for renderer (the wizard), overlay fields (a step on `add-page`), or a second layout-component skill.
 
-Until the Starlight site exists, `.cursor/skills/` is what agents load. A skill whose feature is not in the code yet points at the ADR and does not invent APIs.
+The Starlight site publishes each skill from `.cursor/skills/`. A skill whose feature is not in the code yet points at the ADR and does not invent APIs.

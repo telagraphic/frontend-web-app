@@ -21,6 +21,7 @@ Prefer publishing from [gsap-experiment](../gsap-experiment/SKILL.md) when the m
 3. Start the file with a short storyboard comment.
 4. If markup should opt in, add a type to `app/config/animations.js` (`title` → this `import()`). Unknown types log and skip.
 5. Page or component code calls the effect inside `this.animations.add`.
+6. Follow [write-test](../write-test/SKILL.md). The check is that `destroy` reverts the scope. Do not assert tween values.
 
 The work is done when one owner can apply the effect and `destroy` reverts it.
 

@@ -1,6 +1,6 @@
 # Add a page
 
-Copy this when adding a route with its own view, stylesheet, and page class. Terms: [GLOSSARY.md](../../GLOSSARY.md). Verbs: [METHOD_VERBS.md](METHOD_VERBS.md). Lifecycle: [ADR 0004](../adr/0004-boot-loads-page-classes-from-the-page-index.md), [ADR 0011](../adr/0011-base-lifecycle-holds-signal-and-scope.md). Markup: [TEMPLATES.md](TEMPLATES.md). CSS: [STYLES.md](STYLES.md). Motion: [ANIMATIONS.md](ANIMATIONS.md). Accessibility: [ACCESSIBILITY.md](ACCESSIBILITY.md).
+Copy this when adding a route with its own view, stylesheet, and page class. Terms: [GLOSSARY.md](../../GLOSSARY.md). Verbs: [METHOD_VERBS.md](METHOD_VERBS.md). Lifecycle: [ADR 0004](../adr/0004-boot-loads-page-classes-from-the-page-index.md), [ADR 0011](../adr/0011-base-lifecycle-holds-signal-and-scope.md). Markup: [TEMPLATES.md](TEMPLATES.md). Regions inside the page: [PAGE_COMPONENTS.md](PAGE_COMPONENTS.md). CSS: [STYLES.md](STYLES.md). Motion: [ANIMATIONS.md](ANIMATIONS.md). Accessibility: [ACCESSIBILITY.md](ACCESSIBILITY.md).
 
 The starter ships Home at `/` and not-found at `/404` (ADR 0025). Extra pages come from `.cursor/skills/add-page/SKILL.md`.
 
@@ -67,6 +67,34 @@ About: () => import("../pages/About.js"),
 ```
 
 `page` is the key in the page index, not the file's export name. Every page class is a default export.
+
+## Names
+
+One route key. The page class, the view, the stylesheet, and the CSS block all use it. A view-transition name is built from the same part, so each snapshot has that name once.
+
+| Piece | Form | `about` | `not-found` |
+| --- | --- | --- | --- |
+| Route key | kebab-case | `about` | `not-found` |
+| Page class | PascalCase | `About` | `Page` (shared; there is no `NotFound`) |
+| Files | key or class | `views/pages/about.njk`, `styles/pages/about.css`, `app/pages/About.js` | `views/pages/not-found.njk`, `styles/pages/not-found.css`, `app/pages/Page.js` |
+| Root inside `<main>` | the route key | `<section class="about">` | `<section class="not-found">` |
+| Part | `{block}__{part}` | `about__title`, `about__body` | `not-found__title`, `not-found__body` |
+| Hook the class selects | `data-{route}-{part}` | `data-about-title` | `data-not-found-title` |
+| `static elements` | the part | `title: "[data-about-title]"` | the shared `Page` class selects nothing |
+| Page CSS | `main[data-route="…"]` | `main[data-route="about"] .about__title` | `main[data-route="not-found"] .not-found__title` |
+| View-transition name | `{part}-{route key}` | `title-about` | `title-not-found` |
+| Chrome that stays outside `<main>` | `chrome-{role}` | `chrome-nav` on `[data-navigation]` | same name; the menu does not swap |
+| GSAP overlay | the plug-in block | `wipe`, `wipe__copy`, `wipe__image` | the overlay is not a page block |
+
+A hyphenated key stays hyphenated in the class, the data hook, and the transition name. The class for `work-item` is `WorkItem`. The block is `work-item`, the hook is `data-work-item-title`, and the view-transition name is `title-work-item`.
+
+`internal-link`, `data-animation`, and `data-preload` are shared behavior. They are not the page block.
+
+The root class is the route key. `page-content` is not a page block.
+
+View-transition names live in `styles/components/view-transition.css`, scoped with `main[data-route="…"]`, and only on the view-transition path. A GSAP overlay does not get a `view-transition-name`. Chrome that both pages share uses one fixed name (`chrome-nav`), because the menu is outside the swap. A page part keeps the route in its name (`title-home`, `title-about`), so the two titles do not pair. Give both pages the same name, once in each snapshot, only when that part should move from one page into the other.
+
+Home is the copy: `section.home`, `home__title`, `data-home-title`, `title-home`, class `Home`.
 
 ## View
 

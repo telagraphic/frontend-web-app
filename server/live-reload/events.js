@@ -11,8 +11,8 @@ export function liveReloadEvents() {
       });
       await stream.writeSSE({ event: "hello", data: "ok" });
       while (true) {
-        await stream.writeSSE({ event: "ping", data: "" });
-        await stream.sleep(15_000);
+        await stream.sleep(8_000);
+        await stream.writeSSE({ event: "ping", data: "ok" });
       }
     });
 }

@@ -197,9 +197,9 @@ A page `{% extends %}` the layout and fills `{% block content %}`. `{% include %
 {# views/pages/about.njk #}
 {% extends "layouts/page.njk" %}
 {% block content %}
-  <section class="page-content">
-    <h1 data-animation="title">{{ route.title }}</h1>
-    <p>{{ route.description }}</p>
+  <section class="about">
+    <h1 class="about__title" data-about-title data-animation="title">{{ route.title }}</h1>
+    <p class="about__body">{{ route.description }}</p>
   </section>
 {% endblock %}
 ```
@@ -251,9 +251,9 @@ A page `{% extends %}` the layout and fills `{% block content %}`. `{% include %
 ```vto
 {{# views/pages/about.vto #}}
 {{ layout "layouts/page.vto" }}
-  <section class="page-content">
-    <h1 data-animation="title">{{ route.title }}</h1>
-    <p>{{ route.description }}</p>
+  <section class="about">
+    <h1 class="about__title" data-about-title data-animation="title">{{ route.title }}</h1>
+    <p class="about__body">{{ route.description }}</p>
   </section>
 {{ /layout }}
 ```
@@ -318,9 +318,11 @@ import { Layout } from "../layouts/page.jsx";
 export default function Page(data) {
   return (
     <Layout {...data}>
-      <section class="page-content">
-        <h1 data-animation="title">{data.route.title}</h1>
-        <p>{data.route.description}</p>
+      <section class="about">
+        <h1 class="about__title" data-about-title data-animation="title">
+          {data.route.title}
+        </h1>
+        <p class="about__body">{data.route.description}</p>
       </section>
     </Layout>
   );
@@ -342,6 +344,22 @@ Every value is escaped by default. Raw HTML is always explicit.
 The starter ships Home at `/`. Further pages: [PAGE.md](PAGE.md) and `.cursor/skills/add-page/SKILL.md`.
 
 With `bun run dev` running, a new path works after the save. A route with no page file stops dev and the build with the missing path in the message.
+
+## Developer
+
+`bun run dev` serves `/admin`. The build does not. The page links to the diagnostics that already live elsewhere:
+
+| Link | Page |
+| --- | --- |
+| `/experiments` | Motion sandboxes. Listed below |
+| `/playwright-report/` | This project's Playwright HTML report, after `bun run test:browser` |
+| `/admin/setups/` | `../setups/index.html`, the wizard-setup scoreboard, when that folder exists |
+| `/admin/codebase` | Load order for this project's files, with links into the docs |
+| `http://127.0.0.1:4321/` | The Starlight docs. Start them with `bun run docs:dev` |
+
+The docs server listens on `127.0.0.1`, the same host as those links. `docsServer()` in `server/developer/docsUrl.js` supplies that host to both `astro dev` and `astro preview`. Binding `localhost` listens on IPv6 only, and these links do not connect.
+
+The wizard copies `server/dev.js`, so a created site has the same page. Docs stay on the starter. The setups link reads `../setups` from the project directory.
 
 ## Experiments
 

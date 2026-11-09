@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { skipPreloader, waitForCover, waitForSettled } from "./helpers.js";
+import {
+  appSource,
+  skipPreloader,
+  waitForCover,
+  waitForSettled,
+} from "./helpers.js";
 
 test.describe("navigation", () => {
   test("covers then reveals from not-found to home when a host is present", async ({
@@ -69,6 +74,55 @@ test.describe("navigation", () => {
     await waitForSettled(page, "home");
     await page.evaluate(() => document.fonts.ready);
     await expect(page.locator("main")).toHaveScreenshot("home-settled.png");
+  });
+});
+
+test.describe("page swap", () => {
+  test("moves focus to main", async ({ page }) => {
+    await skipPreloader(page);
+    await page.goto("/404");
+    await waitForSettled(page, "not-found");
+    test.skip(
+      !(await appSource(page)).includes("listenFocus"),
+      "document load does not move focus on navigation",
+    );
+
+    await page.locator("main a.internal-link[href='/']").click();
+    await waitForSettled(page, "home");
+    await expect(page.locator("main")).toBeFocused();
+  });
+
+  test("view transition calls startViewTransition", async ({ page }) => {
+    await skipPreloader(page);
+    await page.goto("/404");
+    await waitForSettled(page, "not-found");
+    test.skip(
+      !(await appSource(page)).includes("startViewTransition"),
+      "this combination does not use the view-transition page swap",
+    );
+
+    await page.evaluate(() => {
+      const native = document.startViewTransition?.bind(document);
+      document.startViewTransition = (callback) => {
+        window.__viewTransitionCalls = (window.__viewTransitionCalls ?? 0) + 1;
+        if (native) return native(callback);
+        const finished = Promise.resolve().then(() => callback());
+        return { finished, ready: finished, updateCallbackDone: finished };
+      };
+    });
+
+    await page.locator("main a.internal-link[href='/']").click();
+    await waitForSettled(page, "home");
+    expect(await page.evaluate(() => window.__viewTransitionCalls)).toBe(1);
+  });
+});
+
+test.describe("reduced motion", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("a first visit does not add is-loading", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("html")).not.toHaveClass(/is-loading/);
   });
 });
 

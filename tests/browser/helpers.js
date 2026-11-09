@@ -14,6 +14,20 @@ export async function waitForSettled(page, route) {
   }
 }
 
+export async function appSource(page) {
+  const sources = await page
+    .locator('script[type="module"]')
+    .evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("src")).filter(Boolean),
+    );
+  const parts = [];
+  for (const src of sources) {
+    if (src.includes("live-reload")) continue;
+    parts.push(await (await page.request.get(src)).text());
+  }
+  return parts.join("\n");
+}
+
 export async function waitForCover(page) {
   await page.waitForFunction(() => {
     const host = document.querySelector("[data-transition-host]");

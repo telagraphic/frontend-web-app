@@ -21,6 +21,7 @@ Read [LAYOUT_COMPONENTS.md](../../../documentation/reference/LAYOUT_COMPONENTS.m
 5. New layout component: extend `Component`, create motion inside `this.animations.add`, and add the class to `createLayout()`.
 6. Import GSAP from `app/animations/gsap/gsap.js`. Use duration `0` when `reducedMotion` is set.
 7. Add `@import "./components/{name}.css" layer(components);` to `styles/styles.css`. Convert tutorial CSS following [STYLES.md](../../../documentation/reference/STYLES.md): BEM with full class names, tokens, rem width queries. Page-specific layout-component styles use `body:has(main[data-route="…"])`.
+8. Follow [write-test](../write-test/SKILL.md) with a unit test of the public behavior: `open` / `close`, `inert`, or the session flag. Do not assert tween values.
 
 The work is done when the tutorial's artwork runs through the existing API, the base methods are unchanged, and the menu toggle still meets the 44px hit area in [ACCESSIBILITY.md](../../../documentation/reference/ACCESSIBILITY.md).
 

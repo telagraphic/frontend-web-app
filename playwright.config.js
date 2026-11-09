@@ -6,7 +6,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? "github" : "list",
+  reporter: [
+    [process.env.CI ? "github" : "list"],
+    ["html", { open: "never" }],
+  ],
   use: {
     ...devices["Desktop Chrome"],
     baseURL: "http://127.0.0.1:3458",

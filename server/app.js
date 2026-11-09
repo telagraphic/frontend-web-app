@@ -16,6 +16,7 @@ export function createApp({ assets, requireHost } = {}) {
   const app = new Hono();
   app.use("*", async (c, next) => {
     await next();
+    if (c.get("skipCsp")) return;
     c.header("Content-Security-Policy", csp);
   });
 

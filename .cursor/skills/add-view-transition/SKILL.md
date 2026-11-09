@@ -43,6 +43,8 @@ wrapCommit(commit) {
 4. Do not use `view-transition-name: match-element`.
 5. Optional `pageswap` / `pagereveal` work lives in `app/head.js`, not a service, and only when a shared name must be chosen at click time.
 
+Follow [write-test](../write-test/SKILL.md). Page swap gets a unit test of `wrapCommit` and a browser test that counts `startViewTransition` and skips on every other combination.
+
 The work is done when the chosen path matches [PAGE_TRANSITIONS.md](../../../documentation/reference/PAGE_TRANSITIONS.md) and there is no overlay host.
 
 ## Do not

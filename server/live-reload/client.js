@@ -16,6 +16,7 @@ source.addEventListener("reload", () => {
 });
 
 source.addEventListener("css", () => {
+  clearOverlay();
   for (const link of document.querySelectorAll('link[rel="stylesheet"]')) {
     const url = new URL(link.href);
     url.searchParams.set("t", String(Date.now()));
@@ -23,8 +24,8 @@ source.addEventListener("css", () => {
   }
 });
 
-source.addEventListener("error", (event) => {
-  showOverlay(event.data ?? "Build error");
+source.addEventListener("build-error", (event) => {
+  showOverlay(event.data || "Build error");
 });
 
 function saveScroll() {
@@ -33,6 +34,10 @@ function saveScroll() {
   } catch {
     /* sessionStorage can throw in private mode */
   }
+}
+
+function clearOverlay() {
+  document.getElementById("dev-error")?.remove();
 }
 
 function showOverlay(text) {

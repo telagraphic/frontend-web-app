@@ -17,10 +17,11 @@ The starter already has Home at `/` and not-found at `/404`. This skill adds ano
 1. Name the route key in kebab case (`about`, `work-item`). The class is PascalCase (`About`). The public path is `/about` unless the user gives another.
 2. Read the view extension from `server/renderer.js`: `.njk`, `.vto`, or `.jsx`.
 3. Add the route to `app/config/siteRoutes.js` with `path`, `title`, `description`, and `page`.
-4. Add `views/pages/{route key}.{ext}` extending the page layout. Content only; the layout owns the skip link and `<main id="main" data-route tabindex="-1">`.
+4. Add `views/pages/{route key}.{ext}` extending the page layout. Content only; the layout owns the skip link and `<main id="main" data-route tabindex="-1">`. The content root's class is the route key (`section.about`). Parts are `about__title`. The page class selects `data-about-title`. A view-transition name for that part is `title-about`. The table is [PAGE.md](../../../documentation/reference/PAGE.md) Names.
 5. Add `styles/pages/{route key}.css` and `@import "./pages/{route key}.css" layer(pages);` in `styles/styles.css`. Follow [write-css](../write-css/SKILL.md) if the CSS uses a feature STYLES.md does not already require.
 6. Add `app/pages/{PascalName}.js` as a default export extending `BasePage`, with `static elements` and empty `onInit`. List it in `app/config/pages.js` as a literal `import()`.
 7. If the overlay needs copy or an image, set `pageTransition` on this destination route (ADR 0024).
+8. Follow [write-test](../write-test/SKILL.md). The wiring test already renders every route. Add a unit test only when this page class does something a caller can see.
 
 The work is done when `bun run dev` serves the path, the document has one `main[data-route="{route key}"]`, and the page class runs `onInit` with no console errors.
 

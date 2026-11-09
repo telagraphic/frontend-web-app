@@ -1,74 +1,13 @@
-.footer__content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 0 auto;
-  max-inline-size: 100%;
-}
-.footer__text {
-  margin: var(--space-0);
-  padding: var(--space-0);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-default);
-  line-height: var(--line-height-normal);
-  font-family: var(--font-family-script);
-}
-.footer__text--highlight {
-  font-size: var(--font-size-1);
-  font-weight: var(--font-weight-semibold);
-}
-.footer__text--highlight a {
-  transition: color 0.3s ease;
-  text-decoration: none;
-}
-@media (hover: hover) {
-  .footer__text--highlight a:hover {
-    text-decoration: none;
-  }
-}
-.footer__text--tagline {
-  font-size: var(--font-size--2);
-  font-family: var(--font-family-serif);
-}
-.footer__text--email {
-  font-size: var(--font-size--2);
-  font-family: var(--font-family-serif);
+.footer {
+  padding: var(--space-6);
+  border-block-start: var(--border-width) solid var(--color-fg);
 }
 
-body:has(main[data-route="home"]) .footer {
-  border-top: var(--border-width-thin) solid var(--color-white);
-  background-color: var(--color-white);
-  color: var(--color-white);
-  z-index: var(--z-index-footer);
-  position: relative;
+.footer__content {
+  max-inline-size: var(--measure);
 }
-body:has(main[data-route="home"]) .footer__content {
-  padding: 0 var(--space-4);
-}
-@media (width >= 50rem) {
-  body:has(main[data-route="home"]) .footer__content {
-    max-inline-size: 100%;
-  }
-}
-@media (width >= 56.25rem) {
-  body:has(main[data-route="home"]) .footer__content {
-    padding: var(--space-8) 0;
-    max-inline-size: 65%;
-  }
-}
-body:has(main[data-route="home"]) .footer__text {
-  color: var(--theme-color-main);
-  font-size: var(--font-size--2);
-}
-body:has(main[data-route="home"]) .footer__text--highlight {
-  font-size: var(--font-size-1);
-  font-weight: var(--font-weight-extrabold);
-}
-body:has(main[data-route="home"]) .footer__text--highlight a {
-  color: var(--theme-color-main);
-}
-@media (hover: hover) {
-  body:has(main[data-route="home"]) .footer__text--highlight a:hover {
-    color: var(--color-black);
-  }
+
+.footer__text {
+  margin: 0;
+  font-size: var(--font-size--1);
 }

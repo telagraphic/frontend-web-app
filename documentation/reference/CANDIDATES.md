@@ -29,7 +29,9 @@ Adopt when support is there and an ADR says yes.
 
 ## Park
 
-Islands/hydration, signals, a second animation library, WebGPU/WebGL as default, PWA/service worker by default, CSS Modules, native `@mixin` until it ships.
+Hydration runtime (`client:*`, client JSX, server islands), signals, a second animation library, WebGPU/WebGL as default, PWA/service worker by default, CSS Modules, native `@mixin` until it ships.
+
+A page component is the shape already in the starter: HTML in the view, class loaded by the page class ([PAGE_COMPONENTS.md](PAGE_COMPONENTS.md)). That is not a hydration runtime.
 
 ## Never
 

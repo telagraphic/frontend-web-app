@@ -20,6 +20,7 @@ Read [SERVICES.md](../../../documentation/reference/SERVICES.md). Terms: [GLOSSA
 5. A failed `init` stops boot with `SERVICE_INIT_FAILED`. Keep `error.cause`.
 6. Add a row to [SERVICES.md](../../../documentation/reference/SERVICES.md) in the same change.
 7. `createServices()` still returns only `{ router, animationsService, transitionsService, smoothScroll }` unless an ADR changes that set. Extra objects stay internal.
+8. Follow [write-test](../write-test/SKILL.md). Keep the wiring test passing, and add a unit test for the service's public method.
 
 The work is done when `createServices()` builds the object, the wiring test still passes, and no class imports the factory.
 

@@ -2,7 +2,7 @@
 
 How CSS is authored, layered, bundled, and targeted. The decisions are [ADR 0023](../adr/0023-css-is-layered-files-bundled-by-bun.md). Page selectors follow [ADR 0021](../adr/0021-page-swap-replaces-the-children-of-main.md) and [PAGE_SWAP.md](PAGE_SWAP.md). Motion that is not layout lives in [ANIMATIONS.md](ANIMATIONS.md). Adding a file or a modern feature: [write-css](../../.cursor/skills/write-css/SKILL.md). Terms are in [GLOSSARY.md](../../GLOSSARY.md).
 
-Status: slice 8 ships Home and not-found page styles. Layout-component artwork in `components/` is still the previous site's until a project replaces it.
+Status: Home and not-found are the only pages. Navigation, preloader, footer, and page are starter chrome. A project replaces tokens and those files.
 
 ## Files
 
@@ -12,7 +12,7 @@ styles/
   reset/normalize.css         modern-normalize; upgrade in place, do not restyle
   tokens/tokens.css           :root custom properties only
   base/base.css               axioms: measure, focus, skip link, reduced motion, hover, scroll-margin
-  base/typography.css         @font-face and element type
+  base/typography.css         element type. The starter uses system fonts; a project adds @font-face here
   components/*.css            layout components, shared blocks, published experiments
   pages/*.css                 one file per route that needs its own rules
   utilities/sr-only.css       the utilities layer
@@ -63,13 +63,12 @@ Custom properties on `:root` are the only shared values. Name them for what they
 :root {
   --color-white: #fff;
   --color-black: #111;
-  --color-brand: #005eb8;
+  --color-brand: #111;
 
   --color-bg: var(--color-white);
   --color-fg: var(--color-black);
 
-  --font-family-sans: "Outfit", system-ui, sans-serif;
-  --font-family-serif: "Hedvig", "Times New Roman", serif;
+  --font-family-sans: system-ui, sans-serif;
 
   --font-size--2: clamp(0.7813rem, 0.6406rem + 0.6249vw, 1.3827rem);
   --font-size--1: clamp(0.9375rem, 0.793rem + 0.6421vw, 1.5556rem);
@@ -162,7 +161,9 @@ Native `@custom-media` and CSS `@mixin` have not shipped. Do not use them.
 | Thing | Form | Example |
 | --- | --- | --- |
 | Block | `.block` | `.footer`, `.navigation`, `.preloader` |
-| Element | `.block__element` | `.footer__text` |
+| Page block | the route key | `.home`, `.about`, `.not-found` |
+| Element | `.block__element` | `.footer__text`, `.about__title` |
+| View-transition name | `{part}-{route key}`, or `chrome-{role}` for chrome outside `<main>` | `title-about`, `chrome-nav` |
 | Modifier | `.block--modifier` or `.block__element--modifier` | `.footer__text--highlight` |
 | JS state | `data-*` on the block | `[data-navigation-status="active"]` |
 | Document flag | class on `html` | `html.is-loading`, `html.is-animating` |
@@ -381,5 +382,3 @@ On publish ([PUBLISH.md](../../.cursor/skills/gsap-experiment/PUBLISH.md)):
 3. Write full BEM class names.
 4. Replace raw pixel width queries with rem queries.
 5. Add `@import "./components/{kebab-name}.css" layer(components);` to `styles/styles.css`.
-
-Shea artwork still lives in `components/hero.css`, `components/page.css`, and `pages/`. Those files leave with the client pages in slice 8.

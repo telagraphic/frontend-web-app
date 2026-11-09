@@ -1,21 +1,12 @@
 :root {
   --color-white: #fff;
-  --color-white-1: #d8d8d8;
-  --color-white-2: #f4f4f4;
-  --color-black: #000;
-  --color-black-1: #191919;
-  --color-black-2: #2a2727;
-  --color-gray-1: rgb(137 137 137 / 48%);
-  --color-gray-2: hsl(0deg 0% 80.78%);
-  --color-brand: #005eb8;
+  --color-black: #111;
+  --color-brand: #111;
 
   --color-bg: var(--color-white);
   --color-fg: var(--color-black);
-  --theme-color-main: var(--color-brand);
 
-  --font-family-sans: "Outfit", system-ui, sans-serif;
-  --font-family-serif: "Hedvig", "Times New Roman", serif;
-  --font-family-script: "Mancon", "Times New Roman", serif;
+  --font-family-sans: system-ui, sans-serif;
 
   --font-size--2: clamp(0.7813rem, 0.6406rem + 0.6249vw, 1.3827rem);
   --font-size--1: clamp(0.9375rem, 0.793rem + 0.6421vw, 1.5556rem);
@@ -26,27 +17,12 @@
   --font-size-4: clamp(2.3328rem, 2.2228rem + 0.4887vw, 2.8032rem);
   --font-size-5: clamp(2.7994rem, 2.7166rem + 0.368vw, 3.1536rem);
 
-  --font-weight-light: 200;
-  --font-weight-light-medium: 300;
   --font-weight-regular: 400;
-  --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --font-weight-extrabold: 800;
 
-  --line-height-tightest: 0.7;
-  --line-height-default: 1;
   --line-height-tight: 1.2;
-  --line-height-1-25: 1.25;
   --line-height-body: 1.5;
-  --line-height-normal: 1.5;
-  --line-height-1-8: 1.8;
-  --line-height-relaxed: 1.7;
-
-  --letter-spacing-tighter: -0.04em;
-  --letter-spacing-tight: -0.01em;
-  --letter-spacing-normal: 0;
-  --letter-spacing-wide: 0.02em;
 
   --space-0: 0;
   --space-1: 0.25rem;
@@ -55,27 +31,13 @@
   --space-4: 1rem;
   --space-5: 1.25rem;
   --space-6: 1.5rem;
-  --space-7: 1.75rem;
   --space-8: 2rem;
-  --space-9: 2.25rem;
-  --space-10: 2.5rem;
   --space-12: 3rem;
   --space-20: 5rem;
-  --space-vh-1-5: 1.5vh;
-  --space-vh-2: 2vh;
-  --space-vh-3: 3vh;
-  --space-vh-5: 5vh;
-  --space-vh-10: 10vh;
 
   --measure: 65ch;
-  --width-90ch: 90ch;
   --border-width: 1px;
-  --border-width-thin: 1px;
-  --border-width-medium: 1.25px;
   --radius: 0.25em;
-  --border-radius-small: 0.25em;
-  --border-radius-medium: 0.75em;
-  --border-radius-large: 10px;
 
   --z-base: 0;
   --z-sticky: 100;
@@ -83,25 +45,9 @@
   --z-preloader: 300;
   --z-transition: 400;
 
-  --z-index-zero: 0;
-  --z-index-home: 10;
-  --z-index-home-background: 20;
-  --z-index-home-content: 30;
   --z-index-footer: var(--z-sticky);
   --z-index-navigation: var(--z-menu);
-  --z-index-navigation-header: 210;
-  --z-index-navigation-background: 220;
-  --z-index-navigation-overlay: 220;
-  --z-index-navigation-menu: 230;
   --z-index-preloader: var(--z-preloader);
-  --z-index-preloader-transition: 310;
   --z-index-page-transition: var(--z-transition);
   --z-index-page-transition-overlay: 410;
-
-  --aspect-ratio-16-9: 16 / 9;
-  --aspect-ratio-1-25: 1 / 1.25;
-  --aspect-ratio-1-1: 1 / 1;
-  --aspect-ratio-4-3: 4 / 3;
-  --aspect-ratio-1: 1;
-  --aspect-ratio-auto: auto;
 }

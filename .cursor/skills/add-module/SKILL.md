@@ -46,7 +46,7 @@ export default class Example extends Component {
 
 Page classes extend `BasePage` instead. Services omit `static elements` and implement `init` / `destroy` only. Effects are `create*` functions, not classes.
 
-The work is done when the file sits in the directory above, uses the matching skill's full steps, and [write-js](../write-js/SKILL.md) would accept the syntax.
+The work is done when the file sits in the directory above, uses the matching skill's full steps, [write-js](../write-js/SKILL.md) would accept the syntax, and [write-test](../write-test/SKILL.md) has the layer that kind requires.
 
 ## Do not
 

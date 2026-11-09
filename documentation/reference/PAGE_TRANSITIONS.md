@@ -85,11 +85,16 @@ Same host and plug-in. No page-swap router. The click calls `cover()`, writes `{
 
 Spec: [same-document view transitions](https://developer.mozilla.org/en-US/docs/Web/API/Document/startViewTransition). The callback **is** the DOM update. `TransitionsService` exists only to call it. There is no host and no GSAP cover.
 
-The CSS gives an element a name the browser can match across the two states of the document. `site-nav` stays on the menu, which does not swap. A name like `hero-section-3` is unique in the document so the hero can move from one page's hero to the next. The reduced-motion query turns those group animations off.
+The CSS gives an element a name the browser can match across the two states of the document. `chrome-nav` stays on the menu, which does not swap. A page part uses `{part}-{route key}` (`title-home`), so that name is unique in the snapshot. The same name on both pages, once in each snapshot, is how that part moves from one page into the other. The reduced-motion query turns those group animations off. The full naming table is [PAGE.md](PAGE.md).
 
 ```css
-.nav { view-transition-name: site-nav; }
-.hero { view-transition-name: hero-section-3; } /* unique in the document */
+[data-navigation] {
+  view-transition-name: chrome-nav;
+}
+
+main[data-route="home"] .home__title {
+  view-transition-name: title-home;
+}
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*) { animation: none; }
@@ -128,15 +133,20 @@ Rules that keep this spec-shaped:
 
 Spec: [cross-document view transitions](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using#cross-document_view_transitions). The browser performs the navigation. **Do not ship `TransitionsService` or the page-swap router.** Do not `preventDefault` on links.
 
-`@view-transition { navigation: auto }` opts the document into that browser navigation. The named elements are the same idea as the page-swap path: a stable name on something both documents share, such as the menu. The reduced-motion query turns the group animations off.
+`@view-transition { navigation: auto }` opts the document into that browser navigation. The named elements are the same idea as the page-swap path: `chrome-nav` on the menu, and `{part}-{route key}` on a page part. The reduced-motion query turns the group animations off.
 
 ```css
 @view-transition {
   navigation: auto;
 }
 
-.nav { view-transition-name: site-nav; }
-.hero { view-transition-name: hero-section-3; }
+[data-navigation] {
+  view-transition-name: chrome-nav;
+}
+
+main[data-route="home"] .home__title {
+  view-transition-name: title-home;
+}
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*) { animation: none; }

@@ -32,6 +32,10 @@ _Avoid_: view, screen, template
 The code that brings a page to life: its animations, components, and lifecycle. Several routes can share one page class.
 _Avoid_: class (on its own), controller, view
 
+**Page component**:
+A region inside the page. Its markup is in the view, and the page class starts and ends the class that adds its behavior.
+_Avoid_: island, widget, hydrated component, partial
+
 **Page index**:
 The single list that names every page class and where its code lives.
 _Avoid_: registry, page map, loader map

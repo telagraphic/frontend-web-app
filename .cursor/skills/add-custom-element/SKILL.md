@@ -9,7 +9,7 @@ description: >-
 
 # Add a custom element
 
-The starter ships class components. Custom elements are a seam (ADR 0009): the browser constructs them, so they import the scope class directly instead of receiving `animationsService` from the factory.
+The starter ships class components. A region inside the page is a page component: the view has the HTML, and the page class loads the class ([PAGE_COMPONENTS.md](../../../documentation/reference/PAGE_COMPONENTS.md)). Custom elements are a seam (ADR 0009): the browser constructs them, so they import the scope class directly instead of receiving `animationsService` from the factory. The page class still imports the module, so `customElements.define` runs. A `<script>` inside `<main>` does not.
 
 Write the full steps when the first custom element lands. Until then, if the user wants one, follow [LAYOUT_COMPONENTS.md](../../../documentation/reference/LAYOUT_COMPONENTS.md) and ADR 0009, and expand this file in the same change.
 

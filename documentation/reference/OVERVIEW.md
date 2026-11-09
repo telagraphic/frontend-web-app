@@ -48,7 +48,7 @@ If you know Stimulus targets, Lit `@query`, or Vue template refs: same “name t
 
 ## Layout components and custom elements
 
-A **layout component** owns markup outside the page: menu, preloader, footer. `createLayout(services)` constructs the project’s list ([LAYOUT_COMPONENTS.md](LAYOUT_COMPONENTS.md), ADR 0007). Page-local widgets are `Component` subclasses the page `use()`s.
+A **layout component** owns markup outside the page: menu, preloader, footer. `createLayout(services)` constructs the project’s list ([LAYOUT_COMPONENTS.md](LAYOUT_COMPONENTS.md), ADR 0007). A **page component** is a region inside the page: the view has the HTML, and the page class loads the class ([PAGE_COMPONENTS.md](PAGE_COMPONENTS.md)).
 
 Technique: the same lifecycle shell as pages (`init` / `destroy`, signal, scope). Custom elements the browser constructs import an animation scope directly (ADR 0009). The starter ships classes. A project may add custom elements at that seam.
 

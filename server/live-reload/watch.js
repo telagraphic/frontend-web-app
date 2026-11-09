@@ -38,7 +38,7 @@ function queue(handler, ms = 60) {
       await handler();
     } catch (error) {
       console.error(error);
-      await sendEvent("error", error.message ?? String(error));
+      await sendEvent("build-error", error.message ?? String(error));
     } finally {
       running = false;
       if (pending) {
