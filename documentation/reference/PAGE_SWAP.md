@@ -47,15 +47,18 @@ click on a route link
 resolve the URL ──── not a route, modifier key, hash, external ──► the browser navigates
    │ a route in the route table
    ▼
-navigationstart                         menu closes
-   │
+navigationstart                         menu stays open when a cover host is on the page
+   │                                    otherwise the menu closes here
    ├──────────────── run together ─────────────────┐
    ▼                                               ▼
 current page hide()                       fetch and parse the next document
 leave animations + the cover                (prefetched on hover if possible)
-   │                                               │
+   │  the cover paints over the open menu         │
    └───────────────── wait for both ───────────────┘
    │                                   fetch or parse failed ──► location.assign(url)
+   ▼
+transitioncovered                       menu closes under the opaque cover
+   │                                    skipped when there is no cover host
    ▼
 current page destroy()                  abort signal, animation scope reverted
    │
@@ -68,10 +71,13 @@ history.pushState                       { path, scroll }
 new page class init()                   static elements selected inside <main>
 refresh Lenis and ScrollTrigger
 wait for [data-preload] images          raced against maxWait (ADR 0018)
+place scroll                            top on a click, saved position on back and forward
    │
    ▼
+new page class show()                   entrance from-state, under the opaque cover
+   │                                    html.is-animating hides [data-animation] until then
+   ▼
 reveal                                  the page transition strategy
-new page class show()                   entrance animations
 focus <main>
 navigationend                           menu sets aria-current; focus moves to main
 ```

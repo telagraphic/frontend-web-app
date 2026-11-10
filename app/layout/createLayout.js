@@ -4,9 +4,19 @@ import { listenFocus } from "./listenFocus.js";
 import { ERROR_CODES } from "../utilities/ErrorRegistry.js";
 import { EVENTS } from "../utilities/Constants.js";
 
-export function createLayout({ router, animationsService, smoothScroll }) {
+export function createLayout({
+  router,
+  animationsService,
+  smoothScroll,
+  transitionsService,
+}) {
   const controller = new AbortController();
-  const menu = new Menu({ router, smoothScroll, animationsService });
+  const menu = new Menu({
+    router,
+    smoothScroll,
+    animationsService,
+    transitionsService,
+  });
   const preloader = new Preloader({ animationsService });
 
   return {

@@ -2,7 +2,7 @@
 
 Copy this when adding a route with its own view, stylesheet, and page class. Terms: [GLOSSARY.md](../../GLOSSARY.md). Verbs: [METHOD_VERBS.md](METHOD_VERBS.md). Lifecycle: [ADR 0004](../adr/0004-boot-loads-page-classes-from-the-page-index.md), [ADR 0011](../adr/0011-base-lifecycle-holds-signal-and-scope.md). Markup: [TEMPLATES.md](TEMPLATES.md). Regions inside the page: [PAGE_COMPONENTS.md](PAGE_COMPONENTS.md). CSS: [STYLES.md](STYLES.md). Motion: [ANIMATIONS.md](ANIMATIONS.md). Accessibility: [ACCESSIBILITY.md](ACCESSIBILITY.md).
 
-The starter ships Home at `/` and not-found at `/404` (ADR 0025). Extra pages come from `.cursor/skills/add-page/SKILL.md`.
+The starter ships Home at `/` and not-found at `/404` (ADR 0025). Extra pages come from `.cursor/skills/front-end-add-page/SKILL.md`.
 
 Status: slice 8 ships Home and not-found. Extra pages come from the add-page skill.
 
@@ -189,7 +189,7 @@ main[data-route="about"] .about__title {
 @import "./pages/about.css" layer(pages);
 ```
 
-Full BEM names. No `&__title`. No Sass. A modern feature you have not used yet goes through [write-css](../../.cursor/skills/write-css/SKILL.md).
+Full BEM names. No `&__title`. No Sass. A modern feature you have not used yet goes through [write-css](../../.cursor/skills/front-end-write-css/SKILL.md).
 
 ## What the starter does not ship
 

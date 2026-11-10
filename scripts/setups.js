@@ -125,7 +125,7 @@ export function scoreboardDocument(results) {
   return developerDocument(
     "Wizard setups",
     `<h1>Wizard setups</h1>
-    <p>Each cell is pass, fail, or pending. <a href="/admin">Developer</a>. <a href="/admin/codebase">Codebase</a>.</p>
+    <p>Pass, fail, or pending for each of the seven combination sites beside this repo. This is not the options wired into the running project. <a href="/admin">Developer</a>. <a href="/admin/codebase">Codebase</a>.</p>
     <table>
       <thead><tr><th>Setup</th><th>Lint</th><th>Unit</th><th>Build</th><th>Browser</th><th>Expected skips</th><th>Report</th></tr></thead>
       <tbody>${rows}</tbody>

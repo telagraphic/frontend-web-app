@@ -4,7 +4,7 @@ How a client site is created from this starter. Decisions: [ADR 0002](../adr/000
 
 `bun run create <dest>` runs `wizard/create.js`. The starter is never rewritten. A created site has no `wizard/` folder and no `create` script.
 
-Status: slice 11 landed the Starlight app in `docs/`. Create copies that app. `bun run build` does not publish it.
+Status: the reference is the Bun reader in `server/docs.js` (ADR 0027). Create copies that server with the rest of `server/`. `bun run build` does not publish the reference.
 
 ## Prompts
 
@@ -29,16 +29,16 @@ Trade-offs sit next to the choice: a document load without an overlay gives up G
 
 Fixed, not asked: GSAP as the motion library, Bun as host, menu, smooth scroll, Prettier, ESLint, Stylelint, html-validate, `process-image.js`, integrations (none).
 
-Create writes files and stops. It prints `cd <dest> && bun install && bun install --cwd docs && bun run dev`. It does not install or `git init`. `bun run docs:dev` serves the copied reference.
+Create writes files and stops. It prints `cd <dest> && bun install && bun run dev`. It does not install or `git init`. `bun run docs:dev` serves the copied reference.
 
 ## Copy, drop, write
 
-Copy the starter into `<dest>`. Skip `wizard/`, `node_modules/`, `dist/`, `.dev/`, `.git`, and `.github/`. Inside `docs/`, also skip `node_modules/`, `dist/`, and `.astro/`. Copy `docs/` and `experiments/`. Then delete unused modules for this combination. Write only these seams:
+Copy the starter into `<dest>`. Skip `wizard/`, `node_modules/`, `dist/`, `.dev/`, `.git`, and `.github/`. Copy `experiments/`. Then delete unused modules for this combination. Write only these seams:
 
 | File | What the wizard writes |
 | --- | --- |
 | `app/config/site.js` | name, origin |
-| `package.json` | name; chosen renderer packages; no `@clack/prompts`; no `create` script; `docs:*` scripts stay |
+| `package.json` | name; chosen renderer packages; no `@clack/prompts`; no `create` script; `docs:dev` stays |
 | `server/renderer.js` | one import |
 | `.prettierrc` | the chosen engine |
 | `styles/styles.css` | GSAP overlay import, or view-transition import, or neither |
@@ -49,7 +49,7 @@ Copy the starter into `<dest>`. Skip `wizard/`, `node_modules/`, `dist/`, `.dev/
 
 `assertDocument()` requires `[data-transition-host]` only when the layout has that host. That host is a `div` with `hidden` and `aria-hidden="true"`, never a landmark. Skip link and `main#main` are always required ([ACCESSIBILITY.md](ACCESSIBILITY.md)).
 
-Docs on the copy: `.cursor/skills/`, `AGENTS.md`, `GLOSSARY.md`, `documentation/adr/`, `documentation/reference/`, and the Starlight app in `docs/`. History guides and checklists are gone from the starter (slice 0). The create-matrix CI workflow stays in the starter. A created site keeps site-level lint, test, and build, and `bun run docs:dev`. The site build does not publish `docs/`.
+Docs on the copy: `.cursor/skills/`, `AGENTS.md`, `GLOSSARY.md`, `documentation/adr/`, `documentation/reference/`, and the reader in `server/docs.js`. History guides and checklists are gone from the starter (slice 0). The create-matrix CI workflow stays in the starter. A created site keeps site-level lint, test, and build, and `bun run docs:dev`. The site build does not publish the reference.
 
 ## Modules per combination
 

@@ -89,6 +89,45 @@ describe("Navigation", () => {
     expect(stopped).toEqual(["stop"]);
   });
 
+  test("transitioncovered closes the menu when a cover host is present", async () => {
+    document.body.innerHTML = `
+      <div data-transition-host hidden></div>
+      <nav data-navigation data-navigation-status="not-active">
+        <button type="button" data-navigation-toggle aria-expanded="false">Menu</button>
+        <div data-navigation-panel>
+          <a class="internal-link" href="/">Home</a>
+        </div>
+      </nav>
+      <main id="main" data-route="home" tabindex="-1"></main>
+    `;
+
+    const stopped = [];
+    const router = new EventTarget();
+    const transitions = new EventTarget();
+    const nav = new Navigation({
+      router,
+      transitionsService: transitions,
+      smoothScroll: {
+        stop() {
+          stopped.push("stop");
+        },
+        start() {
+          stopped.push("start");
+        },
+      },
+    });
+    await nav.init();
+    nav.open();
+
+    router.dispatchEvent(new CustomEvent("navigationstart"));
+    expect(nav.root.getAttribute("data-navigation-status")).toBe("active");
+
+    transitions.dispatchEvent(new CustomEvent("transitioncovered"));
+    expect(nav.root.getAttribute("data-navigation-status")).toBe("not-active");
+    expect(nav.toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(stopped).toEqual(["stop"]);
+  });
+
   test("navigationend sets aria-current on the link for that path", async () => {
     document.body.innerHTML = `
       <nav data-navigation data-navigation-status="not-active">

@@ -1,8 +1,32 @@
 import { existsSync, readFileSync } from "node:fs";
 import { developerDocument } from "./theme.js";
 
+export function projectOptions() {
+  const factory = readText("app/services/ServicesFactory.js");
+  const renderer = readText("server/renderer.js");
+  const styles = readText("styles/styles.css");
+  const viewTransition =
+    importsFrom(factory, "./ViewTransitions.js") ||
+    styles.includes("view-transition");
+  const transition = importsFrom(factory, "./GsapTransitions.js")
+    ? "GSAP transition"
+    : viewTransition
+      ? "View transition"
+      : "None";
+  const navigation = importsFrom(factory, "../router/Router.js")
+    ? "Page swap"
+    : "Document load";
+  const engine = renderer.includes("/vento.js")
+    ? "Vento"
+    : renderer.includes("/jsx.js")
+      ? "JSX"
+      : "Nunjucks";
+  return { transition, navigation, renderer: engine };
+}
+
 export function codebasePage(docsUrl) {
-  const rows = bootFiles()
+  const options = projectOptions();
+  const rows = bootFiles(options)
     .map(([path, by, slug, label]) => {
       return `<tr><td><code>${escapeHtml(path)}</code></td><td>${escapeHtml(by)}</td><td><a href="${docsUrl}${slug}">${escapeHtml(label)}</a></td></tr>`;
     })
@@ -11,8 +35,17 @@ export function codebasePage(docsUrl) {
   return developerDocument(
     "Codebase",
     `<h1>Codebase</h1>
-    <p>Load order for the files in this project. <a href="${docsUrl}glossary">Glossary</a> and the links below are the Starlight site (<code>bun run docs:dev</code>).</p>
-    <pre><code>${escapeHtml(chart())}</code></pre>
+    <p>The options wired into this project. The load order and the file list are this combination. The seven combination sites are scored on <a href="/admin/setups/">Wizard setups</a>.</p>
+    <table>
+      <thead><tr><th>Option</th><th>This project</th></tr></thead>
+      <tbody>
+        <tr><td>Page transition</td><td>${escapeHtml(options.transition)}</td></tr>
+        <tr><td>Navigation</td><td>${escapeHtml(options.navigation)}</td></tr>
+        <tr><td>Renderer</td><td>${escapeHtml(options.renderer)}</td></tr>
+      </tbody>
+    </table>
+    <p><a href="${docsUrl}glossary">Glossary</a> and the links below are the documentation site (<code>bun run docs:dev</code>).</p>
+    <pre><code>${escapeHtml(chart(options))}</code></pre>
     <h2>Files</h2>
     <table>
       <thead><tr><th>File</th><th>Referenced by</th><th>Docs</th></tr></thead>
@@ -22,7 +55,18 @@ export function codebasePage(docsUrl) {
   );
 }
 
-function bootFiles() {
+function readText(path) {
+  return existsSync(path) ? readFileSync(path, "utf8") : "";
+}
+
+function importsFrom(source, specifier) {
+  return (
+    source.includes(`from "${specifier}"`) ||
+    source.includes(`from '${specifier}'`)
+  );
+}
+
+function bootFiles(options = projectOptions()) {
   const rows = [
     [
       "server/app.js",
@@ -65,7 +109,7 @@ function bootFiles() {
     ],
   ];
 
-  if (existsSync("app/services/GsapTransitions.js")) {
+  if (options.transition === "GSAP transition") {
     rows.push(
       [
         "app/services/GsapTransitions.js",
@@ -80,7 +124,10 @@ function bootFiles() {
         "GSAP transition",
       ],
     );
-  } else if (existsSync("app/services/ViewTransitions.js")) {
+  } else if (
+    options.transition === "View transition" &&
+    existsSync("app/services/ViewTransitions.js")
+  ) {
     rows.push(
       [
         "app/services/ViewTransitions.js",
@@ -97,7 +144,10 @@ function bootFiles() {
     );
   }
 
-  if (existsSync("app/router/Router.js")) {
+  if (
+    options.navigation === "Page swap" &&
+    existsSync("app/router/Router.js")
+  ) {
     rows.push([
       "app/router/Router.js",
       "createServices()",
@@ -181,19 +231,27 @@ function bootFiles() {
   return rows.filter(([path]) => existsSync(path));
 }
 
-function chart() {
-  const transition = firstExisting([
-    ["app/services/GsapTransitions.js", "GsapTransitions"],
-    ["app/services/ViewTransitions.js", "ViewTransitions"],
-  ]);
-  const plugIn = firstExisting([
-    ["app/transitions/fade/FadeTransition.js", "FadeTransition"],
-    ["app/transitions/view/ViewTransition.js", "ViewTransition"],
-  ]);
-  const navigation = firstExisting([
-    ["app/router/Router.js", "Router"],
-    ["app/router/DocumentLoad.js", "DocumentLoad"],
-  ]);
+function chart(options = projectOptions()) {
+  const transition =
+    options.transition === "GSAP transition"
+      ? "GsapTransitions"
+      : options.transition === "View transition" &&
+          existsSync("app/services/ViewTransitions.js")
+        ? "ViewTransitions"
+        : null;
+  const plugIn =
+    options.transition === "GSAP transition"
+      ? "FadeTransition"
+      : options.transition === "View transition" &&
+          existsSync("app/transitions/view/ViewTransition.js")
+        ? "ViewTransition"
+        : null;
+  const navigation =
+    options.navigation === "Page swap"
+      ? "Router"
+      : existsSync("app/router/DocumentLoad.js")
+        ? "DocumentLoad"
+        : null;
   const focus = existsSync("app/layout/listenFocus.js")
     ? "\n             listenFocus"
     : "";
@@ -230,13 +288,6 @@ function cssImports() {
     .split("\n")
     .map((line) => line.match(/^@import\s+"([^"]+)"/)?.[1])
     .filter(Boolean);
-}
-
-function firstExisting(pairs) {
-  for (const [path, label] of pairs) {
-    if (existsSync(path)) return label;
-  }
-  return null;
 }
 
 function escapeHtml(value) {

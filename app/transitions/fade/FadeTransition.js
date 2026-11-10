@@ -62,13 +62,16 @@ export default class FadeTransition {
           resolve();
           return;
         }
-        const timeline = gsap.timeline({ onComplete: resolve });
-        timeline.fromTo(
+        gsap.fromTo(
           this.host,
           { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 1.25, ease: "power2.inOut" },
+          {
+            autoAlpha: 1,
+            duration: 0.45,
+            ease: "power2.inOut",
+            onComplete: resolve,
+          },
         );
-        timeline.to({}, { duration: 0.5 });
       });
     });
   }
@@ -89,7 +92,7 @@ export default class FadeTransition {
         }
         gsap.to(this.host, {
           autoAlpha: 0,
-          duration: 1,
+          duration: 0.4,
           ease: "power2.inOut",
           onComplete: finish,
         });

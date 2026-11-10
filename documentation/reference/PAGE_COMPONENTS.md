@@ -122,4 +122,4 @@ Two regions on one page are two `use()` calls. They do not share fields. A custo
 
 Use a custom element when the browser should construct the region. The page class still imports the module: that import is what calls `customElements.define`, and the tag already in the HTML upgrades. The element imports its animation scope itself (ADR 0009) and reverts it in `disconnectedCallback`, which runs when a page swap drops the node.
 
-The steps for the first element are in [add-custom-element](../../.cursor/skills/add-custom-element/SKILL.md). The class is not registered from `createServices()`, and it does not extend `Component`.
+The steps for the first element are in [add-custom-element](../../.cursor/skills/front-end-add-custom-element/SKILL.md). The class is not registered from `createServices()`, and it does not extend `Component`.

@@ -21,9 +21,9 @@ GitHub: parent [#5](https://github.com/telagraphic/frontend-web-app/issues/5). C
 | **8** | [#14](https://github.com/telagraphic/frontend-web-app/issues/14) | Hono renderer; Home and not-found views | 0020, 0025, starter composition | `bun run dev` / `build`. Shea pages gone. Home is `views/pages/home.{ext}`. Unknown paths are HTTP 404 |
 | **9** | [#15](https://github.com/telagraphic/frontend-web-app/issues/15) | Document-load navigation; both view-transition paths; None | 0002 | Five combinations run via create flags |
 | **10** | [#16](https://github.com/telagraphic/frontend-web-app/issues/16) | `bun run create` + CI matrix | 0002 | Seven created-site jobs ([WIZARD.md](WIZARD.md)) |
-| **11** | [#17](https://github.com/telagraphic/frontend-web-app/issues/17) | Starlight from the markdown | 0003 | Site matches the code |
+| **11** | [#17](https://github.com/telagraphic/frontend-web-app/issues/17) | Documentation site from the markdown | 0003, 0027 | Site matches the code |
 
-Skills whose bodies wait on code (`add-service`, `add-effect`, `write-test`, `add-view-transition`) are filled in the slice that builds that feature.
+Skills whose bodies wait on code (`front-end-add-service`, `front-end-add-effect`, `front-end-write-test`, `front-end-add-view-transition`) are filled in the slice that builds that feature.
 
 ## Not in this sequence
 

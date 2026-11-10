@@ -201,13 +201,7 @@ export class Router extends EventTarget {
         return;
       }
 
-      await this.currentPage?.show(context);
       this.smoothScroll?.start();
-      if (historyMode === "traverse") {
-        this.routerHistory.restoreScroll(this.smoothScroll);
-      } else {
-        this.smoothScroll?.scrollTo(0, { immediate: true });
-      }
 
       this.dispatchEvent(
         new CustomEvent(EVENTS.NAVIGATION_END, { detail: context }),
@@ -243,6 +237,14 @@ export class Router extends EventTarget {
 
     await loadImages(currentMain.querySelectorAll("[data-preload]"));
     this.smoothScroll?.refresh();
+    if (context.signal?.aborted) return;
+
+    if (context.history === "traverse") {
+      this.routerHistory.restoreScroll(this.smoothScroll);
+    } else {
+      this.smoothScroll?.scrollTo(0, { immediate: true });
+    }
+    await page.show(context);
   }
 }
 

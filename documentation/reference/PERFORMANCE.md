@@ -1,6 +1,6 @@
 # Performance
 
-Checks for markup, CSS, JavaScript, and network. An agent running [check-performance](../../.cursor/skills/check-performance/SKILL.md) works this list. Terms: [GLOSSARY.md](../../GLOSSARY.md). Images: [IMAGES.md](IMAGES.md). Styles: [STYLES.md](STYLES.md). Animations: [ANIMATIONS.md](ANIMATIONS.md).
+Checks for markup, CSS, JavaScript, and network. An agent running [check-performance](../../.cursor/skills/front-end-check-performance/SKILL.md) works this list. Terms: [GLOSSARY.md](../../GLOSSARY.md). Images: [IMAGES.md](IMAGES.md). Styles: [STYLES.md](STYLES.md). Animations: [ANIMATIONS.md](ANIMATIONS.md).
 
 The target is a first document that paints the cover correctly, then a site that does not download the next route's page class or overlay image until they are needed.
 

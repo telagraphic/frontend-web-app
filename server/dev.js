@@ -177,7 +177,7 @@ function developerPage() {
       <li><a href="/admin/codebase">Codebase</a></li>
       <li><a href="${docsUrl}">Docs</a></li>
     </ul>
-    <p>Docs need <code>bun run docs:dev</code>. Wizard setups appear after the create script writes <code>../setups</code>.</p>`,
+    <p>Docs need <code>bun run docs:dev</code>. Wizard setups is the scoreboard for the seven combination sites that <code>bun run setups</code> writes beside this repo. This project's options are on the Codebase page.</p>`,
   );
 }
 
@@ -194,7 +194,8 @@ function missingSetups() {
   return developerDocument(
     "Wizard setups",
     `<h1>Wizard setups</h1>
-    <p>No setups yet. The create script writes <code>../setups/index.html</code> and one folder per <code>wizard-</code> branch.</p>
+    <p>This page scores the seven wizard combinations. It is not the options wired into this project. Those are on <a href="/admin/codebase">Codebase</a>.</p>
+    <p>No scoreboard yet. <code>bun run setups</code> writes <code>../setups/index.html</code> and one folder per combination.</p>
     <p><a href="/admin">Developer</a></p>`,
   );
 }

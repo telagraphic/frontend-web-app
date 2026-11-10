@@ -2,7 +2,7 @@
 
 How the starter turns the route table and `views/` into HTML documents, in dev and in production. A project uses one **renderer**: Nunjucks, Vento, or JSX. The setup wizard picks it (ADR 0002). The pipeline is [ADR 0020](../adr/0020-pages-render-through-one-renderer-and-hono.md). Terms are in [GLOSSARY.md](../../GLOSSARY.md).
 
-Status: slice 8 landed the Hono renderer, Nunjucks views, and Home / not-found documents. Slice 10 added Vento and JSX kits under `wizard/renderers/`. Slice 11 added Starlight in `docs/`. `bun run dev` is `server/dev.js`. `bun run build` is `server/build.js`. `bun run docs:dev` is the documentation site.
+Status: slice 8 landed the Hono renderer, Nunjucks views, and Home / not-found documents. Slice 10 added Vento and JSX kits under `wizard/renderers/`. The documentation site is `server/docs.js` (ADR 0027). `bun run dev` is `server/dev.js`. `bun run build` is `server/build.js`. `bun run docs:dev` is the documentation site.
 
 ## How it flows
 
@@ -341,7 +341,7 @@ Every value is escaped by default. Raw HTML is always explicit.
 
 ## Add a page
 
-The starter ships Home at `/`. Further pages: [PAGE.md](PAGE.md) and `.cursor/skills/add-page/SKILL.md`.
+The starter ships Home at `/`. Further pages: [PAGE.md](PAGE.md) and `.cursor/skills/front-end-add-page/SKILL.md`.
 
 With `bun run dev` running, a new path works after the save. A route with no page file stops dev and the build with the missing path in the message.
 
@@ -355,11 +355,11 @@ With `bun run dev` running, a new path works after the save. A route with no pag
 | `/playwright-report/` | This project's Playwright HTML report, after `bun run test:browser` |
 | `/admin/setups/` | `../setups/index.html`, the wizard-setup scoreboard, when that folder exists |
 | `/admin/codebase` | Load order for this project's files, with links into the docs |
-| `http://127.0.0.1:4321/` | The Starlight docs. Start them with `bun run docs:dev`, or both servers with `bun run dev:docs` |
+| `http://127.0.0.1:4321/` | The documentation site. Start it with `bun run docs:dev`, or both servers with `bun run dev:docs` |
 
-The docs server listens on `127.0.0.1`, the same host as those links. `docsServer()` in `server/developer/docsUrl.js` supplies that host to both `astro dev` and `astro preview`. Binding `localhost` listens on IPv6 only, and these links do not connect.
+The docs server listens on `127.0.0.1`, the same host as those links. `docsServer()` in `server/developer/docsUrl.js` supplies that host and port to `server/docs.js`. Binding `localhost` listens on IPv6 only, and these links do not connect.
 
-The wizard copies `server/dev.js` and `docs/`, so a created site has the same admin page and the same reference. `bun run build` publishes `dist/` only. The setups link reads `../setups` from the project directory.
+The wizard copies `server/`, so a created site has the same admin page and the same reference. `bun run build` publishes `dist/` only. The setups link reads `../setups` from the project directory.
 
 ## Experiments
 
@@ -398,7 +398,7 @@ createSplitTitle(document.querySelector("[data-experiment]"), {
 });
 ```
 
-When the exploration is done, the `gsap-experiment` skill publishes it as an effect, a component, a partial, and a stylesheet that follow the starter's conventions. The experiment folder stays in git as a record.
+When the exploration is done, the `front-end-gsap-experiment` skill publishes it as an effect, a component, a partial, and a stylesheet that follow the starter's conventions. The experiment folder stays in git as a record.
 
 ## The renderer adapter
 
@@ -454,9 +454,7 @@ export { createRenderer } from "./renderers/vento.js";
 | `bun run test` | `bun test` | Before a commit; CI |
 | `bun run process:image` | `scripts/process-image.js` | When adding images |
 | `bun run create <dest>` | `wizard/create.js`: copy the starter and write the chosen options | Starter only. A client site does not have this. [WIZARD.md](WIZARD.md) |
-| `bun run docs:dev` | Starlight in `docs/`, reading the repo markdown | Dev reference, including on a created site. Not part of `dist/` |
-| `bun run docs:build` | `astro build` in `docs/` | Writes `docs/dist`. CI on the starter. Not the site deploy |
-| `bun run docs:preview` | Serves `docs/dist` | Check the reference build. Not `bun run preview` |
+| `bun run docs:dev` | `server/docs.js`, reading the repo markdown | Dev reference, including on a created site. Not part of `dist/` |
 
 ## Formatting and linting by engine
 

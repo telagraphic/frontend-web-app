@@ -30,6 +30,8 @@ export default class BasePage extends BaseLifecycle {
   }
 
   async show(context) {
+    const root = document.documentElement;
+    root.classList.add("is-animating");
     try {
       this.animationsService?.addTypes(this.animations, this.root);
       await this.onShow?.(context);
@@ -40,6 +42,8 @@ export default class BasePage extends BaseLifecycle {
         `${this.constructor.name}: show hook failed, continuing:`,
         error,
       );
+    } finally {
+      root.classList.remove("is-animating");
     }
   }
 

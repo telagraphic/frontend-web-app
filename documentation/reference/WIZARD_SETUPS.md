@@ -2,7 +2,7 @@
 
 How to create the seven wizard sites, run them, and read the results. The option list is [WIZARD.md](WIZARD.md). The dev links are [TEMPLATES.md](TEMPLATES.md).
 
-Status: `bun run setups` creates the seven folders beside the starter and rewrites `../setups/index.html` after each command. `/admin/setups/` serves that scoreboard. A run is done when the five Nunjucks rows are pass and their skips match this page. Vento and JSX leave the browser cell pending.
+Status: `bun run setups` creates the seven folders beside the starter and rewrites `../setups/index.html` after each command. `/admin/setups/` serves that scoreboard. A run is done when the five Nunjucks rows are pass and their skips match this page. Vento and JSX leave the browser cell pending. A wizard setup is one created site for one combination. The options wired into the project you are running are on `/admin/codebase`.
 
 The starter is not rewritten. `bun run create` refuses a destination inside this repo. Each setup is a folder beside the starter. The `wizard-` name is the folder and, if that folder is its own git repo, its branch. The results page does not check out branches. The script `cd`s into the folder and runs the commands there.
 

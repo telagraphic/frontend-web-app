@@ -1,4 +1,4 @@
-/* Shared with the docs site. The site build does not publish docs/. */
+/* Shared by the developer pages and the documentation server. The site build does not publish the reference. */
 :root {
   --ds-background-100: #ffffff;
   --ds-background-200: #fafafa;

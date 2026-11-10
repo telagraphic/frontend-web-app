@@ -26,6 +26,7 @@ export function createTitleReveal(element, { reducedMotion } = {}) {
       y: 0,
       duration: presets.titleDuration,
       ease: EASES.outQuad,
+      immediateRender: true,
       scrollTrigger: { trigger: element, start: "top 85%", once: true },
     },
   );

@@ -1,6 +1,6 @@
 # Tests
 
-Three layers. Each one checks something a caller can see: a public method, a dispatched event, the DOM, an error code, or a settled screenshot. Decision: [ADR 0008](../adr/0008-tests-go-through-public-interfaces-in-three-layers.md). Adding a test: [write-test](../../.cursor/skills/write-test/SKILL.md).
+Three layers. Each one checks something a caller can see: a public method, a dispatched event, the DOM, an error code, or a settled screenshot. Decision: [ADR 0008](../adr/0008-tests-go-through-public-interfaces-in-three-layers.md). Adding a test: [write-test](../../.cursor/skills/front-end-write-test/SKILL.md).
 
 `bun test` runs unit and wiring. `bun run test:browser` runs Playwright. The dev server for browser tests is `PORT=3458 bun server/dev.js`, started by `playwright.config.js`.
 

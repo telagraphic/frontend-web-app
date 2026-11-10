@@ -1,6 +1,6 @@
 # Styles
 
-How CSS is authored, layered, bundled, and targeted. The decisions are [ADR 0023](../adr/0023-css-is-layered-files-bundled-by-bun.md). Page selectors follow [ADR 0021](../adr/0021-page-swap-replaces-the-children-of-main.md) and [PAGE_SWAP.md](PAGE_SWAP.md). Motion that is not layout lives in [ANIMATIONS.md](ANIMATIONS.md). Adding a file or a modern feature: [write-css](../../.cursor/skills/write-css/SKILL.md). Terms are in [GLOSSARY.md](../../GLOSSARY.md).
+How CSS is authored, layered, bundled, and targeted. The decisions are [ADR 0023](../adr/0023-css-is-layered-files-bundled-by-bun.md). Page selectors follow [ADR 0021](../adr/0021-page-swap-replaces-the-children-of-main.md) and [PAGE_SWAP.md](PAGE_SWAP.md). Motion that is not layout lives in [ANIMATIONS.md](ANIMATIONS.md). Adding a file or a modern feature: [write-css](../../.cursor/skills/front-end-write-css/SKILL.md). Terms are in [GLOSSARY.md](../../GLOSSARY.md).
 
 Status: Home and not-found are the only pages. Navigation, preloader, footer, and page are starter chrome. A project replaces tokens and those files.
 
@@ -375,7 +375,7 @@ Do not edit the bundled file. Do not run Sass, PostCSS, Autoprefixer, or cssnano
 
 `experiments/{name}/styles.css` is the same CSS as production. It may use `var(--…)` from the token file. Dev serves it unbundled, so a save swaps without waiting on `styles/styles.css`.
 
-On publish ([PUBLISH.md](../../.cursor/skills/gsap-experiment/PUBLISH.md)):
+On publish ([PUBLISH.md](../../.cursor/skills/front-end-gsap-experiment/PUBLISH.md)):
 
 1. Copy to `styles/components/{kebab-name}.css`.
 2. Replace raw colors and sizes with tokens.

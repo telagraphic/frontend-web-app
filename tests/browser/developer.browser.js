@@ -39,6 +39,8 @@ test.describe("developer", () => {
     const codebase = await page.goto("/admin/codebase");
     expect(codebase?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveText("Codebase");
+    await expect(page.locator("main")).toContainText("Page transition");
+    await expect(page.locator("main")).toContainText("Renderer");
     await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute(
       "href",
       "http://127.0.0.1:4321/reference/overview",

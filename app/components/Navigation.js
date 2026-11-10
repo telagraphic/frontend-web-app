@@ -9,13 +9,14 @@ export default class Navigation extends Component {
     links: [SELECTORS.INTERNAL_LINK],
   };
 
-  constructor({ router, smoothScroll, animationsService }) {
+  constructor({ router, smoothScroll, animationsService, transitionsService }) {
     super({
       element: SELECTORS.NAV,
       animationsService,
     });
     this.router = router;
     this.smoothScroll = smoothScroll;
+    this.transitionsService = transitionsService;
     this.stoppedScroll = false;
     this.skipScrollStart = false;
   }
@@ -26,15 +27,28 @@ export default class Navigation extends Component {
     this.links = this.elements.links;
     this.listenToggle();
     this.listenKeys();
+    const deferClose = Boolean(
+      this.transitionsService && $(SELECTORS.TRANSITION_HOST),
+    );
+    const closeUnderCover = () => {
+      this.skipScrollStart = true;
+      this.close();
+      this.skipScrollStart = false;
+    };
     this.router?.addEventListener(
       EVENTS.NAVIGATION_START,
       () => {
-        this.skipScrollStart = true;
-        this.close();
-        this.skipScrollStart = false;
+        if (!deferClose) closeUnderCover();
       },
       { signal: this.signal },
     );
+    if (deferClose) {
+      this.transitionsService.addEventListener(
+        EVENTS.TRANSITION_COVERED,
+        closeUnderCover,
+        { signal: this.signal },
+      );
+    }
     this.router?.addEventListener(
       EVENTS.NAVIGATION_END,
       (event) => this.markCurrent(event.detail?.path),

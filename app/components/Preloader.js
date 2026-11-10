@@ -132,13 +132,18 @@ export default class Preloader extends Component {
 
   finish() {
     this.setInert(false);
+    document.documentElement.classList.add("is-animating");
     document.documentElement.classList.remove("is-loading");
     this.dispatchComplete();
   }
 
   skipPersisted() {
     this.setInert(false);
-    document.documentElement.classList.remove("is-loading", "is-covering");
+    document.documentElement.classList.remove(
+      "is-loading",
+      "is-covering",
+      "is-animating",
+    );
     if (this.root) this.root.style.display = "none";
     const host = $(SELECTORS.TRANSITION_HOST);
     if (host) {

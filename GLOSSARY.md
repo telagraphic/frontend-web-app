@@ -154,6 +154,10 @@ _Avoid_: animation registry, animation map
 The starter command that copies this repo into a new folder and writes only the chosen page transition, navigation, and renderer.
 _Avoid_: installer, generator, bootstrap
 
+**Wizard setup**:
+One created site for a single combination of page transition, navigation, and renderer.
+_Avoid_: this project's options, preset, profile
+
 **Starter release**:
 A published snapshot of the starter. The setup wizard runs from it to create one new client site.
 _Avoid_: installer, upgrade

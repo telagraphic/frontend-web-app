@@ -11,13 +11,13 @@ export default defineConfig([
   },
   {
     files: ["server/**/*.js"],
-    ignores: ["server/live-reload/client.js"],
+    ignores: ["server/live-reload/client.js", "server/developer/docsClient.js"],
     plugins: { js },
     extends: ["js/recommended"],
     languageOptions: { globals: { ...globals.node, Bun: "readonly" } },
   },
   {
-    files: ["server/live-reload/client.js"],
+    files: ["server/live-reload/client.js", "server/developer/docsClient.js"],
     plugins: { js },
     extends: ["js/recommended"],
     languageOptions: { globals: globals.browser },

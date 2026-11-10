@@ -1,6 +1,6 @@
 # JavaScript conventions
 
-How browser and server JS is written in this starter. Verbs: [METHOD_VERBS.md](METHOD_VERBS.md). Terms: [GLOSSARY.md](../../GLOSSARY.md). A new file starts from [add-module](../../.cursor/skills/add-module/SKILL.md). Syntax gate: [write-js](../../.cursor/skills/write-js/SKILL.md) and [FEATURES.md](../../.cursor/skills/write-js/FEATURES.md) beside it.
+How browser and server JS is written in this starter. Verbs: [METHOD_VERBS.md](METHOD_VERBS.md). Terms: [GLOSSARY.md](../../GLOSSARY.md). A new file starts from [add-module](../../.cursor/skills/front-end-add-module/SKILL.md). Syntax gate: [write-js](../../.cursor/skills/front-end-write-js/SKILL.md) and [FEATURES.md](../../.cursor/skills/front-end-write-js/FEATURES.md) beside it.
 
 ## Two module shapes
 
@@ -47,7 +47,7 @@ export function createLayout({ router, smoothScroll }) {
 
 ## Syntax
 
-Look up a feature that is not in this table on MDN Baseline **now** ([FEATURES.md](../../.cursor/skills/write-js/FEATURES.md)). Do not remember a year.
+Look up a feature that is not in this table on MDN Baseline **now** ([FEATURES.md](../../.cursor/skills/front-end-write-js/FEATURES.md)). Do not remember a year.
 
 **Required** (Baseline widely available; write these)
 

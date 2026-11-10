@@ -10,13 +10,13 @@ const geistGray = readFileSync(
 const fontDirs = {
   geist: fileURLToPath(
     new URL(
-      "../../docs/node_modules/@fontsource-variable/geist/files/",
+      "../../node_modules/@fontsource-variable/geist/files/",
       import.meta.url,
     ),
   ),
   "geist-mono": fileURLToPath(
     new URL(
-      "../../docs/node_modules/@fontsource-variable/geist-mono/files/",
+      "../../node_modules/@fontsource-variable/geist-mono/files/",
       import.meta.url,
     ),
   ),
@@ -68,7 +68,7 @@ export function developerDocument(title, body) {
     <title>${title}</title>
     <style>
 ${geistGray}
-${fontFaceCss()}
+${developerFontFaceCss("/admin/fonts")}
       :root {
         color-scheme: light;
         --developer-font: "Geist Variable", sans-serif;
@@ -215,7 +215,7 @@ ${fontFaceCss()}
 </html>`;
 }
 
-function fontFaceCss() {
+export function developerFontFaceCss(urlPrefix) {
   return fontFaces
     .filter(([, family, file]) => developerFontFile(family, file))
     .map(
@@ -224,7 +224,7 @@ function fontFaceCss() {
         font-style: normal;
         font-display: swap;
         font-weight: 100 900;
-        src: url("/admin/fonts/${family}/${file}") format("woff2");
+        src: url("${urlPrefix}/${family}/${file}") format("woff2");
         unicode-range: ${range};
       }`,
     )

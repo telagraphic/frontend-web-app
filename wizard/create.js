@@ -53,12 +53,6 @@ function copied(rel) {
   if (!rel || rel === ".") return true;
   const parts = rel.split(sep);
   if (SKIP.has(parts[0])) return false;
-  if (
-    parts[0] === "docs" &&
-    ["node_modules", "dist", ".astro"].includes(parts[1])
-  ) {
-    return false;
-  }
   return true;
 }
 
@@ -89,7 +83,7 @@ try {
 
 console.log(`Created ${combo} (${renderer}) at ${dest}`);
 console.log(
-  `cd ${dest} && bun install && bun install --cwd docs && bun run dev`,
+  `cd ${dest} && bun install && bun run dev`,
 );
 
 async function collectOptions(flags) {
@@ -493,9 +487,19 @@ import Preloader from "../components/Preloader.js";
 ${focusImport}import { ERROR_CODES } from "../utilities/ErrorRegistry.js";
 import { EVENTS } from "../utilities/Constants.js";
 
-export function createLayout({ router, animationsService, smoothScroll }) {
+export function createLayout({
+  router,
+  animationsService,
+  smoothScroll,
+  transitionsService,
+}) {
   const controller = new AbortController();
-  const menu = new Menu({ router, smoothScroll, animationsService });
+  const menu = new Menu({
+    router,
+    smoothScroll,
+    animationsService,
+    transitionsService,
+  });
   const preloader = new Preloader({ animationsService });
 
   return {

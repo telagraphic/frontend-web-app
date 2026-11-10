@@ -26,6 +26,6 @@ The package is not published yet. This decision is the shape for that work.
 
 - Publish from a tagged commit. A dirty working tree is not a release.
 - After a publish, a cached `bunx` can still run the previous release. The command for a new site names `@latest` or a version.
-- The created site is a Bun app. The wizard still stops after writing files and prints `bun install`, `bun install --cwd docs`, and `bun run dev`.
+- The created site is a Bun app. The wizard still stops after writing files and prints `bun install` and `bun run dev`. `bun run docs:dev` serves the reference.
 - A public package publishes this starter, including the ADRs, skills, and docs. Use a private registry when the repo stays private.
 - ADR 0002 records the wizard. This ADR records how a release of that wizard is shared.

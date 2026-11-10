@@ -55,7 +55,7 @@ Built by `createLayout(services)`, the composition root for layout components. E
 
 | Layout component | What it does | Lives in | Status |
 | --- | --- | --- | --- |
-| Menu | `Navigation` owns `open` and `close`. The starter subclass is `Menu`. Closes on `navigationstart`. Sets `aria-current="page"` by href | `app/components/Navigation.js`, `app/components/menus/Menu.js` | Exists. To refactor. Boilerplate: [LAYOUT_COMPONENTS.md](LAYOUT_COMPONENTS.md). ADR 0006, 0017 |
+| Menu | `Navigation` owns `open` and `close`. The starter subclass is `Menu`. Stays open through a cover and closes on `transitioncovered`. Closes on `navigationstart` when there is no cover host. Sets `aria-current="page"` by href | `app/components/Navigation.js`, `app/components/menus/Menu.js` | Exists. To refactor. Boilerplate: [LAYOUT_COMPONENTS.md](LAYOUT_COMPONENTS.md). ADR 0006, 0017 |
 | Preloader | Covers the first document of a session. Later document loads do not paint it. Page `show` runs after it hides. While it is up, skip link, menu, footer, host, and `<main>` are `inert`. `maxWait` defaults to 4000. The counter is off unless `counter` is true | `app/components/Preloader.js` | Exists. Built by `createLayout()`. ADR 0014 |
 
 ### Layout listeners, not services

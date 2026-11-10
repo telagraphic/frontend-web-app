@@ -35,7 +35,7 @@ The site-wide default effect is the class the factory imports. Omit `pageTransit
 
 ## GSAP transition boilerplate
 
-The copy-paste class, styles, factory wiring, and route field are in [GSAP_TRANSITION.md](GSAP_TRANSITION.md). An agent adding one follows `.cursor/skills/add-gsap-transition/SKILL.md`.
+The copy-paste class, styles, factory wiring, and route field are in [GSAP_TRANSITION.md](GSAP_TRANSITION.md). An agent adding one follows `.cursor/skills/front-end-add-gsap-transition/SKILL.md`.
 
 ## GSAP transition + page swap
 

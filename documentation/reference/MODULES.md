@@ -37,7 +37,7 @@ GSAP transitions and view transitions are **two families**, not two adapters of 
 | Animation scope | `GsapAnimationScope` | Another library folder behind `createScope()` (ADR 0009) |
 | Smooth scroll | Lenis | A different scroller, by leaving it out of `createServices()` first |
 | Prefetch cache | In-memory HTML inside the page-swap router | A second in-process warmer. Cover waits on that load; document load uses Speculation Rules or HTTP prefetch, not this cache |
-| Integration | None | The first outside product ([add-integration](../../.cursor/skills/add-integration/SKILL.md)) |
+| Integration | None | The first outside product ([add-integration](../../.cursor/skills/front-end-add-integration/SKILL.md)) |
 
 ## Depth checks
 

@@ -4,7 +4,7 @@ globs: app/**/*.js,server/**/*.js
 alwaysApply: false
 ---
 
-Follow [documentation/reference/JS.md](documentation/reference/JS.md). Syntax lookup: [write-js FEATURES.md](.cursor/skills/write-js/FEATURES.md).
+Follow [documentation/reference/JS.md](documentation/reference/JS.md). Syntax lookup: [write-js FEATURES.md](.cursor/skills/front-end-write-js/FEATURES.md).
 
 - `class` for lifecycle (`init` / `destroy`). Named functions for composition roots and helpers (`createServices`, `createLayout`, `loadImages`).
 - Default export a class. Named-export a helper. No `index.js` barrels. No `#` private fields.
