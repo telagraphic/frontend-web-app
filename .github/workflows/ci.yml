@@ -90,3 +90,44 @@ jobs:
         run: |
           bunx playwright install --with-deps chromium
           bun run test:browser
+
+  packed:
+    runs-on: ubuntu-latest
+    name: packed gsap-page-swap-nunjucks
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - name: Pack and create from the bin
+        run: |
+          bun pm pack --quiet
+          tarball=(frontend-web-app-*.tgz)
+          mkdir -p "$RUNNER_TEMP/prefix"
+          cd "$RUNNER_TEMP/prefix"
+          bun add "$GITHUB_WORKSPACE/${tarball[0]}"
+          "$RUNNER_TEMP/prefix/node_modules/.bin/frontend-web-app" \
+            "$RUNNER_TEMP/packed" \
+            --transition gsap \
+            --navigation page-swap \
+            --renderer nunjucks \
+            --name Site \
+            --origin https://example.com
+          cd "$GITHUB_WORKSPACE"
+          bun run create "$RUNNER_TEMP/checkout" \
+            --transition gsap \
+            --navigation page-swap \
+            --renderer nunjucks \
+            --name Site \
+            --origin https://example.com
+          diff -rq "$RUNNER_TEMP/packed" "$RUNNER_TEMP/checkout"
+          test ! -d "$RUNNER_TEMP/packed/wizard"
+      - name: Install, lint, test, build
+        working-directory: ${{ runner.temp }}/packed
+        run: |
+          bun install
+          bun run lint
+          bun run format:check
+          bun test
+          bun run build

@@ -17,6 +17,11 @@ const SKIP = new Set([
   "playwright-report",
   "blob-report",
   ".specstory",
+  ".cursorindexingignore",
+  "_redirects",
+  "fonts",
+  "netlify.toml",
+  "pnpm-lock.yaml",
 ]);
 
 const PAGE_SWAP = [
@@ -54,6 +59,9 @@ function copied(rel) {
   if (!rel || rel === ".") return true;
   const parts = rel.split(sep);
   if (SKIP.has(parts[0])) return false;
+  if (parts.some((part) => part === ".DS_Store" || part.endsWith(".tgz"))) {
+    return false;
+  }
   return true;
 }
 
