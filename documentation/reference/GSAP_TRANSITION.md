@@ -9,8 +9,8 @@ Terms: [GLOSSARY.md](../../GLOSSARY.md). Paths: [PAGE_TRANSITIONS.md](PAGE_TRANS
 A plug-in is one folder: the class that injects markup and runs the tweens, and the stylesheet for that markup. The layout already has the empty host. The plug-in fills it per navigation and empties it when the reveal finishes.
 
 ```
-app/transitions/wipe/WipeTransition.js
-app/transitions/wipe/wipe.css           # imported from styles/styles.css
+app/transitions/fade/FadeTransition.js
+app/transitions/fade/fade.css           # imported from styles/styles.css
 ```
 
 The host stays empty in the layout. `prepare` writes into it, and `reveal` clears it. The `hidden` attribute keeps it out of the page until then. `aria-hidden="true"` keeps the overlay out of the accessibility tree while it is only a visual cover.
@@ -27,14 +27,14 @@ The factory constructs the plug-in with the host element and `animationsService`
 
 `markup({ to })` returns the HTML for this navigation. It reads `to.pageTransition` only. `copy`, `image`, and `alt` are strings the destination route supplied. `prepare` writes that HTML into the host, unhides the host, and waits for `loadImages` on an injected image so the cover does not rise over an empty frame.
 
-`cover` tweens the host from below the viewport (`yPercent: 100`) to covering it (`yPercent: 0`) and resolves on complete. `reveal` tweens it off the top (`yPercent: -100`), then hides the host and removes the injected nodes before resolving. Both durations are `0` when `reducedMotion` is set, so the promise still settles and the service can continue. The service awaits these promises. The plug-in does not dispatch `transitionstart` or `transitionend`. The service does that.
+`cover` fades the host in (`autoAlpha` 0 to 1) and resolves on complete. `reveal` fades it out, then hides the host and removes the injected nodes before resolving. Under reduced motion the plug-in sets `autoAlpha` and resolves immediately, so the promise still settles and the service can continue. The service awaits these promises. The plug-in does not dispatch `transitionstart` or `transitionend`. The service does that.
 
 ```js
-// app/transitions/wipe/WipeTransition.js
+// app/transitions/fade/FadeTransition.js
 import { gsap } from "../../animations/gsap/gsap.js";
 import { loadImages } from "../../utilities/images.js";
 
-export default class WipeTransition {
+export default class FadeTransition {
   constructor({ host, animationsService }) {
     this.host = host;
     this.animationsService = animationsService;
@@ -52,14 +52,16 @@ export default class WipeTransition {
 
   /** HTML injected into the host. Read only navigationContext.to.pageTransition. */
   markup({ to }) {
-    const fields = to.pageTransition ?? {};
-    const { copy = "", image, alt = "" } = fields;
-    return `
-      <div class="wipe">
-        ${image ? `<img class="wipe__image" src="${image}" alt="${alt}">` : ""}
-        ${copy ? `<p class="wipe__copy">${copy}</p>` : ""}
-      </div>
-    `;
+    const value = to.pageTransition;
+    const { copy = "", image, alt = "" } =
+      value && typeof value !== "string" ? value : {};
+    const imageTag = image
+      ? `<img class="page-transition-overlay__image" src="${image}" alt="${alt}">`
+      : "";
+    const copyTag = copy
+      ? `<p class="page-transition-overlay__copy">${copy}</p>`
+      : "";
+    return `${imageTag}${copyTag}`;
   }
 
   async prepare(navigationContext) {
@@ -72,12 +74,18 @@ export default class WipeTransition {
   cover(navigationContext) {
     return new Promise((resolve) => {
       this.animations.add(({ reducedMotion }) => {
+        if (reducedMotion) {
+          gsap.set(this.host, { autoAlpha: 1 });
+          resolve();
+          return;
+        }
         gsap.fromTo(
           this.host,
-          { yPercent: 100 },
+          { autoAlpha: 0 },
           {
-            yPercent: 0,
-            duration: reducedMotion ? 0 : 0.6,
+            autoAlpha: 1,
+            duration: 0.45,
+            ease: "power2.inOut",
             onComplete: resolve,
           },
         );
@@ -88,14 +96,21 @@ export default class WipeTransition {
   reveal() {
     return new Promise((resolve) => {
       this.animations.add(({ reducedMotion }) => {
+        const finish = () => {
+          this.host.hidden = true;
+          this.host.replaceChildren();
+          resolve();
+        };
+        if (reducedMotion) {
+          gsap.set(this.host, { autoAlpha: 0 });
+          finish();
+          return;
+        }
         gsap.to(this.host, {
-          yPercent: -100,
-          duration: reducedMotion ? 0 : 0.5,
-          onComplete: () => {
-            this.host.hidden = true;
-            this.host.replaceChildren();
-            resolve();
-          },
+          autoAlpha: 0,
+          duration: 0.4,
+          ease: "power2.inOut",
+          onComplete: finish,
         });
       });
     });
@@ -107,41 +122,43 @@ export default class WipeTransition {
 
 ## Styles
 
-The wipe fills the host (`inset: 0` on an absolute box). The image covers that box. The copy sits centered on top of the image.
+The host is the overlay (`inset: 0`, fixed). The image covers that box. The copy sits centered on top of the image. `cover` and `reveal` fade the host with `autoAlpha`.
 
 ```css
-/* app/transitions/wipe/wipe.css */
-.wipe {
+/* app/transitions/fade/fade.css */
+.page-transition-overlay {
   inset: 0;
-  position: absolute;
+  opacity: 0;
+  position: fixed;
 }
 
-.wipe__image {
+.page-transition-overlay__image {
   height: 100%;
   object-fit: cover;
   width: 100%;
 }
 
-.wipe__copy {
-  inset: 0;
+.page-transition-overlay__copy {
   margin: 0;
-  position: absolute;
   text-align: center;
 }
 ```
 
-Add `@import "../app/transitions/wipe/wipe.css" layer(components);` to `styles/styles.css` only when this effect is the one the site uses.
+Add `@import "../app/transitions/fade/fade.css" layer(components);` to `styles/styles.css` only when this effect is the one the site uses.
 
 ## Factory
 
 One effect: import the class in the factory. A second effect: add it to `app/config/transitions.js` and set `pageTransition.effect` on the destination routes that use it.
 
 ```js
-import WipeTransition from "../transitions/wipe/WipeTransition.js";
+import FadeTransition from "../transitions/fade/FadeTransition.js";
+import { transitions } from "../config/transitions.js";
+import { GsapTransitions } from "./GsapTransitions.js";
 
-const host = document.querySelector("[data-transition-host]");
-const transitionsService = new TransitionsService({
-  strategy: new WipeTransition({ host, animationsService }),
+const transitionsService = new GsapTransitions({
+  animationsService,
+  defaultTransition: FadeTransition,
+  transitions,
 });
 ```
 
@@ -154,7 +171,7 @@ Omit `pageTransition` when the route uses the factory default and needs no copy 
   link: "/section-3",
   page: "Page",
   pageTransition: {
-    effect: "wipe",
+    effect: "fade",
     copy: "Section 3",
     image: "/images/section-3.webp",
     alt: "Section 3",

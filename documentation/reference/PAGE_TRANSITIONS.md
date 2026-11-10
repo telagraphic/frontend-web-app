@@ -19,10 +19,10 @@ Do not call these SPA and MPA. **Page swap** replaces `<main>` in the current do
 The **destination** route owns the look (ADR 0024). View-transition routes usually omit the field; names live in CSS.
 
 ```js
-pageTransition: "wipe"   // effect name only; extra effects live in app/config/transitions.js
+pageTransition: "fade"   // effect name only; extra effects live in app/config/transitions.js
 
 pageTransition: {        // effect plus fields markup() reads as strings
-  effect: "wipe",
+  effect: "fade",
   copy: "Section 3",
   image: "/images/section-3.webp",
   alt: "Section 3",
@@ -50,11 +50,19 @@ The layout includes one empty host. The plug-in fills it during `prepare` and cl
 `markup` reads the destination route and returns the overlay HTML. `prepare` writes it into the host before the tween. `cover` and `reveal` are the tweens. The full class, including `loadImages` and the animation scope, is in [GSAP_TRANSITION.md](GSAP_TRANSITION.md).
 
 ```js
-// WipeTransition.js — markup lives here, not in the layout
-export default class WipeTransition {
+// app/transitions/fade/FadeTransition.js — markup lives here, not in the layout
+export default class FadeTransition {
   markup({ to }) {
-    const { copy, image, alt } = to.pageTransition ?? {};
-    return `<div class="wipe">${copy ?? ""}</div>`;
+    const value = to.pageTransition;
+    const { copy = "", image, alt = "" } =
+      value && typeof value !== "string" ? value : {};
+    const imageTag = image
+      ? `<img class="page-transition-overlay__image" src="${image}" alt="${alt}">`
+      : "";
+    const copyTag = copy
+      ? `<p class="page-transition-overlay__copy">${copy}</p>`
+      : "";
+    return `${imageTag}${copyTag}`;
   }
   async prepare(navigationContext) {
     this.host.innerHTML = this.markup(navigationContext);

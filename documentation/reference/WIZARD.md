@@ -156,8 +156,8 @@ Ships on **G/S** and **G/D**. Deleted for **V/S**, **V/D**, and **N**.
 | File | Function |
 | --- | --- |
 | `app/services/GsapTransitions.js` | Sequencer: `prepare`, `cover`, the injected commit, `reveal`. Page swap passes RouterSwap. Document load passes the assign |
-| `app/transitions/wipe/WipeTransition.js` | Default plug-in: `prepare` / `cover` / `reveal` |
-| `app/transitions/wipe/wipe.css` | Plug-in styles |
+| `app/transitions/fade/FadeTransition.js` | Default plug-in: `prepare` / `cover` / `reveal` |
+| `app/transitions/fade/fade.css` | Plug-in styles |
 | `app/config/transitions.js` | Second and later effects only. Omitted when the site has one effect |
 
 ### View transition
@@ -185,7 +185,7 @@ These files exist on every site. The wizard writes the variant. They are not fiv
 | `package.json` | Project name, the chosen renderer packages, no `@clack/prompts`, no `create` script |
 | `server/renderer.js` | One import: Nunjucks, Vento, or JSX |
 | `.prettierrc` | The chosen engine |
-| `styles/styles.css` | The shared layer imports, plus `wipe.css`, or the view-transition files that combination keeps, or neither |
+| `styles/styles.css` | The shared layer imports, plus `fade.css`, or the view-transition files that combination keeps, or neither |
 | `app/services/ServicesFactory.js` | `Router.js` or `DocumentLoad.js` or no navigation import. `GsapTransitions.js` or `ViewTransitions.js` or no transition import |
 | `app/layout/createLayout.js` | Menu and preloader. `listenFocus` only when the router is page swap |
 | `views/layouts/page.{ext}` | Overlay host only for GSAP |
