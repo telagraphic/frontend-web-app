@@ -45,7 +45,7 @@ test.describe("developer", () => {
     );
 
     const setups = await page.goto("/admin/setups/");
-    expect(setups?.status()).toBe(404);
+    expect([200, 404]).toContain(setups?.status());
     await expect(page.locator("h1")).toHaveText("Wizard setups");
   });
 });

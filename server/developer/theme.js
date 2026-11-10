@@ -3,9 +3,7 @@ import { resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const geistGray = readFileSync(
-  fileURLToPath(
-    new URL("../../docs/src/styles/geist-gray.css", import.meta.url),
-  ),
+  fileURLToPath(new URL("./geist-gray.css", import.meta.url)),
   "utf8",
 );
 

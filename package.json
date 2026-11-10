@@ -3,10 +3,12 @@
   "private": true,
   "scripts": {
     "create": "bun wizard/create.js",
+    "setups": "bun scripts/create-setups.js",
     "docs:dev": "bun run --cwd docs dev",
     "docs:build": "bun run --cwd docs build",
     "docs:preview": "bun run --cwd docs preview",
     "dev": "bun server/dev.js",
+    "dev:docs": "bun run dev & bun run docs:dev & wait",
     "build": "bun server/build.js",
     "preview": "bun server/preview.js",
     "test": "bun test tests/unit tests/wiring",

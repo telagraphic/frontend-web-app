@@ -11,5 +11,6 @@
 @import "../app/transitions/fade/fade.css" layer(components);
 @import "./components/smooth-scroll.css" layer(components);
 @import "./pages/home.css" layer(pages);
+@import "./pages/about.css" layer(pages);
 @import "./pages/not-found.css" layer(pages);
 @import "./utilities/sr-only.css" layer(utilities);

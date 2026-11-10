@@ -7,6 +7,7 @@
 .dev
 docs/dist
 docs/.astro
+docs/node_modules
 
 ##########################
 # config/config.js

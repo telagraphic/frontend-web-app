@@ -154,6 +154,10 @@ _Avoid_: animation registry, animation map
 The starter command that copies this repo into a new folder and writes only the chosen page transition, navigation, and renderer.
 _Avoid_: installer, generator, bootstrap
 
+**Starter release**:
+A published snapshot of the starter. The setup wizard runs from it to create one new client site.
+_Avoid_: installer, upgrade
+
 **Renderer**:
 The template engine adapter that turns a route and its data into one complete HTML document. A project has one: Nunjucks, Vento, or JSX.
 _Avoid_: template engine (for the adapter), view engine, page generator

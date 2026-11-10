@@ -355,11 +355,11 @@ With `bun run dev` running, a new path works after the save. A route with no pag
 | `/playwright-report/` | This project's Playwright HTML report, after `bun run test:browser` |
 | `/admin/setups/` | `../setups/index.html`, the wizard-setup scoreboard, when that folder exists |
 | `/admin/codebase` | Load order for this project's files, with links into the docs |
-| `http://127.0.0.1:4321/` | The Starlight docs. Start them with `bun run docs:dev` |
+| `http://127.0.0.1:4321/` | The Starlight docs. Start them with `bun run docs:dev`, or both servers with `bun run dev:docs` |
 
 The docs server listens on `127.0.0.1`, the same host as those links. `docsServer()` in `server/developer/docsUrl.js` supplies that host to both `astro dev` and `astro preview`. Binding `localhost` listens on IPv6 only, and these links do not connect.
 
-The wizard copies `server/dev.js`, so a created site has the same page. Docs stay on the starter. The setups link reads `../setups` from the project directory.
+The wizard copies `server/dev.js` and `docs/`, so a created site has the same admin page and the same reference. `bun run build` publishes `dist/` only. The setups link reads `../setups` from the project directory.
 
 ## Experiments
 
@@ -442,6 +442,7 @@ export { createRenderer } from "./renderers/vento.js";
 | Command | Runs | Use it |
 | --- | --- | --- |
 | `bun run dev` | `server/dev.js`: renders on request, bundles JS and CSS on save, live reload | While working |
+| `bun run dev:docs` | `bun run dev` and `bun run docs:dev` together | While working with the reference open |
 | `bun run build` | `server/build.js`: the six build steps above | Before deploy; the host runs it |
 | `bun run preview` | `server/preview.js`: serves `dist/` the way the host does | To check a build |
 | `bun run lint` | `lint:js`, `lint:css`, then `lint:html` | Before a commit; CI |
@@ -453,9 +454,9 @@ export { createRenderer } from "./renderers/vento.js";
 | `bun run test` | `bun test` | Before a commit; CI |
 | `bun run process:image` | `scripts/process-image.js` | When adding images |
 | `bun run create <dest>` | `wizard/create.js`: copy the starter and write the chosen options | Starter only. A client site does not have this. [WIZARD.md](WIZARD.md) |
-| `bun run docs:dev` | Starlight in `docs/`, reading the repo markdown | Starter only. Internal reference site |
-| `bun run docs:build` | `astro build` in `docs/` | Starter only. CI |
-| `bun run docs:preview` | Serves the Starlight build | Starter only |
+| `bun run docs:dev` | Starlight in `docs/`, reading the repo markdown | Dev reference, including on a created site. Not part of `dist/` |
+| `bun run docs:build` | `astro build` in `docs/` | Writes `docs/dist`. CI on the starter. Not the site deploy |
+| `bun run docs:preview` | Serves `docs/dist` | Check the reference build. Not `bun run preview` |
 
 ## Formatting and linting by engine
 

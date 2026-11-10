@@ -76,7 +76,7 @@ jobs:
           --transition ${{ matrix.transition }}
           --navigation ${{ matrix.navigation }}
           --renderer ${{ matrix.renderer }}
-          --name ci
+          --name Site
           --origin https://example.com
       - name: Install, lint, test, build
         working-directory: ${{ runner.temp }}/site

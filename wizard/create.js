@@ -6,7 +6,6 @@ import * as p from "@clack/prompts";
 const root = resolve(import.meta.dir, "..");
 const SKIP = new Set([
   "wizard",
-  "docs",
   "node_modules",
   "dist",
   ".dev",
@@ -50,6 +49,19 @@ const VIEW_CSS = ["styles/components/view-transition.css"];
 const VIEW_DOC_CSS = ["styles/components/view-transition-document.css"];
 const EXTENSION = { nunjucks: "njk", vento: "vto", jsx: "jsx" };
 
+function copied(rel) {
+  if (!rel || rel === ".") return true;
+  const parts = rel.split(sep);
+  if (SKIP.has(parts[0])) return false;
+  if (
+    parts[0] === "docs" &&
+    ["node_modules", "dist", ".astro"].includes(parts[1])
+  ) {
+    return false;
+  }
+  return true;
+}
+
 const args = parseArgs(process.argv.slice(2));
 const options = await collectOptions(args);
 const dest = resolve(options.dest);
@@ -67,11 +79,7 @@ await mkdir(dest, { recursive: true });
 try {
   await cp(root, dest, {
     recursive: true,
-    filter: (src) => {
-      const rel = relative(root, src);
-      if (!rel || rel === ".") return true;
-      return !SKIP.has(rel.split(sep)[0]);
-    },
+    filter: (src) => copied(relative(root, src)),
   });
   await applyCombination();
 } catch (error) {
@@ -80,7 +88,9 @@ try {
 }
 
 console.log(`Created ${combo} (${renderer}) at ${dest}`);
-console.log(`cd ${dest} && bun install && bun run dev`);
+console.log(
+  `cd ${dest} && bun install && bun install --cwd docs && bun run dev`,
+);
 
 async function collectOptions(flags) {
   const destFlag = flags.dest ?? flags._[0];
@@ -747,9 +757,6 @@ async function writePackageJson(engine) {
   const pkg = JSON.parse(await readFile(resolve(dest, "package.json"), "utf8"));
   pkg.name = name.toLowerCase().replaceAll(/[^a-z0-9-]+/g, "-") || "site";
   delete pkg.scripts.create;
-  delete pkg.scripts["docs:dev"];
-  delete pkg.scripts["docs:build"];
-  delete pkg.scripts["docs:preview"];
   delete pkg.dependencies?.["@clack/prompts"];
   delete pkg.devDependencies?.["@clack/prompts"];
 

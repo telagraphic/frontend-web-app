@@ -39,6 +39,22 @@ test.describe("navigation", () => {
     await expect(page).toHaveURL(/\/$/);
   });
 
+  test("menu navigates from home to about and back", async ({ page }) => {
+    await skipPreloader(page);
+    await page.goto("/");
+    await waitForSettled(page, "home");
+
+    await openMenu(page);
+    await page.locator("a.navigation__link[href='/about']").click();
+    await waitForSettled(page, "about");
+    await expect(page).toHaveURL(/\/about$/);
+
+    await openMenu(page);
+    await page.locator("a.navigation__link[href='/']").click();
+    await waitForSettled(page, "home");
+    await expect(page).toHaveURL(/\/$/);
+  });
+
   test("clicking Home from not-found lands on home", async ({ page }) => {
     await skipPreloader(page);
     await page.goto("/404");
@@ -182,3 +198,10 @@ test.describe("pageshow", () => {
     }
   });
 });
+
+async function openMenu(page) {
+  const nav = page.locator("[data-navigation]");
+  if ((await nav.getAttribute("data-navigation-status")) === "active") return;
+  await page.locator("[data-navigation-toggle]").click();
+  await expect(nav).toHaveAttribute("data-navigation-status", "active");
+}

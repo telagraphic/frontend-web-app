@@ -2,7 +2,7 @@
 
 How to create the seven wizard sites, run them, and read the results. The option list is [WIZARD.md](WIZARD.md). The dev links are [TEMPLATES.md](TEMPLATES.md).
 
-Status: `/admin` is on the dev server. The create script and the seven folders are the next step. This page is the procedure.
+Status: `bun run setups` creates the seven folders beside the starter and rewrites `../setups/index.html` after each command. `/admin/setups/` serves that scoreboard. A run is done when the five Nunjucks rows are pass and their skips match this page. Vento and JSX leave the browser cell pending.
 
 The starter is not rewritten. `bun run create` refuses a destination inside this repo. Each setup is a folder beside the starter. The `wizard-` name is the folder and, if that folder is its own git repo, its branch. The results page does not check out branches. The script `cd`s into the folder and runs the commands there.
 
@@ -34,7 +34,7 @@ Vento and JSX run lint, unit tests, and build. Their browser cell stays pending.
 
 **GSAP + page swap.** Cover, swap `<main>`, reveal. The focus test runs. The view-transition test skips.
 
-**GSAP + document load.** The click covers, writes the session flag, and loads the next document. Reveal plays there. The cover test skips because the head script contains `gsap-cover`. The focus test skips. `documentLoad.test.js` stays.
+**GSAP + document load.** The click covers, writes the session flag, and loads the next document. Reveal plays there. The cover test skips because the head script contains `gsap-cover`. The focus test skips. The view-transition test skips because this combination does not call `startViewTransition`. `documentLoad.test.js` stays.
 
 **View transition + page swap.** `document.startViewTransition` wraps the swap. No overlay host, so the cover test skips. The focus test runs. The view-transition test counts one call.
 
@@ -47,7 +47,7 @@ On every Nunjucks setup, an unknown path returns HTTP 404 and keeps the URL. `/4
 ## Order
 
 1. `/admin` on `bun run dev`. Done.
-2. Add the create script with the `wizard-` names.
+2. `bun run setups` from the starter. The command is `scripts/create-setups.js`.
 3. Create the five Nunjucks sites and run lint, unit tests, build, and Playwright. The scoreboard updates after each step.
 4. Click through each dev server and check the skips against this page.
 5. Create the Vento and JSX sites and run lint, unit tests, and build.

@@ -11,4 +11,10 @@ export const siteRoutes = {
     description: "This URL is not a route.",
     page: "Page",
   },
+  about: {
+    path: "/about",
+    title: "About",
+    description: "About this site.",
+    page: "About",
+  },
 };
