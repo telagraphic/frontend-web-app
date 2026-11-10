@@ -4,7 +4,7 @@ status: accepted
 
 # Environment is one production check, and the origin is config
 
-`Environment.js` sniffed the `App.js` script URL, built a string path for page imports, called `import.meta.hot.accept()` on itself, and returned `https://sheamemo.com` as the site origin. The string import cannot be split (ADR 0004). Accepting hot updates inside this module does not dispose the running app (ADR 0009). The domain is this client site, not the starter.
+`Environment.js` sniffed the `App.js` script URL, built a string path for page imports, called `import.meta.hot.accept()` on itself, and returned a hard-coded origin. The string import cannot be split (ADR 0004). Accepting hot updates inside this module does not dispose the running app (ADR 0009). The origin belongs in config.
 
 ## Decisions
 

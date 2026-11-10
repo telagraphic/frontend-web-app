@@ -1,7 +1,18 @@
-# The Shea Memorandum
+# Frontend web app
 
-Website version of the [Shea Memorandum](https://www.yale64.org/news/shea.pdf) built with ES6 SPA, GSAP with artwork by @telagraphic.
+Starter for a content-driven site on Bun. Static HTML documents, page classes, GSAP, and Lenis.
 
-<img width="972" height="997" alt="Screenshot 2026-01-07 at 2 40 07 PM" src="https://github.com/user-attachments/assets/b503f743-6573-4ebb-a106-f114c15ef4c8" />
+```
+bun install
+bun run dev
+```
 
+Create a new site from this checkout:
 
+```
+bun run create ../my-site
+```
+
+The wizard writes the chosen page transition, navigation, and renderer, then stops. In the new folder, run `bun install` and `bun run dev`.
+
+`bun run docs:dev` serves the reference.

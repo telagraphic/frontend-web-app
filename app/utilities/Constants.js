@@ -97,11 +97,3 @@ export const VALUES = Object.freeze({
   NAV_TIMEOUT: 500,
   PREFETCH_HOVER_DELAY_MS: 100,
 });
-
-/**
- * Background image URLs
- */
-export const BACKGROUND_IMAGES = Object.freeze({
-  PRELOADER_COPY:
-    "https://shea-memorandum-site.b-cdn.net/images/fbi-report-dancing-israelis-3.jpg",
-});

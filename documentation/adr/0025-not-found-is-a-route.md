@@ -25,5 +25,5 @@ Unknown paths currently fall through or redirect home. A starter must ship a rea
 ## Consequences
 
 - The starter ships two pages: Home and not-found. Extra pages still come from the add-page skill.
-- Slice 8 writes `views/pages/not-found.{ext}` when Shea pages leave.
+- Slice 8 writes `views/pages/not-found.{ext}` when the previous client pages leave.
 - Host `_redirects` does not become a single-page `/* /index.html` fallback. Missing files are 404 documents.

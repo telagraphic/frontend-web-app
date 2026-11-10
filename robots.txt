@@ -1,6 +1,0 @@
-# robots.txt for The Shea Memorandum
-User-agent: *
-Allow: /
-
-# Sitemap location
-Sitemap: https://sheamemo.com/sitemap.xml
