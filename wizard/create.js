@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 import { cp, mkdir, rm, writeFile, readFile } from "node:fs/promises";
 import { existsSync, readdirSync } from "node:fs";
 import { resolve, relative, sep } from "node:path";
@@ -296,6 +297,10 @@ async function applyCombination() {
   );
   await applyRenderer(renderer, gsap);
   await writePackageJson(renderer);
+  await rm(resolve(dest, "scripts/create-setups.js"), { force: true });
+  await rm(resolve(dest, "scripts/setups.js"), { force: true });
+  await rm(resolve(dest, "tests/unit/setups.test.js"), { force: true });
+  await writeFile(resolve(dest, "README.md"), siteReadme(name));
 
   if (!gsap) {
     await rm(resolve(dest, "tests/unit/transitionsService.test.js"), {
@@ -760,7 +765,13 @@ function coveringHead() {
 async function writePackageJson(engine) {
   const pkg = JSON.parse(await readFile(resolve(dest, "package.json"), "utf8"));
   pkg.name = name.toLowerCase().replaceAll(/[^a-z0-9-]+/g, "-") || "site";
+  pkg.private = true;
+  delete pkg.bin;
+  delete pkg.files;
+  delete pkg.repository;
+  delete pkg.description;
   delete pkg.scripts.create;
+  delete pkg.scripts.setups;
   delete pkg.dependencies?.["@clack/prompts"];
   delete pkg.devDependencies?.["@clack/prompts"];
 
@@ -801,6 +812,18 @@ async function writePackageJson(engine) {
     resolve(dest, "package.json"),
     `${JSON.stringify(pkg, null, 2)}\n`,
   );
+}
+
+function siteReadme(siteName) {
+  return `# ${siteName}
+
+\`\`\`
+bun install
+bun run dev
+\`\`\`
+
+\`bun run docs:dev\` serves the reference.
+`;
 }
 
 function wiringTest({ gsap, pageSwap }) {

@@ -1,6 +1,35 @@
 {
-  "name": "web-app-refactor",
-  "private": true,
+  "name": "frontend-web-app",
+  "version": "0.1.0",
+  "description": "Starter for a content-driven site on Bun. The setup wizard writes a new site.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/telagraphic/frontend-web-app.git"
+  },
+  "bin": "wizard/create.js",
+  "files": [
+    "app",
+    "server",
+    "styles",
+    "views",
+    "public",
+    "wizard",
+    "tests",
+    "documentation",
+    ".cursor",
+    "scripts",
+    "eslint.config.mjs",
+    "playwright.config.js",
+    "tsconfig.json",
+    ".prettierrc",
+    ".stylelintrc.json",
+    ".htmlvalidate.json",
+    ".gitignore",
+    "bun.lock",
+    "AGENTS.md",
+    "GLOSSARY.md"
+  ],
   "scripts": {
     "create": "bun wizard/create.js",
     "setups": "bun scripts/create-setups.js",
@@ -24,6 +53,7 @@
     "process:image": "bun scripts/process-image.js"
   },
   "dependencies": {
+    "@clack/prompts": "^1.8.1",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
     "avif": "^0.5.3",
@@ -35,7 +65,6 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "@clack/prompts": "^1.8.1",
     "@eslint/js": "^9.34.0",
     "@playwright/test": "^1.65.0",
     "@types/bun": "latest",
