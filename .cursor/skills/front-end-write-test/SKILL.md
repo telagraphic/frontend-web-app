@@ -33,7 +33,7 @@ One change can need two layers. A service needs wiring and a unit test. A view t
 3. Pass fakes through the constructor. Call `router.navigate` for router behavior.
 4. Browser: follow `playwright.config.js`. `bun run test:browser` starts `PORT=3458 bun server/dev.js`. Wait for `main[data-route]`, `[data-transition-host][hidden]`, or `waitForFunction` for the cover. Register the cover wait before the click. Set `sessionStorage` `preloader-played` except for a preloader or `pageshow` test. Unknown paths are a document-load 404. `/404` is a route and can page-swap to Home.
 5. Screenshots are settled frames only: `reducedMotion: "reduce"` and `toHaveScreenshot({ animations: "disabled" })` after the host is hidden. Commit the Linux baseline next to the macOS one. CI looks up `*-chromium-linux.png`.
-6. A browser test is copied to every created site, so skip when the combination lacks the behavior. A unit test that imports a file the wizard deletes needs an `rm` in `wizard/create.js` beside the existing test drops.
+6. A browser test is copied to every created site, so skip when the combination lacks the behavior. A unit test that imports a file the wizard deletes needs an `rm` in `wizard/create.js` beside the existing test drops (`documentLoad.test.js`, `viewTransitions.test.js`, `transitionsService.test.js`, `pageNavigate.test.js`).
 
 The work is done when `bun test` passes for unit and wiring, `bun run test:browser` passes for a browser test, and the assertion fails if the public behavior is removed.
 

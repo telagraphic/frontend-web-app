@@ -19,6 +19,13 @@ jobs:
       - run: bun run build
       - run: bunx playwright install --with-deps chromium
       - run: bun run test:browser
+      - name: Upload browser results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-starter
+          path: test-results
+          if-no-files-found: ignore
 
   created:
     runs-on: ubuntu-latest
@@ -90,6 +97,13 @@ jobs:
         run: |
           bunx playwright install --with-deps chromium
           bun run test:browser
+      - name: Upload browser results
+        if: failure() && matrix.playwright
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-${{ matrix.name }}
+          path: ${{ runner.temp }}/site/test-results
+          if-no-files-found: ignore
 
   packed:
     runs-on: ubuntu-latest
@@ -121,7 +135,12 @@ jobs:
             --renderer nunjucks \
             --name Site \
             --origin https://example.com
-          diff -rq "$RUNNER_TEMP/packed" "$RUNNER_TEMP/checkout"
+          diff -rq "$RUNNER_TEMP/packed" "$RUNNER_TEMP/checkout" > "$RUNNER_TEMP/pack-diff" || true
+          # bun pm pack omits bun.lock even though package.json files lists it.
+          if grep -v "^Only in $RUNNER_TEMP/checkout: bun.lock$" "$RUNNER_TEMP/pack-diff" | grep -q .; then
+            cat "$RUNNER_TEMP/pack-diff"
+            exit 1
+          fi
           test ! -d "$RUNNER_TEMP/packed/wizard"
       - name: Install, lint, test, build
         working-directory: ${{ runner.temp }}/packed

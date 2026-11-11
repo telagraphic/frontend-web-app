@@ -33,7 +33,7 @@ Create writes files and stops. It prints `cd <dest> && bun install && bun run de
 
 ## Copy, drop, write
 
-Copy the starter into `<dest>`. Skip `wizard/`, `node_modules/`, `dist/`, `.dev/`, `.git/`, `.github/`, `.specstory/`, `.DS_Store`, pack tarballs, and checkout files that are not in the published package (`fonts/`, the root `_redirects`, `netlify.toml`, `pnpm-lock.yaml`, `.cursorindexingignore`). Copy `experiments/`. Then delete unused modules for this combination. Write only these seams:
+Copy the starter into `<dest>`. Skip `wizard/`, `node_modules/`, `dist/`, `.dev/`, `.git/`, `.github/`, `.specstory/`, `.DS_Store`, `.bun-tag`, pack tarballs, and checkout files that are not in the published package (`fonts/`, the root `_redirects`, `netlify.toml`, `pnpm-lock.yaml`, `.cursorindexingignore`). Copy `experiments/`. Then delete unused modules for this combination. Write only these seams:
 
 | File | What the wizard writes |
 | --- | --- |

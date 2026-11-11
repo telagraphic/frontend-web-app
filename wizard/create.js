@@ -18,6 +18,7 @@ const SKIP = new Set([
   "blob-report",
   ".specstory",
   ".cursorindexingignore",
+  ".bun-tag",
   "_redirects",
   "fonts",
   "netlify.toml",
@@ -324,6 +325,7 @@ async function applyCombination() {
     });
   }
   if (!pageSwap) {
+    await rm(resolve(dest, "tests/unit/pageNavigate.test.js"), { force: true });
     await writeFile(
       resolve(dest, "tests/wiring/createServices.test.js"),
       wiringTest({ gsap, pageSwap }),

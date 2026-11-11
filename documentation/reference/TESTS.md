@@ -18,7 +18,7 @@ Three layers. Each one checks something a caller can see: a public method, a dis
 | View transition | Unit and browser | `wrapCommit` calls `startViewTransition`, or `commit` when the API is missing. The browser test skips when this combination is not view transition plus page swap |
 | Navigation a fake DOM cannot see | Browser | Overlay cover and reveal, back and forward, `pageshow`, focus on `main`, a settled screenshot |
 
-A browser test is copied onto every created site. Skip it when that combination does not have the behavior. A unit test that imports a module the wizard deletes for some combinations needs the same `rm` in `wizard/create.js` as `documentLoad.test.js`, `viewTransitions.test.js`, and `transitionsService.test.js`.
+A browser test is copied onto every created site. Skip it when that combination does not have the behavior. A unit test that imports a module the wizard deletes for some combinations needs the same `rm` in `wizard/create.js` as `documentLoad.test.js`, `viewTransitions.test.js`, `transitionsService.test.js`, and `pageNavigate.test.js`.
 
 ## Unit
 
